@@ -43,6 +43,6 @@ const routes = require('./routes');
 routes.init(app);
 
 // Start App
-var port = 8080;
+var port = process.env.PORT || 8080;
 app.listen(port);
 console.log('Using http at ' + port + ' port');

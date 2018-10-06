@@ -8,5 +8,6 @@ let router = express.Router();
 
 // Register routes to a router
 router.post('/cognito', authController.cognito);
+router.get('/logout', authController.logout)
 
 module.exports = router;

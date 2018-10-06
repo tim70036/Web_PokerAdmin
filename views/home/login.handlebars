@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Bootstrap Admin Theme</title>
+    <title>Poker Admin</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -42,7 +42,7 @@
                         <h3 class="panel-title">Please Sign In</h3>
                     </div>
                     <div class="panel-body">
-                        <form role="form" action="/auth/cognito" method="POST">
+                        <form role="form" action="/auth/cognito" method="POST" id="login-form">
 
 
                                 <div class="form-group">
@@ -57,7 +57,7 @@
                                     </label>
                                 </div>
                                 <!-- Change this to a button or input when using this as a form -->
-                                <button type="submit" class="btn btn-lg btn-success btn-block">Login</a>
+                                <button type="submit" class="btn btn-lg btn-success btn-block" id="login-btn">Login</a>
 
                         </form>
                     </div>
@@ -78,6 +78,14 @@
     <!-- Custom Theme JavaScript -->
     <script src="./dist/js/sb-admin-2.js"></script>
 
+    <script>
+    $(document).ready(function() {
+        
+        $('#login-form').submit(function(){
+            $('#login-btn').addClass('disabled');
+        });
+    });
+    </script>
 </body>
 
 </html>

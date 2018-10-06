@@ -7,6 +7,16 @@ let cognitoHandler = passport.authenticate('cognito',  {
     failureRedirect:'/home/login'
 });
 
+let logoutHandler = function(req,res){
+    // Using only req.logout is not sufficient
+    req.session.destroy((err) => {
+        if(err) return next(err);
+        req.logout();
+        res.redirect(303, '/');
+    });
+}
+
 module.exports = {
-    cognito : cognitoHandler
+    cognito : cognitoHandler,
+    logout : logoutHandler
 }
