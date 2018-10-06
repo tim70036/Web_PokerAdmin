@@ -13,8 +13,6 @@ const
 const app = express();
 
 // Databases
-const auth = require('./libs/auth')
-auth.init(app);
 
 // Express Setting
 app.engine('handlebars', exphbs({defaultLayout: false}));
@@ -34,6 +32,11 @@ app.use(session({
     resave: false,
     saveUninitialized: true
 }));
+
+
+const auth = require('./libs/auth')
+auth.init(app); // must use express-session before initializing passport
+
 
 // Routes
 const routes = require('./routes');

@@ -7,9 +7,10 @@ const
 let router = express.Router();
 
 // Register routes to a router
-router.get('/', homeController.index);
-router.get('/add', homeController.add);
+router.get('/', homeController.authorize,homeController.index);
+router.get('/add', homeController.authorize, homeController.add);
+router.get('/presentgames', homeController.authorize, homeController.presentgames);
+
 router.get('/login', homeController.login);
-router.get('/presentgames', homeController.presentgames);
 
 module.exports = router;
