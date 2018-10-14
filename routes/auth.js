@@ -7,7 +7,7 @@ const
 let router = express.Router();
 
 // Register routes to a router
-router.post('/cognito', authController.cognito);
-router.get('/logout', authController.logout)
+router.post('/login', authController.login);
+router.get('/logout', authController.logout);
 
 module.exports = router;

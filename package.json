@@ -20,7 +20,7 @@
     "mysql": "^2.16.0",
     "node-jsencrypt": "^1.0.0",
     "passport": "^0.4.0",
-    "passport-cognito": "^0.1.13",
+    "passport-local": "^1.0.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "uuid": "^3.3.2"

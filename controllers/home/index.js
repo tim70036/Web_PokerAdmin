@@ -1,9 +1,9 @@
 // Handlers for home page
-
 const 
     credentials = require('../../configs/credentials');
     
 
+// Import hadnlers from each sub module
 let 
     personnelHandler = require('./personnel'),
     creditHandler = require('./credit'),
@@ -11,7 +11,7 @@ let
     accountHandler = require('./account');
 
 let indexHandler = function(req,res) {
-    
+    res.render('home/index', {layout : 'home'});
 }
     
 let authorizeHandler = function(req, res, next){
@@ -31,7 +31,6 @@ let cmsHandler = function(req, res, next) {
     // check connection?
 
 }
-
 
 let loginHandler = function(req, res) {
     res.render('home/login', {layout : false});

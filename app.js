@@ -42,7 +42,7 @@ app.use(morgan('dev')); // logger
 
 // Authorization init
 const auth = require('./libs/auth')
-auth.init(app); // must use express-session before initializing passport
+auth.init(app); // must set up express-session before initializing passport
 
 // Database init
 const db = require('./libs/db');
