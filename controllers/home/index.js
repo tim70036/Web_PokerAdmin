@@ -10,10 +10,17 @@ let
     gameHandler = require('./game'),
     accountHandler = require('./account');
 
+// Handler for home page
 let indexHandler = function(req,res) {
     res.render('home/index', {layout : 'home'});
 }
-    
+
+// Handler for login page
+let loginHandler = function(req, res) {
+    res.render('home/login', {layout : false});
+}
+
+// Handler for authorization
 let authorizeHandler = function(req, res, next){
 
     // User not login, just redirect
@@ -23,7 +30,19 @@ let authorizeHandler = function(req, res, next){
         return;
     }
 
-    // User has logined, moving forward
+    // User has logined
+    // Add user session data to res.locals for handlebars templating
+    res.locals.userData = {...req.user}; // must use spread operator... to make a copy, otherwise req.user will be changed
+
+    // Translate role to Chinese
+    let roleMapping = {
+        'member' : '會員',
+        'agent' : '代理',
+        'head-agent' : '總代理',
+        'service-agent' : '客服',
+        'admin' : '管理員',
+    }
+    res.locals.userData.role = roleMapping[res.locals.userData.role];
     return next();
 }
 
@@ -32,9 +51,6 @@ let cmsHandler = function(req, res, next) {
 
 }
 
-let loginHandler = function(req, res) {
-    res.render('home/login', {layout : false});
-}
 
 module.exports = {
     index : indexHandler,

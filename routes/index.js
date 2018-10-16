@@ -1,7 +1,7 @@
 // Make Express use several custom routers
 // Import differnt routers
 const
-    homeRoute = require('./home');
+    homeRoute = require('./home'),
     authRoute = require('./auth');
 
  // Make Express use these routers

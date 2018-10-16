@@ -22,15 +22,15 @@
 		<!--end::Web font -->
 
 		<!--begin::Global Theme Styles -->
-		<link href="assets/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="/home/assets/vendors/base/vendors.bundle.css" rel="stylesheet" type="text/css" />
 
-		<!--RTL version:<link href="assets/vendors/base/vendors.bundle.rtl.css" rel="stylesheet" type="text/css" />-->
-		<link href="assets/demo/demo12/base/style.bundle.css" rel="stylesheet" type="text/css" />
+		<!--RTL version:<link href="/home/assets/vendors/base/vendors.bundle.rtl.css" rel="stylesheet" type="text/css" />-->
+		<link href="/home/assets/demo/demo12/base/style.bundle.css" rel="stylesheet" type="text/css" />
 
-		<!--RTL version:<link href="assets/demo/demo12/base/style.bundle.rtl.css" rel="stylesheet" type="text/css" />-->
+		<!--RTL version:<link href="/home/assets/demo/demo12/base/style.bundle.rtl.css" rel="stylesheet" type="text/css" />-->
 
 		<!--end::Global Theme Styles -->
-		<link rel="shortcut icon" href="assets/demo/demo12/media/img/logo/favicon.ico" />
+		<link rel="shortcut icon" href="/home/assets/demo/demo12/media/img/logo/favicon.ico" />
 	</head>
 
 	<!-- end::Head -->
@@ -51,7 +51,7 @@
 							<div class="m-stack m-stack--ver m-stack--general">
 								<div class="m-stack__item m-stack__item--middle m-brand__logo">
 									<a href="index.html" class="m-brand__logo-wrapper">
-										<img alt="" src="assets/demo/demo12/media/img/logo/logo.png" />
+										<img alt="" src="/home/assets/demo/demo12/media/img/logo/logo.png" />
 									</a>
 								</div>
 								<div class="m-stack__item m-stack__item--middle m-brand__tools">
@@ -275,29 +275,43 @@
 												</div>
 											</div>
 										</li>
+
+										
+
 										<li class="m-nav__item m-topbar__user-profile  m-dropdown m-dropdown--medium m-dropdown--arrow  m-dropdown--align-right m-dropdown--mobile-full-width m-dropdown--skin-light" m-dropdown-toggle="click">
+											
+											{{!-- Topbar user section --}}
+											{{#if userData}}
 											<a href="#" class="m-nav__link m-dropdown__toggle">
-												<span class="m-topbar__userpic">
-													<img src="assets/app/media/img/users/user4.jpg" class="m--img-rounded m--marginless m--img-centered" alt="" />
+												{{!-- Choose what to show, add 'm--hide' to hide --}}
+												{{!-- 1 --}}
+												<span class="m-topbar__userpic m--hide">
+													<img src="/home/assets/app/media/img/users/user4.jpg" class="m--img-rounded m--marginless m--img-centered" alt="" />
 												</span>
-												<span class="m-nav__link-icon m-topbar__usericon  m--hide">
+												{{!-- 2 --}}
+												<span class="m-nav__link-icon m-topbar__usericon">
 													<span class="m-nav__link-icon-wrapper"><i class="flaticon-user-ok"></i></span>
 												</span>
-												<span class="m-topbar__username m--hide">Nick</span>
+												{{!-- 3 --}}
+												<span class="m-topbar__username">Hi! {{userData.name}} </span>
 											</a>
+
 											<div class="m-dropdown__wrapper">
 												<span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust"></span>
 												<div class="m-dropdown__inner">
+
 													<div class="m-dropdown__header m--align-center">
 														<div class="m-card-user m-card-user--skin-light">
 															<div class="m-card-user__pic">
-																<img src="assets/app/media/img/users/user4.jpg" class="m--img-rounded m--marginless" alt="" />
+																<img src="/home/assets/app/media/img/users/user4.jpg" class="m--img-rounded m--marginless" alt="" />
 															</div>
 															<div class="m-card-user__details">
-																<span class="m-card-user__name m--font-weight-500">Mark Andre</span>
-																<a href="" class="m-card-user__email m--font-weight-300 m-link">mark.andre@gmail.com</a>
+																<span class="m-card-user__name m--font-weight-500"> {{userData.name}}({{userData.role}})</span>
+																<a href="" class="m-card-user__email m--font-weight-300 m-link"> {{userData.email}} </a>
 															</div>
 														</div>
+														
+
 													</div>
 													<div class="m-dropdown__body">
 														<div class="m-dropdown__content">
@@ -306,7 +320,7 @@
 																	<span class="m-nav__section-text">Section</span>
 																</li>
 																<li class="m-nav__item">
-																	<a href="profile.html" class="m-nav__link">
+																	<a href="#" class="m-nav__link">
 																		<i class="m-nav__link-icon flaticon-profile-1"></i>
 																		<span class="m-nav__link-title">
 																			<span class="m-nav__link-wrap">
@@ -317,13 +331,13 @@
 																	</a>
 																</li>
 																<li class="m-nav__item">
-																	<a href="profile.html" class="m-nav__link">
+																	<a href="#" class="m-nav__link">
 																		<i class="m-nav__link-icon flaticon-share"></i>
 																		<span class="m-nav__link-text">Activity</span>
 																	</a>
 																</li>
 																<li class="m-nav__item">
-																	<a href="profile.html" class="m-nav__link">
+																	<a href="#" class="m-nav__link">
 																		<i class="m-nav__link-icon flaticon-chat-1"></i>
 																		<span class="m-nav__link-text">Messages</span>
 																	</a>
@@ -331,13 +345,13 @@
 																<li class="m-nav__separator m-nav__separator--fit">
 																</li>
 																<li class="m-nav__item">
-																	<a href="profile.html" class="m-nav__link">
+																	<a href="#" class="m-nav__link">
 																		<i class="m-nav__link-icon flaticon-info"></i>
 																		<span class="m-nav__link-text">FAQ</span>
 																	</a>
 																</li>
 																<li class="m-nav__item">
-																	<a href="profile.html" class="m-nav__link">
+																	<a href="#" class="m-nav__link">
 																		<i class="m-nav__link-icon flaticon-lifebuoy"></i>
 																		<span class="m-nav__link-text">Support</span>
 																	</a>
@@ -345,13 +359,15 @@
 																<li class="m-nav__separator m-nav__separator--fit">
 																</li>
 																<li class="m-nav__item">
-																	<a href="snippets/pages/user/login-1.html" class="btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder">Logout</a>
+																	<a href="/auth/logout" class="btn m-btn--pill    btn-secondary m-btn m-btn--custom m-btn--label-brand m-btn--bolder">Logout</a>
 																</li>
 															</ul>
 														</div>
 													</div>
 												</div>
 											</div>
+											{{/if}}
+
 										</li>
 										
 									</ul>
@@ -376,23 +392,23 @@
 					<!-- BEGIN: Aside Menu -->
 					<div id="m_ver_menu" class="m-aside-menu  m-aside-menu--skin-dark m-aside-menu--submenu-skin-dark " m-menu-vertical="1" m-menu-scrollable="0" m-menu-dropdown-timeout="500">
 						<ul class="m-menu__nav ">
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
+							<li id="index-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">基本資訊</span></a></li>
                             <li class="m-menu__section m-menu__section--first">
 								<h4 class="m-menu__section-text">人員管理</h4>
 								<i class="m-menu__section-icon flaticon-more-v2"></i>
 							</li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-light"></i><span class="m-menu__link-text">代理商管理</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">總代理商管理</span></a></li>
-                            <li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">客服管理</span></a></li>
+							<li id="personnel-member-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/member" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
+							<li id="personnel-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-light"></i><span class="m-menu__link-text">代理商管理</span></a></li>
+							<li id="personnel-head-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/head-agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">總代理商管理</span></a></li>
+                            <li id="personnel-service-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/service-agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">客服管理</span></a></li>
 							
                             
                             <li class="m-menu__section ">
 								<h4 class="m-menu__section-text">帳務管理</h4>
 								<i class="m-menu__section-icon flaticon-more-v2"></i>
 							</li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-graphic"></i><span class="m-menu__link-text">額度存提</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-network"></i><span class="m-menu__link-text">存提紀錄</span></a></li>
+							<li id="credit-transfer-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/credit/transfer" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-graphic"></i><span class="m-menu__link-text">額度存提</span></a></li>
+							<li id="credit-history-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/credit/history" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-network"></i><span class="m-menu__link-text">存提紀錄</span></a></li>
 
                             
                             
@@ -400,19 +416,19 @@
 								<h4 class="m-menu__section-text">牌局管理</h4>
 								<i class="m-menu__section-icon flaticon-more-v2"></i>
 							</li>
-                            <li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">入桌審核</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">當前牌局</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">戰績紀錄</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-settings"></i><span class="m-menu__link-text">戰績導入</span></a></li>
+                            <li id="game-verify-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/verify" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">入桌審核</span></a></li>
+							<li id="game-present-games-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/present-games" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">當前牌局</span></a></li>
+							<li id="game-history-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/history" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">戰績紀錄</span></a></li>
+							<li id="game-import-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/import" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-settings"></i><span class="m-menu__link-text">戰績導入</span></a></li>
 
                             
                             <li class="m-menu__section ">
 								<h4 class="m-menu__section-text">帳號設定</h4>
 								<i class="m-menu__section-icon flaticon-more-v2"></i>
 							</li>
-                            <li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">一般設定</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">德撲帳號設定</span></a></li>
-							<li class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="inner.html" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">CMS帳號設定</span></a></li>
+                            <li id="account-misc-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/misc" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">一般設定</span></a></li>
+							<li id="account-game-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/game" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">德撲帳號設定</span></a></li>
+							<li id="account-club-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/club" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">CMS帳號設定</span></a></li>
 						</ul>
 					</div>
 
@@ -424,89 +440,8 @@
 				<!-- END: Left Aside -->
 				<div class="m-grid__item m-grid__item--fluid m-wrapper">
 
-					<!-- BEGIN: Subheader -->
-					<div class="m-subheader ">
-						<div class="d-flex align-items-center">
-							<div class="mr-auto">
-								<h3 class="m-subheader__title m-subheader__title--separator">Inner Page</h3>
-								<ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
-									<li class="m-nav__item m-nav__item--home">
-										<a href="#" class="m-nav__link m-nav__link--icon">
-											<i class="m-nav__link-icon la la-home"></i>
-										</a>
-									</li>
-									<li class="m-nav__separator">-</li>
-									<li class="m-nav__item">
-										<a href="" class="m-nav__link">
-											<span class="m-nav__link-text">Resources</span>
-										</a>
-									</li>
-									<li class="m-nav__separator">-</li>
-									<li class="m-nav__item">
-										<a href="" class="m-nav__link">
-											<span class="m-nav__link-text">Timesheet</span>
-										</a>
-									</li>
-								</ul>
-							</div>
-							<div>
-								<div class="m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-right m-dropdown--align-push" m-dropdown-toggle="hover" aria-expanded="true">
-									<a href="#" class="m-portlet__nav-link btn btn-lg btn-secondary  m-btn m-btn--outline-2x m-btn--air m-btn--icon m-btn--icon-only m-btn--pill  m-dropdown__toggle">
-										<i class="la la-plus m--hide"></i>
-										<i class="la la-ellipsis-h"></i>
-									</a>
-									<div class="m-dropdown__wrapper">
-										<span class="m-dropdown__arrow m-dropdown__arrow--right m-dropdown__arrow--adjust"></span>
-										<div class="m-dropdown__inner">
-											<div class="m-dropdown__body">
-												<div class="m-dropdown__content">
-													<ul class="m-nav">
-														<li class="m-nav__section m-nav__section--first m--hide">
-															<span class="m-nav__section-text">Quick Actions</span>
-														</li>
-														<li class="m-nav__item">
-															<a href="" class="m-nav__link">
-																<i class="m-nav__link-icon flaticon-share"></i>
-																<span class="m-nav__link-text">Activity</span>
-															</a>
-														</li>
-														<li class="m-nav__item">
-															<a href="" class="m-nav__link">
-																<i class="m-nav__link-icon flaticon-chat-1"></i>
-																<span class="m-nav__link-text">Messages</span>
-															</a>
-														</li>
-														<li class="m-nav__item">
-															<a href="" class="m-nav__link">
-																<i class="m-nav__link-icon flaticon-info"></i>
-																<span class="m-nav__link-text">FAQ</span>
-															</a>
-														</li>
-														<li class="m-nav__item">
-															<a href="" class="m-nav__link">
-																<i class="m-nav__link-icon flaticon-lifebuoy"></i>
-																<span class="m-nav__link-text">Support</span>
-															</a>
-														</li>
-														<li class="m-nav__separator m-nav__separator--fit">
-														</li>
-														<li class="m-nav__item">
-															<a href="#" class="btn btn-outline-danger m-btn m-btn--pill m-btn--wide btn-sm">Submit</a>
-														</li>
-													</ul>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- END: Subheader -->
-					<div class="m-content">
-						{{{body}}}
-                    </div>
+					{{{body}}}
+					
 				</div>
 			</div>
 
@@ -581,7 +516,7 @@
 								<div class="m-messenger__wrapper">
 									<div class="m-messenger__message m-messenger__message--in">
 										<div class="m-messenger__message-pic">
-											<img src="assets/app/media/img//users/user3.jpg" alt="" />
+											<img src="/home/assets/app/media/img//users/user3.jpg" alt="" />
 										</div>
 										<div class="m-messenger__message-body">
 											<div class="m-messenger__message-arrow"></div>
@@ -611,7 +546,7 @@
 								<div class="m-messenger__wrapper">
 									<div class="m-messenger__message m-messenger__message--in">
 										<div class="m-messenger__message-pic">
-											<img src="assets/app/media/img//users/user3.jpg" alt="" />
+											<img src="/home/assets/app/media/img//users/user3.jpg" alt="" />
 										</div>
 										<div class="m-messenger__message-body">
 											<div class="m-messenger__message-arrow"></div>
@@ -642,7 +577,7 @@
 								<div class="m-messenger__wrapper">
 									<div class="m-messenger__message m-messenger__message--in">
 										<div class="m-messenger__message-pic">
-											<img src="assets/app/media/img//users/user3.jpg" alt="" />
+											<img src="/home/assets/app/media/img//users/user3.jpg" alt="" />
 										</div>
 										<div class="m-messenger__message-body">
 											<div class="m-messenger__message-arrow"></div>
@@ -715,7 +650,7 @@
 								<div class="m-messenger__wrapper">
 									<div class="m-messenger__message m-messenger__message--in">
 										<div class="m-messenger__message-pic">
-											<img src="assets/app/media/img//users/user3.jpg" alt="" />
+											<img src="/home/assets/app/media/img//users/user3.jpg" alt="" />
 										</div>
 										<div class="m-messenger__message-body">
 											<div class="m-messenger__message-arrow"></div>
@@ -1038,8 +973,8 @@
 		<!-- begin::Quick Nav -->
 
 		<!--begin::Global Theme Bundle -->
-		<script src="assets/vendors/base/vendors.bundle.js" type="text/javascript"></script>
-		<script src="assets/demo/demo12/base/scripts.bundle.js" type="text/javascript"></script>
+		<script src="/home/assets/vendors/base/vendors.bundle.js" type="text/javascript"></script>
+		<script src="/home/assets/demo/demo12/base/scripts.bundle.js" type="text/javascript"></script>
 
 		<!--end::Global Theme Bundle -->
 	</body>
@@ -1053,16 +988,31 @@
             var url      = window.location.href;
             var origin   = window.location.origin;
             console.log(pathname);
-            console.log(url);
-            console.log(origin);
+
 
             var mappings = {
-                '/home/' : 1,
-                '/home'  : 2,
-                '/home/personnel/member' : 3,
+                '/home/' : 'index-tag',
+                '/home'  : 'index-tag',
+
+                '/home/personnel/member' : 'personnel-member-tag',
+				'/home/personnel/agent' : 'personnel-agent-tag',
+
+				'/home/personnel/head-agent' : 'personnel-head-agent-tag',
+				'/home/personnel/service-agent' : 'personnel-service-agent-tag',
+				'/home/credit/transfer' : 'credit-transfer-tag',
+				'/home/credit/history' : 'credit-history-tag',
+
+				'/home/game/verify' : 'game-verify-tag',
+				'/home/game/present-games' : 'game-present-games-tag',
+				'/home/game/history' : 'game-history-tag',
+				'/home/game/import' : 'game-import-tag',
+
+				'/home/account/misc' : 'account-misc-tag',
+				'/home/account/game' : 'account-game-tag',
+				'/home/account/club' : 'account-club-tag',
             }
             console.log(mappings[pathname]);
-            //m-menu__item--active
+			$('#' + mappings[pathname]).addClass('m-menu__item--active')
         });
                              
     </script>

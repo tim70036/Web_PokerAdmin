@@ -1,5 +1,6 @@
-const crypto = require('crypto');
-const JSEncrypt = require('node-jsencrypt');
+const 
+	crypto = require('crypto'),
+	JSEncrypt = require('node-jsencrypt');
 
 
 

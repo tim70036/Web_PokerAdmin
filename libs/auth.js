@@ -1,19 +1,23 @@
+// Configure passport for express
 const
     passport = require('passport'), 
     passportLocalStrategy = require('passport-local').Strategy,
     credentials = require('../configs/credentials');
 
-
 function init(app) {
 
-    // Mapping user between client <-> server <-> database
-    // Particulary, userid in session <-> user instance in database
+    // Mapping user between session store <-> server <-> req.user
+    // Particulary, serialized user in session <-> user instance req.user
+    // http://toon.io/understanding-passportjs-authentication-flow/
+    // Since we are using Redis, we choose to store the whole user object in redis
+    // Thus no serialize and deserialize
     passport.serializeUser(function(user, done){ 
-        // Map user instance to id
+        // Serialize user instance to store in session storage, used for checking authentication for each request later
         done(null,user);
     });
-    passport.deserializeUser(function(id, done){ 
-        done(null,id);
+    passport.deserializeUser(function(serializedUser, done){ 
+        // deSerialize user instance, so passport can put it in req.user (after authentication of each request)
+        done(null,serializedUser);
     });
 
     // Config each strategy
@@ -40,7 +44,7 @@ function configLocalStrategy() {
             // Encrypt password
 
             // Prepare query
-            let sqlString = "SELECT account, name, role, roleId FROM UserAccount WHERE account=? AND password=?";
+            let sqlString = "SELECT id, account, name, email, role, roleId FROM UserAccount WHERE account=? AND password=?";
             let values = [username, password];
             sqlString = req.db.format(sqlString, values);
 

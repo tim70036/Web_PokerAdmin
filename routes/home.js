@@ -6,6 +6,7 @@ const
 
 let router = express.Router();
 
+
 // Register routes to a router
 // Dashboard routes
 router.get('/', homeController.authorize, homeController.index);
