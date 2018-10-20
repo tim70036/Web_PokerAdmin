@@ -1,9 +1,41 @@
+{{!-- Import custom script & stylesheet --}}
+<!--begin::Page Vendors -->
+<script src="/home/assets/vendors/custom/jquery-ui/jquery-ui.bundle.js" type="text/javascript"></script>
+<!--end::Page Vendors -->
+
+<!--begin::Page Scripts -->
+<script src="/home/assets/demo/default/custom/components/portlets/tools.js" type="text/javascript"></script>
+<script src="/home/assets/demo/default/custom/components/portlets/draggable.js" type="text/javascript"></script>
+
+<!--end::Page Scripts -->
+
+<style>
+	.clubCardPic {
+		width: 45px;
+		height: 45px;
+		border-radius: 50px;
+	}
+
+	@media (min-width: 768px){
+		.btn {
+			margin: 5px 25px;
+		}
+	}
+
+	@media (max-width: 767px){
+		.btn {
+			margin: 5px 10px;
+		}
+	}
+	
+</style>
+
 {{!-- Header goes here --}}
 <!-- BEGIN: Subheader -->
 <div class="m-subheader ">
 	<div class="d-flex align-items-center">
 		<div class="mr-auto">
-			<h3 class="m-subheader__title m-subheader__title--separator">Inner Page</h3>
+			<h3 class="m-subheader__title m-subheader__title--separator">CMS 帳號設定</h3>
 			<ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
 				<li class="m-nav__item m-nav__item--home">
 					<a href="#" class="m-nav__link m-nav__link--icon">
@@ -82,4 +114,207 @@
 {{!-- Content goes here --}}
 <div class="m-content">
 	
+
+						
+	<div class="row" id="m_sortable_portlets">
+		<div class="col-lg-6">
+
+			<!--begin::Portlet-->
+			<div class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg " m-portlet="true">
+				<div class="m-portlet__head">
+					<div class="m-portlet__head-caption">
+						<div class="m-portlet__head-title">
+							<span class="m-portlet__head-icon">
+								<img src="http://info.pokermate.net/data/club/2018/5/6/29208096_small_1525573685974.png" alt="" class="clubCardPic">
+							</span>
+							<h3 class="m-portlet__head-text">
+								Portlet Action Icons
+							</h3>
+						</div>
+					</div>
+					<!--begin::m-portlet__head-tools-->
+					<div class="m-portlet__head-tools">
+						<ul class="m-portlet__nav">
+							<li class="m-portlet__nav-item">
+								<a href="#" m-portlet-tool="toggle" class="m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
+							<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
+							<li class="m-portlet__nav-item">
+								<a href="#" m-portlet-tool="reload" class="m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_6eibmh8y1e"><i class="la la-edit"></i></a>
+							<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_6eibmh8y1e" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(627px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 38px;"></div>                            <div class="tooltip-inner">Edit</div>                        </div></li>
+							<li class="m-portlet__nav-item">
+								<a href="#" m-portlet-tool="fullscreen" class="m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_iektn53g5s"><i class="la la-expand"></i></a>
+							<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_iektn53g5s" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(649px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 48px;"></div>                            <div class="tooltip-inner">Fullscreen</div>                        </div></li>
+							<li class="m-portlet__nav-item">
+								<a href="#" m-portlet-tool="remove" class="m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_xdx0yxd1lz"><i class="la la-close"></i></a>
+							<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_xdx0yxd1lz" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(687px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 42px;"></div>                            <div class="tooltip-inner">Remove</div>                        </div></li>
+						</ul>
+					</div>
+					<!--end::m-portlet__head-tools-->
+				</div>
+				<div class="m-portlet__body">
+					Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled. Lorem Ipsum is simply
+					dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled. Lorem Ipsum is simply dummy text of the
+					printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled.
+				</div>
+			</div>
+
+			<!--end::Portlet-->
+
+			<!-- begin:Empty Portlet: sortable porlet required for each columns! -->
+			<div class="m-portlet m-portlet--sortable-empty">
+			</div>
+
+			<!--end::Empty Portlet-->
+		</div>
+		<div class="col-lg-6">
+
+			<!--begin::Portlet-->
+			<div class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
+				<div class="m-portlet__head">
+					<div class="m-portlet__head-caption">
+						<div class="m-portlet__head-title">
+							<span class="m-portlet__head-icon">
+								<img src="http://info.pokermate.net/data/club/2018/5/6/29208096_small_1525573685974.png" alt="" class="clubCardPic">
+							</span>
+							<h3 class="m-portlet__head-text">
+								諾亞方舟
+							</h3>
+						</div>
+					</div>
+					<!--begin::m-portlet__head-tools-->
+					<div class="m-portlet__head-tools">
+						<ul class="m-portlet__nav">
+							<li class="m-portlet__nav-item">
+								<a href="#" m-portlet-tool="toggle" class="m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
+							<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
+						</ul>
+					</div>
+					<!--end::m-portlet__head-tools-->
+				</div>
+
+				<div class="m-portlet__body">
+					<!--begin:: row -->
+					<div class="row m-row--no-padding m-row--col-separator-xl">
+						<!--begin:: col -->
+						<div class="col-md-12 col-lg-12 col-xl-6">
+
+							<!--begin:: Widgets/Stats2-1 -->
+							<div class="m-widget1">
+								<div class="m-widget1__item">
+									<div class="row m-row--no-padding align-items-center">
+										<div class="col">
+											<h3 class="m-widget1__title">俱樂部 ID</h3>
+											{{!-- <span class="m-widget1__desc"></span> --}}
+										</div>
+										<div class="col m--align-right">
+											<span class="m-widget1__number m--font-brand">29208096</span>
+										</div>
+									</div>
+								</div>
+								<div class="m-widget1__item">
+									<div class="row m-row--no-padding align-items-center">
+										<div class="col">
+											<h3 class="m-widget1__title">會員數</h3>
+											<span class="m-widget1__desc">當前人數 / 最大人數</span>
+										</div>
+										<div class="col m--align-right">
+											<span class="m-widget1__number m--font-danger"> 1483 / 1500 </span>
+										</div>
+									</div>
+								</div>
+								<div class="m-widget1__item">
+									<div class="row m-row--no-padding align-items-center">
+										<div class="col">
+											<h3 class="m-widget1__title">管理員數</h3>
+											<span class="m-widget1__desc">當前人數 / 最大人數</span>
+										</div>
+										<div class="col m--align-right">
+											<span class="m-widget1__number m--font-success"> 0 / 10 </span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!--end:: Widgets/Stats2-1 -->
+						</div>
+						<!--end::col-->
+						<!--begin:: col -->
+						<div class="col-md-12 col-lg-12 col-xl-6">
+
+							<!--begin:: Widgets/Stats2-2 -->
+							<div class="m-widget1">
+								<div class="m-widget1__item">
+									<div class="row m-row--no-padding align-items-center">
+										<div class="col">
+											<h3 class="m-widget1__title">俱樂部等級</h3>
+											<span class="m-widget1__desc">當前等級</span>
+										</div>
+										<div class="col m--align-right">
+											<span class="m-widget1__number m--font-accent">8</span>
+										</div>
+									</div>
+								</div>
+								<div class="m-widget1__item">
+									<div class="row m-row--no-padding align-items-center">
+										<div class="col">
+											<h3 class="m-widget1__title">基金</h3>
+											<span class="m-widget1__desc">當前數量</span>
+										</div>
+										<div class="col m--align-right">
+											<span class="m-widget1__number m--font-info">0</span>
+										</div>
+									</div>
+								</div>
+								<div class="m-widget1__item">
+									<div class="row m-row--no-padding align-items-center">
+										<div class="col">
+											<h3 class="m-widget1__title">鑽石</h3>
+											<span class="m-widget1__desc">當前數量</span>
+										</div>
+										<div class="col m--align-right">
+											<span class="m-widget1__number m--font-warning">0</span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!--begin:: Widgets/Stats2-2 -->
+						</div>
+						<!--end::col-->
+					</div>
+					<!--end::row-->
+
+					<!--begin:: row -->
+					<div class="row m-row--no-padding">
+						<div class="col-sm-auto col-md-6 col-lg-6 col-xl-6">
+							<button type="button" class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
+						</div>
+						<div class="col-sm-auto col-md-6 col-lg-6	 col-xl-6 m--align-right">
+							<button type="button" class="btn m-btn--square  btn-outline-danger m-btn m-btn--custom m-btn--outline-2x"><i class="la la-remove"></i> <span>刪除帳號</span></button>	
+						</div>
+					</div>
+					<!--end::row-->
+
+				</div>
+				<!--end::Portlet body-->	
+				<!--begin::Portlet footer-->
+				{{!-- <div class="m-portlet__foot">
+
+				</div> --}}
+				<!--end::Portlet footer-->
+
+			</div>
+			<!--end::Portlet-->
+
+			<!-- begin:Empty Portlet: sortable porlet required for each columns! -->
+			<div class="m-portlet m-portlet--sortable-empty">
+			</div>
+
+			<!--end::Empty Portlet-->
+		</div>
+	</div>
+
+
 </div>
+
+

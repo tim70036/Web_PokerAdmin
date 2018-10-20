@@ -32,7 +32,8 @@ let authorizeHandler = function(req, res, next){
 
     // User has logined
     // Add user session data to res.locals for handlebars templating
-    res.locals.userData = {...req.user}; // must use spread operator... to make a copy, otherwise req.user will be changed
+    res.locals.user = req.user;
+    res.locals.user = {...req.user}; // must use spread operator... to make a copy, otherwise req.user will be changed
 
     // Translate role to Chinese
     let roleMapping = {
@@ -42,7 +43,7 @@ let authorizeHandler = function(req, res, next){
         'service-agent' : '客服',
         'admin' : '管理員',
     }
-    res.locals.userData.role = roleMapping[res.locals.userData.role];
+    res.locals.user.role = roleMapping[res.locals.user.role];
     return next();
 }
 

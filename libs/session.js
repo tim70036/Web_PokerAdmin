@@ -40,7 +40,7 @@ function init(app){
         store: sessionStore, // use redis store
         secret: credentials.sessionProviders.key, // key for encrypting signed cookie
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         genid: (req) => {
             return uuid(); // use UUIDs for session IDs
           }
@@ -48,8 +48,6 @@ function init(app){
 
 
 }
-
-
 
 module.exports = {
     init : init

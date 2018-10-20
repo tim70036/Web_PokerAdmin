@@ -43,6 +43,7 @@ function configLocalStrategy() {
 
             // Encrypt password
 
+
             // Prepare query
             let sqlString = "SELECT id, account, name, email, role, roleId FROM UserAccount WHERE account=? AND password=?";
             let values = [username, password];
@@ -63,7 +64,7 @@ function configLocalStrategy() {
                 }
 
                 // Arrive here only if user found
-                console.log(results[0]);
+                // console.log(results[0]);
                 return done(null, results[0]); // result[0] is the user instance in db
             });
         }

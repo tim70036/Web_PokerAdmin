@@ -3,6 +3,7 @@ const
     passport = require('passport');
 
 
+
 let loginHandler = function(req,res, next) {
 
     // Use custom callback to send resposne to ajax request, since passport can't deal with ajax form by default
