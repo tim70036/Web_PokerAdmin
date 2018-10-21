@@ -10,6 +10,7 @@ let gameHandler = function(req,res){
 }
 
 let clubHandler = function(req,res){
+
     res.render('home/account/club', {layout : 'home'});
 }
 

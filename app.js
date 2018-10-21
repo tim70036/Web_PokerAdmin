@@ -3,6 +3,7 @@
 const   
     express = require('express'),
     exphbs  = require('express-handlebars'),
+    exphbsSections = require('express-handlebars-sections'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     compression = require('compression'),
@@ -16,7 +17,27 @@ const app = express();
 
 
 // Express Setting
-app.engine('handlebars', exphbs({defaultLayout: false}));
+app.engine('handlebars', exphbs({
+    defaultLayout: false,
+    helpers : {
+        section: function (name, options) { // helper used to manage sections in handlebar templates
+            var helper = this;
+            if (!this._sections) {
+                this._sections = {};
+                this._sections._get = function(arg){
+                    if(typeof helper._sections[arg] === 'undefined'){
+                        throw new Error('The section "' + arg + '" is required.')
+                    }
+                    return helper._sections[arg];
+                }
+            }
+            if(!this._sections[name]){
+                this._sections[name] = options.fn(this);
+            }
+            return null;
+        }
+    }
+}));
 app.set('view engine', 'handlebars');
 app.enable('trust proxy'); 
 
