@@ -6,6 +6,9 @@
 		height: 45px;
 		border-radius: 50px;
 	}
+	i {
+		margin-right: 8px;
+	}
 	</style>
 {{/section}}
 {{!-- Import custom script to layout --}}
@@ -121,16 +124,14 @@
 		<div class="col-lg-6">
 
 			<!--begin::Portlet-->
-			<div class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
+			<div id="9991225" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
 				<div class="m-portlet__head">
 					<div class="m-portlet__head-caption">
 						<div class="m-portlet__head-title">
 							<span class="m-portlet__head-icon">
 								<img src="http://info.pokermate.net/data/club/2018/5/6/29208096_small_1525573685974.png" alt="" class="clubCardPic">
 							</span>
-							<h3 class="m-portlet__head-text">
-								諾亞方舟
-							</h3>
+							<h3 class="club-name m-portlet__head-text">諾亞方舟</h3>
 						</div>
 					</div>
 					<!--begin::m-portlet__head-tools-->
@@ -159,7 +160,7 @@
 											{{!-- <span class="m-widget1__desc"></span> --}}
 										</div>
 										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-primary">29208096</span>
+											<span class="club-id m-widget1__number m--font-primary">29208096</span>
 										</div>
 									</div>
 								</div>
@@ -247,7 +248,7 @@
 											{{!-- <span class="m-widget1__desc"></span> --}}
 										</div>
 										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-info"> 9991225</span>
+											<span class="club-account m-widget1__number m--font-info">9991225</span>
 										</div>
 										
 									</div>
@@ -271,7 +272,7 @@
 											{{!-- <span class="m-widget1__desc"></span> --}}
 										</div>
 										<div class="col m--align-right">
-											<button type="button" class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
+											<button onclick="fillEditModal(9991225)" data-toggle="modal" data-target="#edit-modal" type="button"  class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
 										</div>
 										
 									</div>
@@ -290,6 +291,21 @@
 
 			</div>
 			<!--end::Portlet-->
+
+
+			<!--begin::add Portlet-->
+			<div id="9991225" class="m-portlet m-portlet--mobile m-portlet--sortable" m-portlet="true">
+				<div class="m-portlet__body">
+					<div class="row m-row--no-padding">
+						<div class="col">
+							<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增俱樂部帳號</button>
+							{{!-- <button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-outline-accent m-btn m-btn--custom m-btn--bolder m-btn--outline-2x"><i class="la la-plus"></i>新增俱樂部帳號</button> --}}
+						</div>
+					</div>
+					
+				</div>
+			</div>
+			<!--end::add Portlet-->
 
 			<!-- begin:Empty Portlet: sortable porlet required for each columns! -->
 			<div class="m-portlet m-portlet--sortable-empty">
@@ -476,31 +492,8 @@
 		</div>
 	</div>
 
-	<!--begin::Modal-->
-	<div class="modal fade" id="m_modal_1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type
-						specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
-						and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!--end::Modal-->
 
-	<!--begin::Modal-->
+	<!--begin::edit Modal-->
 	<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
 			<div class="modal-content">
@@ -560,6 +553,47 @@
 			</div>
 		</div>
 	</div>
+	<!--end::edit Modal-->
 
-	<!--end::Modal-->
+	<!--begin::add Modal-->
+	<div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<!--begin::Form-->
+				<form class="m-form" autocomplete="off">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">新增俱樂部帳號</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-group m-form__group">
+							<label for="example_input_full_name">俱樂部帳號</label>
+							<div class="m-input-icon m-input-icon--left">
+								<input id="add-club-account" type="text" class="form-control m-input" placeholder="請輸入 CMS 帳號" required>
+								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-user"></i></span></span>
+							</div>
+						</div>
+						<div class="form-group m-form__group">
+							<label for="example_input_full_name">俱樂部密碼</label>
+							<div class="m-input-icon m-input-icon--left">
+								<input id="add-club-password" type="password" class="form-control m-input" placeholder="請輸入 CMS 密碼" autocomplete="new-password" required>
+								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-key"></i></span></span>
+							</div>
+						</div>	
+						<span class="m-form__help">請填入該俱樂部的 CMS 帳號和密碼 </span>
+					</div>
+					<div class="modal-footer">
+						<div class="col m--align-right">
+							<button type="button" class="btn m-btn--square  btn-primary m-btn m-btn--custom  ">確定新增</button>
+							<button type="button" class="btn m-btn--square  btn-secondary m-btn m-btn--custom  "  data-dismiss="modal">取消</button>
+						</div>
+					</div>
+				</form>
+				<!--end::Form-->
+			</div>
+		</div>
+	</div>
+	<!--end::add Modal-->
 </div>
