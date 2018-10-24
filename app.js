@@ -3,7 +3,6 @@
 const   
     express = require('express'),
     exphbs  = require('express-handlebars'),
-    exphbsSections = require('express-handlebars-sections'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
     compression = require('compression'),

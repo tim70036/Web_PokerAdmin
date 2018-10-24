@@ -12,6 +12,7 @@ function init(app) {
         user     : credentials.dbProviders.user,
         password : credentials.dbProviders.pwd,
         database : credentials.dbProviders.db,
+        multipleStatements: true,
     });
 
     // Set connection instance to req.db

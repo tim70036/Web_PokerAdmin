@@ -17,6 +17,27 @@ router.get('/personnel/agent', homeController.authorize, homeController.personne
 router.get('/personnel/head-agent', homeController.authorize, homeController.personnel.headAgent);
 router.get('/personnel/service-agent', homeController.authorize, homeController.personnel.serviceAgent);
 
+// Personnel CRUD ajax
+router.get('/personnel/member/read', homeController.authorize, homeController.personnel.memberRead);
+router.get('/personnel/agent/read', homeController.authorize, homeController.personnel.agentRead);
+router.get('/personnel/head-agent/read', homeController.authorize, homeController.personnel.headAgentRead);
+router.get('/personnel/service-agent/read', homeController.authorize, homeController.personnel.serviceAgentRead);
+
+router.post('/personnel/member/create', homeController.authorize, homeController.personnel.memberCreate);
+router.post('/personnel/agent/create', homeController.authorize, homeController.personnel.agentCreate);
+router.post('/personnel/head-agent/create', homeController.authorize, homeController.personnel.headAgentCreate);
+router.post('/personnel/service-agent/create', homeController.authorize, homeController.personnel.serviceAgentCreate);
+
+router.post('/personnel/member/update', homeController.authorize, homeController.personnel.memberUpdate);
+router.post('/personnel/agent/update', homeController.authorize, homeController.personnel.agentUpdate);
+router.post('/personnel/head-agent/update', homeController.authorize, homeController.personnel.headAgentUpdate);
+router.post('/personnel/service-agent/update', homeController.authorize, homeController.personnel.serviceAgentUpdate);
+
+router.post('/personnel/member/delete', homeController.authorize, homeController.personnel.memberDelete);
+router.post('/personnel/agent/delete', homeController.authorize, homeController.personnel.agentDelete);
+router.post('/personnel/head-agent/delete', homeController.authorize, homeController.personnel.headAgentDelete);
+router.post('/personnel/service-agent/delete', homeController.authorize, homeController.personnel.serviceAgentDelete);
+
 // Credit management routes
 router.get('/credit/transfer', homeController.authorize, homeController.credit.transfer);
 router.get('/credit/history', homeController.authorize, homeController.credit.history);

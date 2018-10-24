@@ -1,9 +1,19 @@
+{{!-- Import custom stylesheet to layout --}}
+{{#section 'css'}}
+    <link href="/home/assets/vendors/custom/datatables/datatables.bundle.css" rel="stylesheet" type="text/css" />
+{{/section}}
+{{!-- Import custom script to layout --}}
+{{#section 'js'}}
+	<script src="/home/personnels/js/serviceagent-management-ajax.js" type="text/javascript"></script>
+	<script src="/home/assets/vendors/custom/datatables/datatables.bundle.js" type="text/javascript"></script>
+{{/section}}
+
 {{!-- Header goes here --}}
 <!-- BEGIN: Subheader -->
 <div class="m-subheader ">
 	<div class="d-flex align-items-center">
 		<div class="mr-auto">
-			<h3 class="m-subheader__title m-subheader__title--separator">Inner Page</h3>
+			<h3 class="m-subheader__title m-subheader__title--separator">客服管理</h3>
 			<ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
 				<li class="m-nav__item m-nav__item--home">
 					<a href="#" class="m-nav__link m-nav__link--icon">
@@ -82,4 +92,53 @@
 {{!-- Content goes here --}}
 <div class="m-content">
 	
+	<div class="m-portlet m-portlet--mobile">
+		<div class="m-portlet__head">
+			<div class="m-portlet__head-caption">
+				<div class="m-portlet__head-title">
+					<h2 class="m-portlet__head-text">
+						客服查詢
+					</h2>
+				</div>
+			</div>  
+			<div class="m-portlet__head-tools">
+				<ul class="m-portlet__nav">
+					<li class="m-portlet__nav-item">
+						<a href="#" class="btn btn-primary m-btn m-btn--custom m-btn--icon m-btn--air">
+							<span>
+								<i class="la la-cart-plus"></i>
+								<span>New Order</span>
+							</span>
+						</a>
+					</li>
+				</ur>
+			</div>
+		</div>
+		
+		<div class="m-portlet__body">
+			
+			<table class="table table-striped- table-bordered table-hover table-checkable" id="m_table_1">
+				<thead>
+					<tr>
+						<th>RecordId</th>
+						<th>帳號</th>
+						<th>姓名</th>
+						<th>賴Id</th>
+						<th>微信Id</th>
+						<th>臉書Id</th>
+						<th>電話</th>
+						<th>銀行代號</th>
+						<th>銀行名稱</th>
+						<th>銀行帳號</th>
+						<th>現金額度</th>
+						<th>信用</th>
+						<th>評論</th>
+						<th>創立時間</th>
+					</tr>
+				</thead>
+			</table>
+
+		</div>
+	</div>
 </div>
+

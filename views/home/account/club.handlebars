@@ -2,9 +2,12 @@
 {{#section 'css'}}
     <style>
 	.clubCardPic {
-		width: 45px;
-		height: 45px;
+		width: 40px;
+		height: 40px;
 		border-radius: 50px;
+	}
+	.clubCardIcon {
+		font-size: 2.8rem !important;
 	}
 	i {
 		margin-right: 8px;
@@ -117,372 +120,402 @@
 
 {{!-- Content goes here --}}
 <div class="m-content">
-	
-
-						
-	<div class="row" id="m_sortable_portlets">
-		<div class="col-lg-6">
-
-			<!--begin::Portlet-->
-			<div id="9991225" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
-				<div class="m-portlet__head">
-					<div class="m-portlet__head-caption">
-						<div class="m-portlet__head-title">
-							<span class="m-portlet__head-icon">
-								<img src="http://info.pokermate.net/data/club/2018/5/6/29208096_small_1525573685974.png" alt="" class="clubCardPic">
-							</span>
-							<h3 class="club-name m-portlet__head-text">諾亞方舟</h3>
-						</div>
-					</div>
-					<!--begin::m-portlet__head-tools-->
-					<div class="m-portlet__head-tools">
-						<ul class="m-portlet__nav">
-							<li class="m-portlet__nav-item">
-								<a href="#" m-portlet-tool="toggle" class="m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
-							<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
-						</ul>
-					</div>
-					<!--end::m-portlet__head-tools-->
-				</div>
-
-				<div class="m-portlet__body">
-					<!--begin:: row -->
-					<div class="row m-row--no-padding m-row--col-separator-xl">
-						<!--begin:: col -->
-						<div class="col-md-12 col-lg-12 col-xl-6">
-
-							<!--begin:: Widgets/Stats2-1 -->
-							<div class="m-widget1">
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部 ID</h3>
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<span class="club-id m-widget1__number m--font-primary">29208096</span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">會員數</h3>
-											<span class="m-widget1__desc">當前人數 / 最大人數</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-accent"> 1483 / 1500 </span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">管理員數</h3>
-											<span class="m-widget1__desc">當前人數 / 最大人數</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-success"> 0 / 10 </span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!--end:: Widgets/Stats2-1 -->
-						</div>
-						<!--end::col-->
-						<!--begin:: col -->
-						<div class="col-md-12 col-lg-12 col-xl-6">
-
-							<!--begin:: Widgets/Stats2-2 -->
-							<div class="m-widget1">
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部等級</h3>
-											<span class="m-widget1__desc">當前等級</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-brand">8</span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">基金</h3>
-											<span class="m-widget1__desc">當前數量</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-danger">0</span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">鑽石</h3>
-											<span class="m-widget1__desc">當前數量</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-warning">0</span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!--begin:: Widgets/Stats2-2 -->
-						</div>
-						<!--end::col-->
-					</div>
-					<!--end::row-->
-
-					<!--begin:: row -->
-					<div class="row m-row--no-padding">
-						<div class="col">
-							<div class="m-widget1">
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部帳號</h3>
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<span class="club-account m-widget1__number m--font-info">9991225</span>
-										</div>
-										
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部密碼</h3>
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-info"> 119*****asd</span>
-										</div>
-										
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											{{!-- <h3 class="m-widget1__title"></h3> --}}
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<button onclick="fillEditModal(9991225)" data-toggle="modal" data-target="#edit-modal" type="button"  class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
-										</div>
-										
-									</div>
-								</div>
-							</div>
-						</div>
-						
-					</div>
-				</div>
-				<!--end::Portlet body-->	
-				<!--begin::Portlet footer-->
-				{{!-- <div class="m-portlet__foot">
-
-				</div> --}}
-				<!--end::Portlet footer-->
-
-			</div>
-			<!--end::Portlet-->
-
-
-			<!--begin::add Portlet-->
-			<div id="9991225" class="m-portlet m-portlet--mobile m-portlet--sortable" m-portlet="true">
-				<div class="m-portlet__body">
-					<div class="row m-row--no-padding">
-						<div class="col">
-							<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增俱樂部帳號</button>
-							{{!-- <button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-outline-accent m-btn m-btn--custom m-btn--bolder m-btn--outline-2x"><i class="la la-plus"></i>新增俱樂部帳號</button> --}}
-						</div>
-					</div>
 					
-				</div>
-			</div>
-			<!--end::add Portlet-->
-
-			<!-- begin:Empty Portlet: sortable porlet required for each columns! -->
-			<div class="m-portlet m-portlet--sortable-empty">
-			</div>
-
-			<!--end::Empty Portlet-->
-		</div>
+	<div class="row" id="m_sortable_portlets">
+		<!--begin::col-->
 		<div class="col-lg-6">
+			{{!-- Iterate and print out the first part of club data --}}
+			{{#if clubs}}
+				{{#each clubs.left}}
+				<!--begin::Portlet-->
+				<div id="{{account}}" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
+					<div class="m-portlet__head">
+						<div class="m-portlet__head-caption">
+							<div class="m-portlet__head-title">
+								<span class="m-portlet__head-icon">
+									{{#if smallIcon}} <img src="{{smallIcon}}" alt="" class="clubCardPic">
+									{{else}} <i class="fa clubCardIcon fa-user-circle"></i>
+									{{/if}}
+								</span>
+								<h3 class="club-name m-portlet__head-text">{{name}}</h3>
+							</div>
+						</div>
+						<!--begin::m-portlet__head-tools-->
+						<div class="m-portlet__head-tools">
+							<ul class="m-portlet__nav">
+								<li class="m-portlet__nav-item">
+									<a href="#" m-portlet-tool="toggle" class="portlet-collapse-btn m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
+								<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
+							</ul>
+						</div>
+						<!--end::m-portlet__head-tools-->
+					</div>
 
-			<!--begin::Portlet-->
-			<div id="9991225" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
-				<div class="m-portlet__head">
-					<div class="m-portlet__head-caption">
-						<div class="m-portlet__head-title">
-							<span class="m-portlet__head-icon">
-								<img src="http://info.pokermate.net/data/club/2018/5/6/29208096_small_1525573685974.png" alt="" class="clubCardPic">
-							</span>
-							<h3 class="club-name m-portlet__head-text">諾亞方舟</h3>
+					<div class="m-portlet__body">
+						<!--begin:: row -->
+						<div class="row m-row--no-padding m-row--col-separator-xl">
+							<!--begin:: col -->
+							<div class="col-md-12 col-lg-12 col-xl-6">
+
+								<!--begin:: Widgets/Stats2-1 -->
+								<div class="m-widget1">
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部 ID</h3>
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<span class="club-id m-widget1__number m--font-primary">{{cmsId}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">會員數</h3>
+												<span class="m-widget1__desc">當前人數 / 最大人數</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-accent"> {{curMember}} / {{maxMember}} </span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">管理員數</h3>
+												<span class="m-widget1__desc">當前人數 / 最大人數</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-success"> {{curManage}} / {{maxManage}} </span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!--end:: Widgets/Stats2-1 -->
+							</div>
+							<!--end::col-->
+							<!--begin:: col -->
+							<div class="col-md-12 col-lg-12 col-xl-6">
+
+								<!--begin:: Widgets/Stats2-2 -->
+								<div class="m-widget1">
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部等級</h3>
+												<span class="m-widget1__desc">當前等級</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-brand">{{level}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">基金</h3>
+												<span class="m-widget1__desc">當前數量</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-danger">{{fund}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">鑽石</h3>
+												<span class="m-widget1__desc">當前數量</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-warning">{{diamond}}</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!--begin:: Widgets/Stats2-2 -->
+							</div>
+							<!--end::col-->
+						</div>
+						<!--end::row-->
+
+						<!--begin:: row -->
+						<div class="row m-row--no-padding">
+							<div class="col">
+								<div class="m-widget1">
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部帳號</h3>
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<span class="club-account m-widget1__number m--font-info">{{account}}</span>
+											</div>
+											
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部密碼</h3>
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-info">{{password}}</span>
+											</div>
+											
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												{{!-- <h3 class="m-widget1__title"></h3> --}}
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<button onclick="fillEditModal({{account}})" data-toggle="modal" data-target="#edit-modal" type="button"  class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
+											</div>
+											
+										</div>
+									</div>
+								</div>
+							</div>
+							
 						</div>
 					</div>
-					<!--begin::m-portlet__head-tools-->
-					<div class="m-portlet__head-tools">
-						<ul class="m-portlet__nav">
-							<li class="m-portlet__nav-item">
-								<a href="#" m-portlet-tool="toggle" class="m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
-							<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
-						</ul>
-					</div>
-					<!--end::m-portlet__head-tools-->
+					<!--end::Portlet body-->	
+					<!--begin::Portlet footer-->
+					{{!-- <div class="m-portlet__foot">
+
+					</div> --}}
+					<!--end::Portlet footer-->
+
 				</div>
+				<!--end::Portlet-->
+				{{/each}}
 
-				<div class="m-portlet__body">
-					<!--begin:: row -->
-					<div class="row m-row--no-padding m-row--col-separator-xl">
-						<!--begin:: col -->
-						<div class="col-md-12 col-lg-12 col-xl-6">
-
-							<!--begin:: Widgets/Stats2-1 -->
-							<div class="m-widget1">
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部 ID</h3>
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<span class="club-id m-widget1__number m--font-primary">29208096</span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">會員數</h3>
-											<span class="m-widget1__desc">當前人數 / 最大人數</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-accent"> 1483 / 1500 </span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">管理員數</h3>
-											<span class="m-widget1__desc">當前人數 / 最大人數</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-success"> 0 / 10 </span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!--end:: Widgets/Stats2-1 -->
-						</div>
-						<!--end::col-->
-						<!--begin:: col -->
-						<div class="col-md-12 col-lg-12 col-xl-6">
-
-							<!--begin:: Widgets/Stats2-2 -->
-							<div class="m-widget1">
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部等級</h3>
-											<span class="m-widget1__desc">當前等級</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-brand">8</span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">基金</h3>
-											<span class="m-widget1__desc">當前數量</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-danger">0</span>
-										</div>
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">鑽石</h3>
-											<span class="m-widget1__desc">當前數量</span>
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-warning">0</span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!--begin:: Widgets/Stats2-2 -->
-						</div>
-						<!--end::col-->
-					</div>
-					<!--end::row-->
-
-					<!--begin:: row -->
-					<div class="row m-row--no-padding">
-						<div class="col">
-							<div class="m-widget1">
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部帳號</h3>
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<span class="club-account m-widget1__number m--font-info">9991225</span>
-										</div>
-										
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											<h3 class="m-widget1__title">俱樂部密碼</h3>
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<span class="m-widget1__number m--font-info"> 119*****asd</span>
-										</div>
-										
-									</div>
-								</div>
-								<div class="m-widget1__item">
-									<div class="row m-row--no-padding align-items-center">
-										<div class="col">
-											{{!-- <h3 class="m-widget1__title"></h3> --}}
-											{{!-- <span class="m-widget1__desc"></span> --}}
-										</div>
-										<div class="col m--align-right">
-											<button onclick="fillEditModal(9991225)" data-toggle="modal" data-target="#edit-modal" type="button"  class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
-										</div>
-										
-									</div>
-								</div>
+				{{#if clubs.isEven}}
+				<!--begin::add Portlet-->
+				<div class="m-portlet m-portlet--mobile m-portlet--sortable" m-portlet="true">
+					<div class="m-portlet__body">
+						<div class="row m-row--no-padding">
+							<div class="col">
+								<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--air m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增俱樂部帳號</button>
+								{{!-- <button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-outline-accent m-btn m-btn--custom m-btn--bolder m-btn--outline-2x"><i class="la la-plus"></i>新增俱樂部帳號</button> --}}
 							</div>
 						</div>
 						
 					</div>
 				</div>
-				<!--end::Portlet body-->	
-				<!--begin::Portlet footer-->
-				{{!-- <div class="m-portlet__foot">
-
-				</div> --}}
-				<!--end::Portlet footer-->
-
+				<!--end::add Portlet-->
+				{{/if}}
+			{{/if}}
+			<!-- begin:Empty Portlet: sortable porlet required for each columns! -->
+			<div class="m-portlet m-portlet--sortable-empty">
 			</div>
-			<!--end::Portlet-->
+
+			<!--end::Empty Portlet-->
+		</div>
+		<!--end::col-->
+		<!--begin::col-->
+		<div class="col-lg-6">
+
+			{{!-- Iterate and print out the second part of club data --}}
+			{{#if clubs}}
+				{{#each clubs.right}} 
+				<!--begin::Portlet-->
+				<div id="{{account}}" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
+					<div class="m-portlet__head">
+						<div class="m-portlet__head-caption">
+							<div class="m-portlet__head-title">
+								<span class="m-portlet__head-icon">
+									{{#if smallIcon}} <img src="{{smallIcon}}" alt="" class="clubCardPic">
+									{{else}} <i class="fa clubCardIcon fa-user-circle"></i>
+									{{/if}}
+								</span>
+								<h3 class="club-name m-portlet__head-text">{{name}}</h3>
+							</div>
+						</div>
+						<!--begin::m-portlet__head-tools-->
+						<div class="m-portlet__head-tools">
+							<ul class="m-portlet__nav">
+								<li class="m-portlet__nav-item">
+									<a href="#" m-portlet-tool="toggle" class="portlet-collapse-btn m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
+								<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
+							</ul>
+						</div>
+						<!--end::m-portlet__head-tools-->
+					</div>
+
+					<div class="m-portlet__body">
+						<!--begin:: row -->
+						<div class="row m-row--no-padding m-row--col-separator-xl">
+							<!--begin:: col -->
+							<div class="col-md-12 col-lg-12 col-xl-6">
+
+								<!--begin:: Widgets/Stats2-1 -->
+								<div class="m-widget1">
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部 ID</h3>
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<span class="club-id m-widget1__number m--font-primary">{{cmsId}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">會員數</h3>
+												<span class="m-widget1__desc">當前人數 / 最大人數</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-accent"> {{curMember}} / {{maxMember}} </span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">管理員數</h3>
+												<span class="m-widget1__desc">當前人數 / 最大人數</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-success"> {{curManage}} / {{maxManage}} </span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!--end:: Widgets/Stats2-1 -->
+							</div>
+							<!--end::col-->
+							<!--begin:: col -->
+							<div class="col-md-12 col-lg-12 col-xl-6">
+
+								<!--begin:: Widgets/Stats2-2 -->
+								<div class="m-widget1">
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部等級</h3>
+												<span class="m-widget1__desc">當前等級</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-brand">{{level}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">基金</h3>
+												<span class="m-widget1__desc">當前數量</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-danger">{{fund}}</span>
+											</div>
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">鑽石</h3>
+												<span class="m-widget1__desc">當前數量</span>
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-warning">{{diamond}}</span>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<!--begin:: Widgets/Stats2-2 -->
+							</div>
+							<!--end::col-->
+						</div>
+						<!--end::row-->
+
+						<!--begin:: row -->
+						<div class="row m-row--no-padding">
+							<div class="col">
+								<div class="m-widget1">
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部帳號</h3>
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<span class="club-account m-widget1__number m--font-info">{{account}}</span>
+											</div>
+											
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												<h3 class="m-widget1__title">俱樂部密碼</h3>
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<span class="m-widget1__number m--font-info">{{password}}</span>
+											</div>
+											
+										</div>
+									</div>
+									<div class="m-widget1__item">
+										<div class="row m-row--no-padding align-items-center">
+											<div class="col">
+												{{!-- <h3 class="m-widget1__title"></h3> --}}
+												{{!-- <span class="m-widget1__desc"></span> --}}
+											</div>
+											<div class="col m--align-right">
+												<button onclick="fillEditModal({{account}})" data-toggle="modal" data-target="#edit-modal" type="button"  class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
+											</div>
+											
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					<!--end::Portlet body-->	
+					<!--begin::Portlet footer-->
+					{{!-- <div class="m-portlet__foot">
+
+					</div> --}}
+					<!--end::Portlet footer-->
+
+				</div>
+				<!--end::Portlet-->
+				{{/each}}
+
+				{{#unless clubs.isEven}}
+				<!--begin::add Portlet-->
+				<div class="m-portlet m-portlet--mobile m-portlet--sortable" m-portlet="true">
+					<div class="m-portlet__body">
+						<div class="row m-row--no-padding">
+							<div class="col">
+								<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--air m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增俱樂部帳號</button>
+								{{!-- <button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-outline-accent m-btn m-btn--custom m-btn--bolder m-btn--outline-2x"><i class="la la-plus"></i>新增俱樂部帳號</button> --}}
+							</div>
+						</div>
+						
+					</div>
+				</div>
+				<!--end::add Portlet-->
+				{{/unless}}
+			{{/if}}
 
 			<!-- begin:Empty Portlet: sortable porlet required for each columns! -->
 			<div class="m-portlet m-portlet--sortable-empty">
@@ -490,6 +523,7 @@
 
 			<!--end::Empty Portlet-->
 		</div>
+		<!--end::col-->
 	</div>
 
 
