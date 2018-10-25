@@ -27,19 +27,19 @@ var DatatablesDataSourceAjaxServer = function() {
 
 			buttons: [
 				{ 
-					text: '編輯',
+					text: '<i class="fa fa-user-edit"></i> <span>編輯</span>',
 					attr: {
 						id: 'editButton',
-						class: 'btn m-btn--pill    btn-outline-primary',
+						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
 						style: "display:block; margin-right:0.5em;"
 					},
 				},
 
 				{ 
-					text: '保存', 
+					text: '<i class="fa fa-save"></i> <span>保存</span>', 
 					attr: {
 						id: 'saveButton',
-						class: 'btn m-btn--pill    btn-outline-primary',
+						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
 						style: "display:none; margin-right:0.5em;"
 					},	
 				},
@@ -47,15 +47,15 @@ var DatatablesDataSourceAjaxServer = function() {
 					text: '取消', 
 					attr: {
 						id: 'cancelButton',
-						class: 'btn m-btn--pill    btn-outline-primary',
+						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
 						style: "display:none; margin-right:0.5em;"
 					},
 				},
 				{ 
-					text: '刪除', 
+					text: '<i class="fa fa-user-slash"></i> <span>刪除</span>', 
 					attr: {
 						id: 'deleteButton',
-						class: 'btn m-btn--pill    btn-outline-primary',
+						class: 'btn btn-outline-danger m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
 						style: "display:block; margin-right:0.5em;"
 					},
 				},
