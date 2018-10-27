@@ -45,7 +45,9 @@ function configLocalStrategy() {
 
 
             // Prepare query
-            let sqlString = "SELECT id, account, name, email, role, roleId FROM UserAccount WHERE account=? AND password=?";
+            let sqlString = `SELECT id, account, email, role 
+                            FROM UserAccount 
+                            WHERE account=? AND password=?`;
             let values = [username, password];
             sqlString = req.db.format(sqlString, values);
 
@@ -55,17 +57,59 @@ function configLocalStrategy() {
                 // results will contain the results of the query
                 // fields will contain information about the returned results fields (if any)
                 if(error) { 
-                    return done(err); 
+                    return done(error); 
                 }                
                 // Not found user
                 else if (results.length <= 0) {
                     return done(null, false);
                     
                 }
-
+                
                 // Arrive here only if user found
-                // console.log(results[0]);
-                return done(null, results[0]); // result[0] is the user instance in db
+                let user = results[0];
+
+                // Prepare data
+                let roleToTable = {
+                    'admin'         : 'AdminInfo',
+                    'serviceAgent'  : 'ServiceAgentInfo',
+                    'headAgent'     : 'HeadAgentInfo',
+                    'agent'         : 'AgentInfo',
+                    'member'        : 'MemberInfo'
+                };
+                let targetTable = roleToTable[user.role];
+                let targetUid = user.id;
+
+                // Pepare query
+                sqlString =`SELECT id, name
+                            FROM ??
+                            WHERE uid=?`;
+                values = [targetTable, targetUid];
+                sqlString = req.db.format(sqlString, values);
+
+                // Search for the role id and name of this user
+                req.db.query(sqlString, function(error, results, fields){ 
+                    // error will be an Error if one occurred during the query
+                    // results will contain the results of the query
+                    // fields will contain information about the returned results fields (if any)
+                    if(error) { 
+                        return done(error); 
+                    }                
+                    // Not found role id 
+                    else if (results.length <= 0) {
+                        return done(null, false);
+                        
+                    }
+                    
+
+                    // Add data to user object
+                    user.roleId = results[0].id;
+                    user.name = results[0].name;
+                    
+                    // return user object to passport
+                    return done(null, user); 
+                });
+
+                
             });
         }
       ));
