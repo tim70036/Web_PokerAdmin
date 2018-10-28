@@ -100,23 +100,40 @@ let serviceAgentCreateHandler = function(req,res){
     let createData = req.body;
     
     // Return if data is empty
-    if(!createData)  {
+    if(!req.body.account)  {
         res.json({err: true, msg: '空白資料'});
         return;
     }
 
-    console.log(createData);
+    console.log(req.body);
     
     
-    let adminId = req.user.roleId;
-    
+    let 
+        name            = req.body.name,
+        account         = req.body.account,
+        password        = req.body.password,
+        passwordConfirm = req.body.passwordConfirm,
+        email           = req.body.email,
+        bankSymbol      = req.body.bankSymbol,
+        bankName        = req.body.bankName,
+        bankAccount     = req.body.bankAccount,
+        phoneNumber     = req.body.phoneNumber,
+        facebookId      = req.body.facebookId,
+        lineId          = req.body.lineId,
+        wechatId        = req.body.wechatId,
+        comment         = req.body.comment,
+        adminId         = req.user.roleId,
+        role            = 'serviceAgent';
 
+    
+    // 
+   
     
     // Prepare query
     let sqlString =`SELECT * 
                     FROM UserAccount 
                     WHERE account=?`;
-    let values = [createData.account];
+    let values = [account];
     sqlString = req.db.format(sqlString, values);
 
     // Check if duplicate account exists
@@ -132,12 +149,32 @@ let serviceAgentCreateHandler = function(req,res){
             return res.json({err: true, msg: '使用者帳號重複'});
         }
         
-        // Now we can insert new account
-        sqlString =`INSERT INTO UserAccount (account, password, role, email) 
-                    VALUES (?, ?, ?, ?)
+        // Insert new user accuont to 2 tables
+        // Prepare queries
+        let queryStrings = [];
+
+        let sqlString = `INSERT INTO UserAccount (account, password, role, email) VALUES (?, ?, ?, ?)`;
+        let values = [account, password, role, email];
+        queryStrings.push(req.db.format(sqlString, values));
+        
+        sqlString =`INSERT INTO ServiceAgentInfo (uid, adminId, userAccount, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment) 
+                    VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
                     `;
-        values = [createData.account];
-        sqlString = req.db.format(sqlString, values);
+        values = [account, adminId, account, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment];
+        queryStrings.push(req.db.format(sqlString, values));
+        
+        console.log(queryStrings);
+
+        // Execute SQL transaction and return response to client
+        sqlTransaction(req.db, queryStrings, function(error, msg){
+            // Return the result of transaction to client
+            if(error) {
+                return res.json({err: true, msg: msg});
+            }
+            else {
+                return res.json({err: false, msg: 'success'});
+            }
+        });
 
     });
 }
@@ -172,23 +209,24 @@ let serviceAgentUpdateHandler = function(req,res){
         return;
     }
     
-    // Produce multiple SQL statements and add them into one query string
-    let sqlTemplate = `UPDATE ServiceAgentInfo 
+    // Prepare queries
+    let queryStrings = [];
+    
+    let sqlString = `UPDATE ServiceAgentInfo 
                             SET name=?, lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
                                 bankSymbol=?, bankName=?, bankAccount=?, comment=?
                             WHERE id=?`;
-    let sqlString = '';
 	for(let i=0 ; i<updateData.length ; i++){
         let element = updateData[i];
         let values = [element.name, element.lineId, element.wechatId, element.facebookId, element.phone,
             element.bankAccount, element.bankName, element.bankAccount, element.comment, element.id];
 
-        // Append a statement to query string
-        sqlString = sqlString + req.db.format(sqlTemplate, values) + ';'; // use ';' to seperate each SQL statement
+        // Append a statement to query string array
+        queryStrings.push(req.db.format(sqlString, values)); 
     }
 
     // Execute SQL transaction and return response to client
-    sqlTransaction(req.db, sqlString, function(error, msg){
+    sqlTransaction(req.db, queryStrings, function(error, msg){
         // Return the result of transaction to client
         if(error) {
             return res.json({err: true, msg: msg});
@@ -228,19 +266,24 @@ let serviceAgentDeleteHandler = function(req,res){
         return;
     }
 
-    // Produce multiple SQL statements and add them into one query string
-    let sqlTemplate = `DELETE FROM ServiceAgentInfo WHERE id=?`;
-    let sqlString = '';
+    // Prepare queries
+    let queryStrings = [];
+
+    let sqlString =`DELETE FROM UserAccount 
+                    WHERE id=(SELECT uid 
+                              FROM ServiceAgentInfo 
+                              WHERE id=?)
+                    `;
 	for(let i=0 ; i<deleteData.length ; i++){
         let element = deleteData[i];
         let values = [element.id];
 
-        // Append a statement to query string
-        sqlString = sqlString + req.db.format(sqlTemplate, values) + ';'; // use ';' to seperate each SQL statement
+        // Append a statement to query string array
+        queryStrings.push(req.db.format(sqlString, values));
     }
 
     // Execute SQL transaction and return response to client
-    sqlTransaction(req.db, sqlString, function(error, msg){
+    sqlTransaction(req.db, queryStrings, function(error, msg){
         // Return the result of transaction to client
         if(error) {
             return res.json({err: true, msg: msg});
@@ -251,10 +294,11 @@ let serviceAgentDeleteHandler = function(req,res){
     });
 }
 
-// Function that execute multi SQL statement(all in one string) inside a SQL transaction
-// It will pass success status and message to callback
+// Function that execute multi SQL statement(strings in an array) inside a SQL transaction
+// It will pass success status and message to callback, 
+// It also pass all 'successful' results in an array to callback
 // PS : notice the 'return' before rollback()
-function sqlTransaction(db, queryString, callback){
+function sqlTransaction(db, queryStrings, callback){
     try{
         
 		db.beginTransaction(function(error){
@@ -264,44 +308,63 @@ function sqlTransaction(db, queryString, callback){
                 return callback(true, error);
             }
 
-            // Execute SQL query
-            db.query(queryString, function(error, results, fields){
-
-                // Some errors happend when executing query
-                if(error){
-                    return db.rollback(function(){
-                        return callback(true, error);
-                    });
-                    
-                }
-                else if(results.warningCount > 0){
-                    return db.rollback(function(){
-                        return callback(true, 'wrong format');
-                    });
-
-                }
-
-                // SQL execution succeed, commit transaction
-                db.commit(function(error){
-
-                    // Something happend when commiting trasaction
-                    if(error){
-                        return db.rollback(function(){
-                            callback(true, error);
-                        })
-                    }
-
-                    // Transaction commit suceed
-                    return callback(false, 'success');
-                });
-            });
+            // Recursively execute all SQL statements 
+            sqlQueries(db, queryStrings, callback, []);
+            
 		});
 
 	}catch(error){
 		return callback(true, error);
 	}
 }
+function sqlQueries(db, queryStrings, callback, allResults){
+    
+    // Reach end
+    if(queryStrings.length <= 0) {
+        // SQL execution succeed, commit transaction
+        return db.commit(function(error){
 
+            // Something happend when commiting trasaction
+            if(error){
+                return db.rollback(function(){
+                    callback(true, error, allResults);
+                })
+            }
+
+            // Transaction commit suceed
+            return callback(false, 'success', allResults);
+        });
+    }
+    // Still have queries to execute
+    else {
+        // Extract the first query from query array
+        let sqlQuery = queryStrings.shift() + ';';  // use ';' to seperate each SQL statement
+        
+        // Execute one SQL query
+        return db.query(sqlQuery, function(error, results, fields){
+            
+            // Some errors happend when executing query
+            if(error){
+                return db.rollback(function(){
+                    return callback(true, error, allResults);
+                });
+                
+            }
+            else if(results.warningCount > 0){
+                console.log(results)
+                return db.rollback(function(){
+                    return callback(true, 'warning', allResults);
+                });
+
+            }
+
+            // Succeed, then add results to array and call the recursive function again
+            allResults.push(results);
+            sqlQueries(db, queryStrings, callback, allResults);
+        });
+    }
+
+}
 
 module.exports = {
     member : memberHandler,

@@ -1,7 +1,7 @@
 var DatatablesDataSourceAjaxServer = function() {
 
 	// Data table init function
-	var initTable = function() {
+	var init = function() {
 		var table = $('#data-table');
 
 		// Init data table
@@ -33,7 +33,7 @@ var DatatablesDataSourceAjaxServer = function() {
 			// Data table button
 			buttons: [
 				{ 
-					text: '<i class="fa fa-user-edit"></i> <span>編輯</span>',
+					text: '<i class="fa fa-user-edit"></i> <span>編輯選取</span>',
 					attr: {
 						id: 'editButton',
 						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
@@ -42,15 +42,15 @@ var DatatablesDataSourceAjaxServer = function() {
 				},
 
 				{ 
-					text: '<i class="fa fa-save"></i> <span>保存</span>', 
+					text: '<i class="fa fa-save"></i> <span>保存變更</span>', 
 					attr: {
 						id: 'saveButton',
-						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
+						class: 'btn btn-outline-success m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
 						style: "display:none; margin-right:0.5em;"
 					},	
 				},
-				{ 
-					text: '取消', 
+				{ 	
+					text: '<i class="fa fa-walking"></i> <span>離開編輯</span>', 
 					attr: {
 						id: 'cancelButton',
 						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
@@ -58,7 +58,7 @@ var DatatablesDataSourceAjaxServer = function() {
 					},
 				},
 				{ 
-					text: '<i class="fa fa-user-slash"></i> <span>刪除</span>', 
+					text: '<i class="fa fa-user-slash"></i> <span>刪除選取</span>', 
 					attr: {
 						id: 'deleteButton',
 						class: 'btn btn-outline-danger m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
@@ -250,6 +250,7 @@ var DatatablesDataSourceAjaxServer = function() {
 						$('#cancelButton').css('display', 'none');
 						oTable.column(0).visible(true);
 						oTable.ajax.reload();
+						BlockUI.unBlock(); // Unblock all UI
 					}
 
 			});
@@ -295,13 +296,10 @@ var DatatablesDataSourceAjaxServer = function() {
 					success: function(result){
 						console.log({result});
 						oTable.ajax.reload();
+						BlockUI.unBlock(); // Unblock all UI
 					}
 			});
 		});
-	};
-
-	// Form init function
-	var initForm = function() {
 
 		// When form sumbit
 		$('#createButton').click(function(e){
@@ -311,21 +309,21 @@ var DatatablesDataSourceAjaxServer = function() {
 				url: "/home/personnel/service-agent/create",
 				data: $('#create-form').serialize(), // serializes the form, note it is different from other AJAX in this module
 				success: function(result){
-					console.log({result});
-					oTable.ajax.reload();
+					console.log(result);
+					oTable.ajax.reload(); // reload table data
+					BlockUI.unBlock(); // Unblock all UI
+					$('#create-modal').modal('hide'); // close form modal
 				}
 			});
 		});
-	}
+	};
+
 	
 
 	return {
 
 		//main function to initiate the module
-		init: function() {
-			initTable();
-			initForm();
-		},
+		init: init
 
 	};
 
