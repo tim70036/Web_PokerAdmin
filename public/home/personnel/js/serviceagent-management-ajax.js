@@ -1,11 +1,13 @@
 var DatatablesDataSourceAjaxServer = function() {
 
+	var oTable;
+
 	// Data table init function
-	var init = function() {
+	var initTable = function() {
 		var table = $('#data-table');
 
 		// Init data table
-		var oTable = table.DataTable({
+		oTable = table.DataTable({
 
 			responsive: true,
 			searchDelay: 500,
@@ -123,9 +125,57 @@ var DatatablesDataSourceAjaxServer = function() {
 			$(this).parents('tr').toggleClass('active');
 		});
 
-		//Function to restore rows from input field -> origin format
-		function restoreRow(){
 
+		$('#editButton').click(function(e){
+			e.preventDefault();
+			
+			// Change selected rows from origin format -> input field
+			// Iterate each row in table
+			var empty = true;
+			oTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+
+				// Check whether this row has been check
+				var rowNode = this.node();
+				var isChecked = $(rowNode).hasClass('active');
+
+				if (isChecked) {
+					empty = false;
+					var name =oTable.cell(rowIdx, 2).data();
+					var lineId = oTable.cell(rowIdx, 3).data();
+					var wechatId = oTable.cell(rowIdx, 4).data();
+					var facebookId = oTable.cell(rowIdx, 5).data();
+					var phone = oTable.cell(rowIdx, 6).data();
+					var bankSymbol = oTable.cell(rowIdx, 7).data();
+					var bankName = oTable.cell(rowIdx, 8).data();
+					var bankAccount = oTable.cell(rowIdx, 9).data();
+					var comment = oTable.cell(rowIdx, 10).data();
+					
+					//console.log('index is cheched : ' + rowIdx);
+					oTable.cell(rowIdx,2).node().innerHTML = `<input type="text" class="form-control input-small" value=${name}>`;
+					oTable.cell(rowIdx,3).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
+					oTable.cell(rowIdx,4).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
+					oTable.cell(rowIdx,5).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
+					oTable.cell(rowIdx,6).node().innerHTML = `<input type="text" class="form-control input-small" value=${phone}>`;
+					oTable.cell(rowIdx,7).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankSymbol}>`;
+					oTable.cell(rowIdx,8).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankName}>`;
+					oTable.cell(rowIdx,9).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankAccount}>`;
+					oTable.cell(rowIdx,10).node().innerHTML = `<input type="text" class="form-control input-small" value=${comment}>`;
+				}
+			});
+
+			// If empty then return
+			if(empty) {
+				return;
+			}
+
+			// Change button mode
+			editModeButton();
+		});
+
+		$('#cancelButton').click(function(e){
+			e.preventDefault();
+			
+			// Restore rows from input field -> origin format
 			// Iterate each row in table
 			oTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 
@@ -157,63 +207,19 @@ var DatatablesDataSourceAjaxServer = function() {
 					oTable.cell(rowIdx,10).node().innerHTML = comment;
 				}
 			});
-		};
 
-		// Function to change selected rows from origin format -> input field
-		function editRow(){
-
-			// Iterate each row in table
-			oTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
-
-				// Check whether this row has been check
-				var rowNode = this.node();
-				var isChecked = $(rowNode).hasClass('active');
-
-				if (isChecked) {
-					
-					var name =oTable.cell(rowIdx, 2).data();
-					var lineId = oTable.cell(rowIdx, 3).data();
-					var wechatId = oTable.cell(rowIdx, 4).data();
-					var facebookId = oTable.cell(rowIdx, 5).data();
-					var phone = oTable.cell(rowIdx, 6).data();
-					var bankSymbol = oTable.cell(rowIdx, 7).data();
-					var bankName = oTable.cell(rowIdx, 8).data();
-					var bankAccount = oTable.cell(rowIdx, 9).data();
-					var comment = oTable.cell(rowIdx, 10).data();
-					
-					//console.log('index is cheched : ' + rowIdx);
-					oTable.cell(rowIdx,2).node().innerHTML = `<input type="text" class="form-control input-small" value=${name}>`;
-					oTable.cell(rowIdx,3).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
-					oTable.cell(rowIdx,4).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
-					oTable.cell(rowIdx,5).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
-					oTable.cell(rowIdx,6).node().innerHTML = `<input type="text" class="form-control input-small" value=${phone}>`;
-					oTable.cell(rowIdx,7).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankSymbol}>`;
-					oTable.cell(rowIdx,8).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankName}>`;
-					oTable.cell(rowIdx,9).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankAccount}>`;
-					oTable.cell(rowIdx,10).node().innerHTML = `<input type="text" class="form-control input-small" value=${comment}>`;
-				}
-			});
-		};
-
-		$('#editButton').click(function(e){
-			e.preventDefault();
-			
-			oTable.column(0).visible(false);
-			$('#saveButton').css('display', 'block');
-			$('#cancelButton').css('display', 'block');
-			$('#editButton').css('display', 'none');
-			$('#deleteButton').css('display', 'none');
-
-			editRow();
-			
+			// Change button mode
+			normalModeButton();
 		});
 
 		$('#saveButton').click(function(e){
 			e.preventDefault();
-			
-			var data = [];
 
+			var thisButton = $(this);
+
+			// Collect selected data
 			// Iterate each row in table
+			var data = [];
 			oTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 
 				// Check whether this row has been check
@@ -236,44 +242,83 @@ var DatatablesDataSourceAjaxServer = function() {
 					data.push(obj);
 				}
 			});
-			
-			// Send to server
-			$.ajax({
-					type: "POST",
-					url: "/home/personnel/service-agent/update",
-					data: {data : data},
-					success: function(result){
-						console.log({result});
-						$('#editButton').css('display', 'block');
-						$('#deleteButton').css('display', 'block');
-						$('#saveButton').css('display', 'none');
-						$('#cancelButton').css('display', 'none');
-						oTable.column(0).visible(true);
-						oTable.ajax.reload();
-						BlockUI.unBlock(); // Unblock all UI
-					}
 
-			});
-		});
+			// If empty then return
+			if(data.length <= 0)	return;
 
-		$('#cancelButton').click(function(e){
-			e.preventDefault();
-			
-			$('#editButton').css('display', 'block');
-			$('#deleteButton').css('display', 'block');
-			$('#saveButton').css('display', 'none');
-			$('#cancelButton').css('display', 'none');
-			oTable.column(0).visible(true);
+			// Sweet alert, make user confirm
+			swal({
+                title: '確定保存變更?',
+                text: '這項變動將無法復原!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '確定變更',
+                cancelButtonText: '不，取消',
+                reverseButtons: true
+            }).then(function(result){
+				// User confirmed
+                if (result.value) {
 
-			restoreRow();
+					// Ready to send data
+					// Block button
+					thisButton.addClass('m-loader m-loader--success m-loader--right')
+					.attr('disabled', true);
+
+					// Send to server
+					$.ajax({
+						type: "POST",
+						url: "/home/personnel/service-agent/update",
+						data: {data : data},
+						success: function(result){
+							console.log({result});
+							oTable.ajax.reload();
+							normalModeButton(); // Change button mode
+
+							// Unblock button
+							thisButton.removeClass('m-loader m-loader--success m-loader--right')
+							.attr('disabled', false); 
+
+							// Sweet alert
+							if(!result.err){
+								swal({
+									title: "執行成功",
+									text: "變更已保存!",
+									type: "success",
+									confirmButtonText: "OK"
+								});
+							}
+							else{
+								swal({
+									title: "執行失敗",
+									text: result.msg,
+									type: "error",
+									confirmButtonText: "OK"
+								});
+							}
+						}
+					});
+				}
+				// User did not confirmed
+				// result.dismiss can be 'cancel', 'overlay',
+				// 'close', and 'timer' 
+				else if (result.dismiss === 'cancel') {
+                    // swal(
+                    //     'Cancelled',
+                    //     'Your imaginary file is safe :)',
+                    //     'error'
+                    // )
+                }
+            });
 		});
 
 		$('#deleteButton').click(function(e){
 			e.preventDefault();
 
-			var data = [];
-
+			var thisButton = $(this);
+			
+			// Collect selected data
 			// Iterate each row in table
+			var data = [];
 			oTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
 
 				// Check whether this row has been check
@@ -288,47 +333,230 @@ var DatatablesDataSourceAjaxServer = function() {
 				}
 			});
 
-			// Send to server
-			$.ajax({
-					type: "POST",
-					url: "/home/personnel/service-agent/delete",
-					data: {data: data},
-					success: function(result){
-						console.log({result});
-						oTable.ajax.reload();
-						BlockUI.unBlock(); // Unblock all UI
-					}
-			});
+			// If empty then return
+			if(data.length <= 0){
+				return;
+			}
+
+			// Sweet alert, make user confirm
+			swal({
+                title: '確定刪除 ' + data.length + ' 位客服?',
+                text: '這項變動將無法復原!',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: '確定刪除',
+                cancelButtonText: '不，取消',
+                reverseButtons: true
+            }).then(function(result){
+				// User confirmed
+                if (result.value) {
+
+					// Ready to send data
+					// Block button
+					thisButton.addClass('m-loader m-loader--danger m-loader--right')
+					.attr('disabled', true);
+
+					// Send to server
+					$.ajax({
+						type: "POST",
+						url: "/home/personnel/service-agent/delete",
+						data: {data: data},
+						success: function(result){
+							console.log({result});
+							oTable.ajax.reload();
+							
+							// Unblock button
+							thisButton.removeClass('m-loader m-loader--danger m-loader--right')
+							.attr('disabled', false);
+
+							// Sweet alert
+							if(!result.err){
+								swal({
+									title: "執行成功",
+									text: "客服人員已刪除!",
+									type: "success",
+									confirmButtonText: "OK"
+								});
+							}
+							else{
+								swal({
+									title: "執行失敗",
+									text: result.msg,
+									type: "error",
+									confirmButtonText: "OK"
+								});
+							}
+
+						}
+					});
+				}
+				// User did not confirmed
+				// result.dismiss can be 'cancel', 'overlay',
+				// 'close', and 'timer' 
+				else if (result.dismiss === 'cancel') {
+                    // swal(
+                    //     'Cancelled',
+                    //     'Your imaginary file is safe :)',
+                    //     'error'
+                    // )
+                }
+            });
+
+			
+
+			
 		});
 
-		// When form sumbit
-		$('#createButton').click(function(e){
-			e.preventDefault();
-			$.ajax({
-				type: "POST",
-				url: "/home/personnel/service-agent/create",
-				data: $('#create-form').serialize(), // serializes the form, note it is different from other AJAX in this module
-				success: function(result){
-					console.log(result);
-					oTable.ajax.reload(); // reload table data
-					BlockUI.unBlock(); // Unblock all UI
-					$('#create-modal').modal('hide'); // close form modal
-				}
-			});
-		});
+		function editModeButton(){
+			oTable.column(0).visible(false);
+			$('#saveButton').css('display', 'block');
+			$('#cancelButton').css('display', 'block');
+			$('#editButton').css('display', 'none');
+			$('#deleteButton').css('display', 'none');
+		}
+		function normalModeButton(){
+			$('#editButton').css('display', 'block');
+			$('#deleteButton').css('display', 'block');
+			$('#saveButton').css('display', 'none');
+			$('#cancelButton').css('display', 'none');
+			oTable.column(0).visible(true);
+		}
 	};
 
+	var initForm = function() {
+		// http://jqueryvalidation.org/validate/
+
+		// Custom email validator, the original one is like shit(cannot allow blank)
+		$.validator.methods.email = function( value, element ) {
+			console.log(value);
+			return this.optional( element ) ||  /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test( value ) ;
+		  }
+		
+		// Set up validator for form
+		$( '#create-form' ).validate({
+            // define validation rules
+            rules: {
+                name: {
+                    required: true
+                },
+                account: {
+                    required: true 
+                },
+                password: {
+                    required: true,
+                    
+                },
+                passwordConfirm: {
+                    required: true,
+					equalTo: "#password"
+                },
+                email: {
+                    email: true
+                },
+                bankSymbol: {
+                },
+                bankName: {
+                },
+                bankAccount: {
+                },
+                phoneNumber: {
+                },
+                facebookId: {
+                },
+                lineId: {
+				},
+				wechatId: {
+				},
+				comment: {
+                },
+            },
+			
+			// custom invalid messages
+			messages: { 
+				name: {
+                    required: '名稱為必填欄位'
+                },
+                account: {
+                    required: '帳號為必填欄位'
+                },
+                password: {
+                    required: '密碼為必填欄位'
+                    
+                },
+                passwordConfirm: {
+                    required: '確認密碼為必填欄位',
+					equalTo: '請輸入相同的密碼'
+                },
+                email: {
+                    email: '請輸入正確的 email 格式'
+                },
+			},
+
+            //display error alert on form submit  
+            invalidHandler: function(event, validator) {  
+                
+                swal({
+                    "title": "欄位資料錯誤", 
+                    "text": "請更正錯誤欄位後再試一次", 
+                    "type": "error",
+                    confirmButtonText: "OK"
+                });
+                
+            },
+
+            submitHandler: function (form) {
+
+				// Ready to send data
+				// Block modal
+				mApp.block('#create-modal .modal-content', {
+					size: 'lg',
+					type: 'loader',
+					state: 'primary',
+					message: '新增中...'
+				});
+
+				$.ajax({
+					type: "POST",
+					url: "/home/personnel/service-agent/create",
+					data: $(form).serialize(), // serializes the form, note it is different from other AJAX in this module
+					success: function(result){
+						console.log(result);
+						oTable.ajax.reload(); // reload table data
+						mApp.unblock('#create-modal .modal-content'); // Unblock button
+						$('#create-modal').modal('hide'); // close form modal
+						
+						// Sweet alert
+						if(!result.err){
+							swal({
+								title: "執行成功",
+								text: "客服人員已新增!",
+								type: "success",
+								confirmButtonText: "OK"
+							});
+						}
+						else{
+							swal({
+								title: "執行失敗",
+								text: result.msg,
+								type: "error",
+								confirmButtonText: "OK"
+							});
+						}
+					}
+				});
+            }
+        });     
+	}
 	
 
 	return {
-
-		//main function to initiate the module
-		init: init
-
+		initTable: initTable,
+		initForm:  initForm
 	};
 
 }();
 
 jQuery(document).ready(function() {
-	DatatablesDataSourceAjaxServer.init();
+	DatatablesDataSourceAjaxServer.initTable();
+	DatatablesDataSourceAjaxServer.initForm();
 });
