@@ -31,12 +31,12 @@ router.post('/personnel/service-agent/create', homeController.authorize, homeCon
 router.post('/personnel/member/update', homeController.authorize, homeController.personnel.memberUpdate);
 router.post('/personnel/agent/update', homeController.authorize, homeController.personnel.agentUpdate);
 router.post('/personnel/head-agent/update', homeController.authorize, homeController.personnel.headAgentUpdate);
-router.post('/personnel/service-agent/update', homeController.authorize, homeController.personnel.serviceAgentUpdate);
+router.post('/personnel/service-agent/update', homeController.authorize, homeController.personnel.serviceAgentUpdateValidate, homeController.personnel.serviceAgentUpdate);
 
 router.post('/personnel/member/delete', homeController.authorize, homeController.personnel.memberDelete);
 router.post('/personnel/agent/delete', homeController.authorize, homeController.personnel.agentDelete);
 router.post('/personnel/head-agent/delete', homeController.authorize, homeController.personnel.headAgentDelete);
-router.post('/personnel/service-agent/delete', homeController.authorize, homeController.personnel.serviceAgentDelete);
+router.post('/personnel/service-agent/delete', homeController.authorize, homeController.personnel.serviceAgentDeleteValidate,  homeController.personnel.serviceAgentDelete);
 
 // Credit management routes
 router.get('/credit/transfer', homeController.authorize, homeController.credit.transfer);

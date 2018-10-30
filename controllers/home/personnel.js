@@ -1,5 +1,8 @@
 const 
-    credentials = require('../../configs/credentials');
+    credentials = require('../../configs/credentials'),
+    { check, body, validationResult } = require('express-validator/check'),
+    { sanitizeBody } = require('express-validator/filter');
+
 
 let memberHandler = function(req,res){
     res.render('home/personnel/member', {layout : 'home'});
@@ -94,6 +97,8 @@ let headAgentCreateHandler = function(req,res){
     res.json(data);
 }
 
+
+
 let serviceAgentCreateHandler = function(req,res){
 
     // Receive form data from AJAX
@@ -108,22 +113,10 @@ let serviceAgentCreateHandler = function(req,res){
     console.log(req.body);
     
     
-    let 
-        name            = req.body.name,
-        account         = req.body.account,
-        password        = req.body.password,
-        passwordConfirm = req.body.passwordConfirm,
-        email           = req.body.email,
-        bankSymbol      = req.body.bankSymbol,
-        bankName        = req.body.bankName,
-        bankAccount     = req.body.bankAccount,
-        phoneNumber     = req.body.phoneNumber,
-        facebookId      = req.body.facebookId,
-        lineId          = req.body.lineId,
-        wechatId        = req.body.wechatId,
-        comment         = req.body.comment,
-        adminId         = req.user.roleId,
-        role            = 'serviceAgent';
+    const 
+        {name, account, password, passwordConfirm, email, bankSymbol, bankName, bankAccount, phoneNumber, facebookId, lineId, wechatId, comment} = req.body,
+        adminId = req.user.roleId,
+        role = 'serviceAgent';
 
     
     // 
@@ -200,6 +193,15 @@ let headAgentUpdateHandler = function(req,res){
 
 let serviceAgentUpdateHandler = function(req,res){
     
+    const result = validationResult(req);
+
+    // If the form data is invalid
+    if (!result.isEmpty()) {
+        // Return the first error to client
+        let firstError = result.array()[0].msg;
+        return res.json({err: true, msg: firstError});
+    }
+    
     // Receive data array
     let updateData = req.body.data;
     
@@ -258,6 +260,15 @@ let headAgentDeleteHandler = function(req,res){
 
 let serviceAgentDeleteHandler = function(req,res){
 
+    const result = validationResult(req);
+
+    // If the form data is invalid
+    if (!result.isEmpty()) {
+        // Return the first error to client
+        let firstError = result.array()[0].msg;
+        return res.json({err: true, msg: firstError});
+    }
+
     let deleteData = req.body.data;
     
     // Return if data is empty
@@ -296,7 +307,7 @@ let serviceAgentDeleteHandler = function(req,res){
 
 // Function that execute multi SQL statement(strings in an array) inside a SQL transaction
 // It will pass success status and message to callback, 
-// It also pass all 'successful' results in an array to callback
+// It also pass all 'successful' results in an array to callback(all results before encounter a fail)
 // PS : notice the 'return' before rollback()
 function sqlTransaction(db, queryStrings, callback){
     try{
@@ -366,6 +377,75 @@ function sqlQueries(db, queryStrings, callback, allResults){
 
 }
 
+// Form data validate generators
+// Invoke it to produce a middleware for validating
+function serviceAgentUpdateValidator(){
+    return [
+        // Data must be array
+        body('data')
+            .isArray().withMessage('Wrong data format')
+            .custom( function(data) { return (data.length < 10000)? true : false;  }).withMessage('更改資料數量過多'),
+        // For each in data array
+        body('data.*.id')
+            .isInt({ min:0, max:9999999999 }).withMessage('Wrong data format'),
+        body('data.*.name')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:1 }).withMessage('名稱不可為空')
+            .isLength({ max:20 }).withMessage('名稱長度不可超過 20'),  
+        body('data.*.lineId')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:20 }).withMessage('Line Id 長度不可超過 20'),  // length 0 means this field is optional
+        body('data.*.wechatId')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:20 }).withMessage('Wechat Id 長度不可超過 20'), 
+        body('data.*.facebookId')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:20 }).withMessage('Facebook Id 長度不可超過 20'),
+        body('data.*.phone')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:20 }).withMessage('電話長度不可超過 20'),
+        body('data.*.bankSymbol')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:20 }).withMessage('銀行代碼長度不可超過 20')
+            .optional({ checkFalsy:true }) // Use optional for isInt, this allows input to be 0, null and false, however node mysql will escpae them, so it is fine
+            .isInt({ min:0 }).withMessage('銀行代號必須是數字'),
+        body('data.*.bankName')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:20 }).withMessage('銀行名稱長度不可超過 20'),
+        body('data.*.bankAccount')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:20 }).withMessage('銀行帳號長度不可超過 20')
+            .optional({ checkFalsy:true }) // Use optional for isInt, this allows input to be "", 0, null and false, however node mysql will escpae them, so it is fine
+            .isInt({ min:0 }).withMessage('銀行帳號必須是數字'),
+        body('data.*.comment')
+            .isString().withMessage('Wrong data format')
+            .isLength({ min:0, max:30 }).withMessage('備註長度不可超過 30'),
+        
+        // Sanitize all values 
+        sanitizeBody('data.*.*')
+            .escape() // Esacpe characters to prevent XSS attack, replace <, >, &, ', " and / with HTML entities
+            .trim(), // trim white space from both end
+
+    ];
+}
+
+function serviceAgentDeleteValidator(){
+    return [
+        // Data must be array
+        body('data')
+            .isArray().withMessage('Wrong data format')
+            .custom( function(data) { return (data.length < 10000)? true : false;  }).withMessage('更改資料數量過多'),
+        // For each in data array
+        body('data.*.id')
+            .isInt({ min:0, max:9999999999 }).withMessage('Wrong data format'),
+        
+        // Sanitize all values 
+        sanitizeBody('data.*.*')
+            .escape() // Esacpe characters to prevent XSS attack, replace <, >, &, ', " and / with HTML entities
+            .trim(), // trim white space from both end 
+    ];
+}
+
 module.exports = {
     member : memberHandler,
     agent : agentHandler,
@@ -389,10 +469,13 @@ module.exports = {
     agentUpdate : agentUpdateHandler,
     headAgentUpdate : headAgentUpdateHandler,
     serviceAgentUpdate : serviceAgentUpdateHandler,
+    serviceAgentUpdateValidate : serviceAgentUpdateValidator(),
+    
 
     //Delete
     memberDelete : memberDeleteHandler,
     agentDelete : agentDeleteHandler,
     headAgentDelete : headAgentDeleteHandler,
     serviceAgentDelete : serviceAgentDeleteHandler,
+    serviceAgentDeleteValidate:  serviceAgentDeleteValidator(),
 };

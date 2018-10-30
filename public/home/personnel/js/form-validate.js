@@ -1,231 +1,358 @@
-//== Class definition
+var FormValidation = function () {
 
-var FormControls = function () {
-    //== Private functions
-    
-    var demo1 = function () {
-        $( "#m_form_1" ).validate({
-            // define validation rules
-            rules: {
-                email: {
-                    required: true,
-                    email: true,
-                    minlength: 10 
+    // basic validation
+    var handleValidation1 = function() {
+        // for more info visit the official plugin documentation: 
+            // http://docs.jquery.com/Plugins/Validation
+
+            var form1 = $('#form_sample_1');
+            var error1 = $('.alert-danger', form1);
+            var success1 = $('.alert-success', form1);
+
+            form1.validate({
+                errorElement: 'span', //default input error message container
+                errorClass: 'help-block help-block-error', // default input error message class
+                focusInvalid: false, // do not focus the last invalid input
+                ignore: "",  // validate all fields including form hidden input
+                messages: {
+                    select_multi: {
+                        maxlength: jQuery.validator.format("Max {0} items allowed for selection"),
+                        minlength: jQuery.validator.format("At least {0} items must be selected")
+                    }
                 },
-                url: {
-                    required: true 
-                },
-                digits: {
-                    required: true,
-                    digits: true
-                },
-                creditcard: {
-                    required: true,
-                    creditcard: true 
-                },
-                phone: {
-                    required: true,
-                    phoneUS: true 
-                },
-                option: {
-                    required: true
-                },
-                options: {
-                    required: true,
-                    minlength: 2,
-                    maxlength: 4
-                },
-                memo: {
-                    required: true,
-                    minlength: 10,
-                    maxlength: 100
+                rules: {
+                    name: {
+                        minlength: 2,
+                        required: true
+                    },
+                    input_group: {
+                        email: true,
+                        required: true
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    url: {
+                        required: true,
+                        url: true
+                    },
+                    number: {
+                        required: true,
+                        number: true
+                    },
+                    digits: {
+                        required: true,
+                        digits: true
+                    },
+                    creditcard: {
+                        required: true,
+                        creditcard: true
+                    },
+                    occupation: {
+                        minlength: 5,
+                    },
+                    select: {
+                        required: true
+                    },
+                    select_multi: {
+                        required: true,
+                        minlength: 1,
+                        maxlength: 3
+                    }
                 },
 
-                checkbox: {
-                    required: true
+                invalidHandler: function (event, validator) { //display error alert on form submit              
+                    success1.hide();
+                    error1.show();
+                    App.scrollTo(error1, -200);
                 },
-                checkboxes: {
-                    required: true,
-                    minlength: 1,
-                    maxlength: 2
+
+                errorPlacement: function (error, element) { // render error placement for each input type
+                    var cont = $(element).parent('.input-group');
+                    if (cont.size() > 0) {
+                        cont.after(error);
+                    } else {
+                        element.after(error);
+                    }
                 },
-                radio: {
-                    required: true
+
+                highlight: function (element) { // hightlight error inputs
+
+                    $(element)
+                        .closest('.form-group').addClass('has-error'); // set error class to the control group
+                },
+
+                unhighlight: function (element) { // revert the change done by hightlight
+                    $(element)
+                        .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                },
+
+                success: function (label) {
+                    label
+                        .closest('.form-group').removeClass('has-error'); // set success class to the control group
+                },
+
+                submitHandler: function (form) {
+                    success1.show();
+                    error1.hide();
                 }
-            },
-            
-            //display error alert on form submit  
-            invalidHandler: function(event, validator) {     
-                var alert = $('#m_form_1_msg');
-                alert.removeClass('m--hide').show();
-                mUtil.scrollTop();
-            },
+            });
 
-            submitHandler: function (form) {
-                //form[0].submit(); // submit the form
-            }
-        });       
+
     }
 
-    var demo2 = function () {
-        $( "#m_form_2" ).validate({
-            // define validation rules
-            rules: {
-                email: {
-                    required: true,
-                    email: true 
-                },
-                url: {
-                    required: true 
-                },
-                digits: {
-                    required: true,
-                    digits: true
-                },
-                creditcard: {
-                    required: true,
-                    creditcard: true 
-                },
-                phone: {
-                    required: true,
-                    phoneUS: true 
-                },
-                option: {
-                    required: true
-                },
-                options: {
-                    required: true,
-                    minlength: 2,
-                    maxlength: 4
-                },
-                memo: {
-                    required: true,
-                    minlength: 10,
-                    maxlength: 100
+    // validation using icons
+    var handleValidation2 = function() {
+        // for more info visit the official plugin documentation: 
+            // http://docs.jquery.com/Plugins/Validation
+
+            var form2 = $('#form_sample_2');
+            var error2 = $('.alert-danger', form2);
+            var success2 = $('.alert-success', form2);
+
+            form2.validate({
+                errorElement: 'span', //default input error message container
+                errorClass: 'help-block help-block-error', // default input error message class
+                focusInvalid: false, // do not focus the last invalid input
+                ignore: "",  // validate all fields including form hidden input
+                rules: {
+                    name: {
+                        minlength: 2,
+                        required: true
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    url: {
+                        required: true,
+                        url: true
+                    },
+                    number: {
+                        required: true,
+                        number: true
+                    },
+                    digits: {
+                        required: true,
+                        digits: true
+                    },
+                    creditcard: {
+                        required: true,
+                        creditcard: true
+                    },
                 },
 
-                checkbox: {
-                    required: true
-                },
-                checkboxes: {
-                    required: true,
-                    minlength: 1,
-                    maxlength: 2
-                },
-                radio: {
-                    required: true
-                }
-            },
-            
-            //display error alert on form submit  
-            invalidHandler: function(event, validator) {     
-                mUtil.scrollTo("m_form_2", -200);
-
-                /*
-                swal({
-                    "title": "", 
-                    "text": "There are some errors in your submission. Please correct them.", 
-                    "type": "error",
-                    "confirmButtonClass": "btn btn-secondary m-btn m-btn--wide"
-                });
-                */
-            },
-
-            submitHandler: function (form) {
-                //form[0].submit(); // submit the form
-            }
-        });       
-    }
-
-    var demo3 = function () {
-        $( "#m_form_3" ).validate({
-            // define validation rules
-            rules: {
-                //=== Client Information(step 3)
-                //== Billing Information
-                billing_card_name: {
-                    required: true
-                },
-                billing_card_number: {
-                    required: true,
-                    creditcard: true
-                },
-                billing_card_exp_month: {
-                    required: true
-                },
-                billing_card_exp_year: {
-                    required: true
-                },
-                billing_card_cvv: {
-                    required: true,
-                    minlength: 2,
-                    maxlength: 3
+                invalidHandler: function (event, validator) { //display error alert on form submit              
+                    success2.hide();
+                    error2.show();
+                    App.scrollTo(error2, -200);
                 },
 
-                //== Billing Address
-                billing_address_1: {
-                    required: true
+                errorPlacement: function (error, element) { // render error placement for each input type
+                    var icon = $(element).parent('.input-icon').children('i');
+                    icon.removeClass('fa-check').addClass("fa-warning");  
+                    icon.attr("data-original-title", error.text()).tooltip({'container': 'body'});
                 },
-                billing_address_2: {
+
+                highlight: function (element) { // hightlight error inputs
+                    $(element)
+                        .closest('.form-group').removeClass("has-success").addClass('has-error'); // set error class to the control group   
+                },
+
+                unhighlight: function (element) { // revert the change done by hightlight
                     
                 },
-                billing_city: {
-                    required: true
-                },
-                billing_state: {
-                    required: true
-                },
-                billing_zip: {
-                    required: true,
-                    number: true
+
+                success: function (label, element) {
+                    var icon = $(element).parent('.input-icon').children('i');
+                    $(element).closest('.form-group').removeClass('has-error').addClass('has-success'); // set success class to the control group
+                    icon.removeClass("fa-warning").addClass("fa-check");
                 },
 
-                billing_delivery: {
-                    required: true
+                submitHandler: function (form) {
+                    success2.show();
+                    error2.hide();
+                    form[0].submit(); // submit the form
                 }
-            },
-            
-            //display error alert on form submit  
-            invalidHandler: function(event, validator) {
-                mUtil.scrollTo("m_form_3", -200); 
+            });
 
-                swal({
-                    "title": "", 
-                    "text": "There are some errors in your submission. Please correct them.", 
-                    "type": "error",
-                    "confirmButtonClass": "btn btn-secondary m-btn m-btn--wide",
-                    "onClose": function(e) {
-                        console.log('on close event fired!');
+
+    }
+
+    // advance validation
+    var handleValidation3 = function() {
+        // for more info visit the official plugin documentation: 
+        // http://docs.jquery.com/Plugins/Validation
+
+            var form3 = $('#form_sample_3');
+            var error3 = $('.alert-danger', form3);
+            var success3 = $('.alert-success', form3);
+
+            //IMPORTANT: update CKEDITOR textarea with actual content before submit
+            form3.on('submit', function() {
+                for(var instanceName in CKEDITOR.instances) {
+                    CKEDITOR.instances[instanceName].updateElement();
+                }
+            })
+
+            form3.validate({
+                errorElement: 'span', //default input error message container
+                errorClass: 'help-block help-block-error', // default input error message class
+                focusInvalid: false, // do not focus the last invalid input
+                ignore: "", // validate all fields including form hidden input
+                rules: {
+                    name: {
+                        minlength: 2,
+                        required: true
+                    },
+                    email: {
+                        required: true,
+                        email: true
+                    },  
+                    options1: {
+                        required: true
+                    },
+                    options2: {
+                        required: true
+                    },
+                    select2tags: {
+                        required: true
+                    },
+                    datepicker: {
+                        required: true
+                    },
+                    occupation: {
+                        minlength: 5,
+                    },
+                    membership: {
+                        required: true
+                    },
+                    service: {
+                        required: true,
+                        minlength: 2
+                    },
+                    markdown: {
+                        required: true
+                    },
+                    editor1: {
+                        required: true
+                    },
+                    editor2: {
+                        required: true
                     }
-                });
+                },
 
-                event.preventDefault();
-            },
+                messages: { // custom messages for radio buttons and checkboxes
+                    membership: {
+                        required: "Please select a Membership type"
+                    },
+                    service: {
+                        required: "Please select  at least 2 types of Service",
+                        minlength: jQuery.validator.format("Please select  at least {0} types of Service")
+                    }
+                },
 
-            submitHandler: function (form) {
-                //form[0].submit(); // submit the form
-                swal({
-                    "title": "", 
-                    "text": "Form validation passed. All good!", 
-                    "type": "success",
-                    "confirmButtonClass": "btn btn-secondary m-btn m-btn--wide"
-                });
+                errorPlacement: function (error, element) { // render error placement for each input typeW
+                    if (element.parents('.mt-radio-list').size() > 0 || element.parents('.mt-checkbox-list').size() > 0) {
+                        if (element.parents('.mt-radio-list').size() > 0) {
+                            error.appendTo(element.parents('.mt-radio-list')[0]);
+                        }
+                        if (element.parents('.mt-checkbox-list').size() > 0) {
+                            error.appendTo(element.parents('.mt-checkbox-list')[0]);
+                        }
+                    } else if (element.parents('.mt-radio-inline').size() > 0 || element.parents('.mt-checkbox-inline').size() > 0) {
+                        if (element.parents('.mt-radio-inline').size() > 0) {
+                            error.appendTo(element.parents('.mt-radio-inline')[0]);
+                        }
+                        if (element.parents('.mt-checkbox-inline').size() > 0) {
+                            error.appendTo(element.parents('.mt-checkbox-inline')[0]);
+                        }
+                    } else if (element.parent(".input-group").size() > 0) {
+                        error.insertAfter(element.parent(".input-group"));
+                    } else if (element.attr("data-error-container")) { 
+                        error.appendTo(element.attr("data-error-container"));
+                    } else {
+                        error.insertAfter(element); // for other inputs, just perform default behavior
+                    }
+                },
 
-                return false;
-            }
-        });       
+                invalidHandler: function (event, validator) { //display error alert on form submit   
+                    success3.hide();
+                    error3.show();
+                    App.scrollTo(error3, -200);
+                },
+
+                highlight: function (element) { // hightlight error inputs
+                   $(element)
+                        .closest('.form-group').addClass('has-error'); // set error class to the control group
+                },
+
+                unhighlight: function (element) { // revert the change done by hightlight
+                    $(element)
+                        .closest('.form-group').removeClass('has-error'); // set error class to the control group
+                },
+
+                success: function (label) {
+                    label
+                        .closest('.form-group').removeClass('has-error'); // set success class to the control group
+                },
+
+                submitHandler: function (form) {
+                    success3.show();
+                    error3.hide();
+                    //form[0].submit(); // submit the form
+                }
+
+            });
+
+             //apply validation on select2 dropdown value change, this only needed for chosen dropdown integration.
+            $('.select2me', form3).change(function () {
+                form3.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input
+            });
+
+            //initialize datepicker
+            $('.date-picker').datepicker({
+                rtl: App.isRTL(),
+                autoclose: true
+            });
+            $('.date-picker .form-control').change(function() {
+                form3.validate().element($(this)); //revalidate the chosen dropdown value and show error or success message for the input 
+            })
+    }
+
+    var handleWysihtml5 = function() {
+        if (!jQuery().wysihtml5) {
+            
+            return;
+        }
+
+        if ($('.wysihtml5').size() > 0) {
+            $('.wysihtml5').wysihtml5({
+                "stylesheets": ["../assets/global/plugins/bootstrap-wysihtml5/wysiwyg-color.css"]
+            });
+        }
     }
 
     return {
-        // public functions
-        init: function() {
-            demo1(); 
-            demo2();
-            demo3(); 
+        //main function to initiate the module
+        init: function () {
+
+            handleWysihtml5();
+            handleValidation1();
+            handleValidation2();
+            handleValidation3();
+
         }
+
     };
+
 }();
 
-jQuery(document).ready(function() {    
-    FormControls.init();
+jQuery(document).ready(function() {
+    FormValidation.init();
 });

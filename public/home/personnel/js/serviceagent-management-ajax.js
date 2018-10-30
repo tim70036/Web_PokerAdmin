@@ -227,6 +227,7 @@ var DatatablesDataSourceAjaxServer = function() {
 				var isChecked = $(rowNode).hasClass('active');
 
 				if (isChecked) {
+
 					var obj = {};
 					obj["id"] = oTable.cell(rowIdx, 0).data();
 					obj["name"] = oTable.cell(rowIdx, 2).node().childNodes[0].value;
@@ -271,15 +272,18 @@ var DatatablesDataSourceAjaxServer = function() {
 						data: {data : data},
 						success: function(result){
 							console.log({result});
-							oTable.ajax.reload();
-							normalModeButton(); // Change button mode
-
+							
 							// Unblock button
 							thisButton.removeClass('m-loader m-loader--success m-loader--right')
 							.attr('disabled', false); 
 
 							// Sweet alert
 							if(!result.err){
+
+								// Succeed then reload
+								oTable.ajax.reload();
+								normalModeButton(); // Change button mode
+
 								swal({
 									title: "執行成功",
 									text: "變更已保存!",
