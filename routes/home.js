@@ -26,7 +26,7 @@ router.get('/personnel/service-agent/read', homeController.authorize, homeContro
 router.post('/personnel/member/create', homeController.authorize, homeController.personnel.memberCreate);
 router.post('/personnel/agent/create', homeController.authorize, homeController.personnel.agentCreate);
 router.post('/personnel/head-agent/create', homeController.authorize, homeController.personnel.headAgentCreate);
-router.post('/personnel/service-agent/create', homeController.authorize, homeController.personnel.serviceAgentCreate);
+router.post('/personnel/service-agent/create', homeController.authorize, homeController.personnel.serviceAgentCreateValidate, homeController.personnel.serviceAgentCreate);
 
 router.post('/personnel/member/update', homeController.authorize, homeController.personnel.memberUpdate);
 router.post('/personnel/agent/update', homeController.authorize, homeController.personnel.agentUpdate);

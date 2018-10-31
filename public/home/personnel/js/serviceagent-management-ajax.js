@@ -144,7 +144,7 @@ var DatatablesDataSourceAjaxServer = function() {
 					var lineId = oTable.cell(rowIdx, 3).data();
 					var wechatId = oTable.cell(rowIdx, 4).data();
 					var facebookId = oTable.cell(rowIdx, 5).data();
-					var phone = oTable.cell(rowIdx, 6).data();
+					var phoneNumber = oTable.cell(rowIdx, 6).data();
 					var bankSymbol = oTable.cell(rowIdx, 7).data();
 					var bankName = oTable.cell(rowIdx, 8).data();
 					var bankAccount = oTable.cell(rowIdx, 9).data();
@@ -155,7 +155,7 @@ var DatatablesDataSourceAjaxServer = function() {
 					oTable.cell(rowIdx,3).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
 					oTable.cell(rowIdx,4).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
 					oTable.cell(rowIdx,5).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
-					oTable.cell(rowIdx,6).node().innerHTML = `<input type="text" class="form-control input-small" value=${phone}>`;
+					oTable.cell(rowIdx,6).node().innerHTML = `<input type="text" class="form-control input-small" value=${phoneNumber}>`;
 					oTable.cell(rowIdx,7).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankSymbol}>`;
 					oTable.cell(rowIdx,8).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankName}>`;
 					oTable.cell(rowIdx,9).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankAccount}>`;
@@ -189,7 +189,7 @@ var DatatablesDataSourceAjaxServer = function() {
 					var lineId = oTable.cell(rowIdx, 3).data();
 					var wechatId = oTable.cell(rowIdx, 4).data();
 					var facebookId = oTable.cell(rowIdx, 5).data();
-					var phone = oTable.cell(rowIdx, 6).data();
+					var phoneNumber = oTable.cell(rowIdx, 6).data();
 					var bankSymbol = oTable.cell(rowIdx, 7).data();
 					var bankName = oTable.cell(rowIdx, 8).data();
 					var bankAccount = oTable.cell(rowIdx, 9).data();
@@ -200,7 +200,7 @@ var DatatablesDataSourceAjaxServer = function() {
 					oTable.cell(rowIdx,3).node().innerHTML = lineId;
 					oTable.cell(rowIdx,4).node().innerHTML = wechatId;
 					oTable.cell(rowIdx,5).node().innerHTML = facebookId;
-					oTable.cell(rowIdx,6).node().innerHTML = phone;
+					oTable.cell(rowIdx,6).node().innerHTML = phoneNumber;
 					oTable.cell(rowIdx,7).node().innerHTML = bankSymbol;
 					oTable.cell(rowIdx,8).node().innerHTML = bankName;
 					oTable.cell(rowIdx,9).node().innerHTML = bankAccount;
@@ -234,7 +234,7 @@ var DatatablesDataSourceAjaxServer = function() {
 					obj["lineId"] = oTable.cell(rowIdx, 3).node().childNodes[0].value;
 					obj["wechatId"] = oTable.cell(rowIdx, 4).node().childNodes[0].value;
 					obj["facebookId"] = oTable.cell(rowIdx, 5).node().childNodes[0].value;
-					obj["phone"] = oTable.cell(rowIdx, 6).node().childNodes[0].value;
+					obj["phoneNumber"] = oTable.cell(rowIdx, 6).node().childNodes[0].value;
 					obj["bankSymbol"] = oTable.cell(rowIdx, 7).node().childNodes[0].value;
 					obj["bankName"] = oTable.cell(rowIdx, 8).node().childNodes[0].value;
 					obj["bankAccount"] = oTable.cell(rowIdx, 9).node().childNodes[0].value;
@@ -441,58 +441,104 @@ var DatatablesDataSourceAjaxServer = function() {
             // define validation rules
             rules: {
                 name: {
-                    required: true
+					required: true,
+					maxlength: 20
                 },
                 account: {
-                    required: true 
+					required: true,
+					maxlength: 20
                 },
                 password: {
-                    required: true,
-                    
+					required: true,
+					maxlength: 20
                 },
                 passwordConfirm: {
                     required: true,
-					equalTo: "#password"
+					equalTo: "#password",
+					maxlength: 20
                 },
                 email: {
-                    email: true
+					email: true,
+					maxlength: 40
                 },
                 bankSymbol: {
+					digits: true,
+					maxlength: 20
                 },
                 bankName: {
+					maxlength: 20
                 },
                 bankAccount: {
+					digits: true,
+					maxlength: 20
                 },
                 phoneNumber: {
+					digits: true,
+					maxlength: 20
                 },
                 facebookId: {
+					maxlength: 20
                 },
                 lineId: {
+					maxlength: 20
 				},
 				wechatId: {
+					maxlength: 20
 				},
 				comment: {
+					maxlength: 40
                 },
             },
 			
 			// custom invalid messages
 			messages: { 
 				name: {
-                    required: '名稱為必填欄位'
+					required: '名稱為必填欄位',
+					maxlength: '長度不可超過 20'
                 },
                 account: {
-                    required: '帳號為必填欄位'
+					required: '帳號為必填欄位',
+					maxlength: '長度不可超過 20'
                 },
                 password: {
-                    required: '密碼為必填欄位'
-                    
+					required: '密碼為必填欄位',
+					maxlength: '長度不可超過 20'
                 },
                 passwordConfirm: {
                     required: '確認密碼為必填欄位',
-					equalTo: '請輸入相同的密碼'
+					equalTo: '請輸入相同的密碼',
+					maxlength: '長度不可超過 20'
                 },
                 email: {
-                    email: '請輸入正確的 email 格式'
+					email: '請輸入正確的 email 格式',
+					maxlength: '長度不可超過 40'
+                },
+                bankSymbol: {
+					digits: '必須是數字',
+					maxlength: '長度不可超過 20'
+                },
+                bankName: {
+					maxlength: '長度不可超過 20'
+                },
+                bankAccount: {
+					digits: '必須是數字',
+					maxlength: '長度不可超過 20'
+                },
+                phoneNumber: {
+					digits: '必須是數字',
+					maxlength: '長度不可超過 20'
+                },
+                facebookId: {
+					maxlength: '長度不可超過 20'
+                },
+                lineId: {
+					maxlength: '長度不可超過 20'
+				},
+				wechatId: {
+					maxlength: '長度不可超過 20'
+				},
+				comment: {
+					maxlength: '長度不可超過 40'
                 },
 			},
 
@@ -525,12 +571,15 @@ var DatatablesDataSourceAjaxServer = function() {
 					data: $(form).serialize(), // serializes the form, note it is different from other AJAX in this module
 					success: function(result){
 						console.log(result);
-						oTable.ajax.reload(); // reload table data
+						
 						mApp.unblock('#create-modal .modal-content'); // Unblock button
-						$('#create-modal').modal('hide'); // close form modal
 						
 						// Sweet alert
 						if(!result.err){
+
+							$('#create-modal').modal('hide');  // close form modal
+							oTable.ajax.reload(); // reload table data
+
 							swal({
 								title: "執行成功",
 								text: "客服人員已新增!",
