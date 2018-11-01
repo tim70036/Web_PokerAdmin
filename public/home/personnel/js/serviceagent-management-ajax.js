@@ -1,4 +1,4 @@
-var DatatablesDataSourceAjaxServer = function() {
+var ServiceAgent = function() {
 
 	var oTable;
 
@@ -610,6 +610,6 @@ var DatatablesDataSourceAjaxServer = function() {
 }();
 
 jQuery(document).ready(function() {
-	DatatablesDataSourceAjaxServer.initTable();
-	DatatablesDataSourceAjaxServer.initForm();
+	ServiceAgent.initTable();
+	ServiceAgent.initForm();
 });

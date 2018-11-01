@@ -1,48 +1,17 @@
 const 
-    credentials = require('../../configs/credentials'),
-    sqlTransaction = require('../../libs/sqlTransaction'),
+    sqlTransaction = require('../../../libs/sqlTransaction'),
     { body, validationResult } = require('express-validator/check'),
     { sanitizeBody } = require('express-validator/filter');
 
 
-let memberHandler = function(req,res){
-    res.render('home/personnel/member', {layout : 'home'});
-}
 
-let agentHandler = function(req,res){
-    res.render('home/personnel/agent', {layout : 'home'});
-}
-
-let headAgentHandler = function(req,res){
-    res.render('home/personnel/head-agent', {layout : 'home'});
-}
-
-let serviceAgentHandler = function(req,res){
+// Page rendering
+let renderHandler = function(req,res){
     res.render('home/personnel/service-agent', {layout : 'home'});
 }
 
-// datatable server-side read
-let memberReadHandler = function(req,res){
-    let data = {
-    
-    };
-
-    res.json(data);
-}
-
-let agentReadHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let headAgentReadHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let serviceAgentReadHandler = function(req,res){
+// Datatable ajax read
+let readHandler = function(req,res){
 
     // Get the admin id of this user
     let adminId = req.user.roleId;
@@ -79,28 +48,8 @@ let serviceAgentReadHandler = function(req,res){
 
 }
 
-// datatable server-side create ajax
-let memberCreateHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let agentCreateHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let headAgentCreateHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-
-
-let serviceAgentCreateHandler = function(req,res){
+// Datatable ajax create
+let createHandler = function(req,res){
 
     const result = validationResult(req);
 
@@ -156,26 +105,8 @@ let serviceAgentCreateHandler = function(req,res){
     });
 }
 
-// datatable server-side Update ajax
-let memberUpdateHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let agentUpdateHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let headAgentUpdateHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let serviceAgentUpdateHandler = function(req,res){
+// Datatable ajax update
+let updateHandler = function(req,res){
     
     const result = validationResult(req);
    
@@ -217,26 +148,8 @@ let serviceAgentUpdateHandler = function(req,res){
     });
 }
 
-// datatable server-side delete ajax
-let memberDeleteHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let agentDeleteHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let headAgentDeleteHandler = function(req,res){
-    let data = {};
-
-    res.json(data);
-}
-
-let serviceAgentDeleteHandler = function(req,res){
+// Datatable ajax delete
+let deleteHandler = function(req,res){
 
     const result = validationResult(req);
 
@@ -280,7 +193,7 @@ let serviceAgentDeleteHandler = function(req,res){
 
 // Form data validate generators
 // Invoke it to produce a middleware for validating
-function serviceAgentCreateValidator(){
+function createValidator(){
     return [
         // Check format
         // All values must be string
@@ -365,7 +278,7 @@ function serviceAgentCreateValidator(){
     ];
 }
 
-function serviceAgentUpdateValidator(){
+function updateValidator(){
     return [
         // Check format
         // Data must be array
@@ -452,7 +365,7 @@ function serviceAgentUpdateValidator(){
     ];
 }
 
-function serviceAgentDeleteValidator(){
+function deleteValidator(){
     return [
         // Check format
         // Data must be array
@@ -513,36 +426,16 @@ function serviceAgentDeleteValidator(){
 }
 
 module.exports = {
-    member : memberHandler,
-    agent : agentHandler,
-    headAgent : headAgentHandler,
-    serviceAgent : serviceAgentHandler,
+    render : renderHandler,
 
-    //Read
-    memberRead : memberReadHandler,
-    agentRead : agentReadHandler,
-    headAgentRead : headAgentReadHandler,
-    serviceAgentRead : serviceAgentReadHandler,
+    read : readHandler,
 
-    //Create
-    memberCreate : memberCreateHandler,
-    agentCreate : agentCreateHandler,
-    headAgentCreate : headAgentCreateHandler,
-    serviceAgentCreate : serviceAgentCreateHandler,
-    serviceAgentCreateValidate : serviceAgentCreateValidator(),
+    create : createHandler,
+    createValidate : createValidator(),
 
-    //Update
-    memberUpdate : memberUpdateHandler,
-    agentUpdate : agentUpdateHandler,
-    headAgentUpdate : headAgentUpdateHandler,
-    serviceAgentUpdate : serviceAgentUpdateHandler,
-    serviceAgentUpdateValidate : serviceAgentUpdateValidator(),
-    
+    update : updateHandler,
+    updateValidate : updateValidator(),
 
-    //Delete
-    memberDelete : memberDeleteHandler,
-    agentDelete : agentDeleteHandler,
-    headAgentDelete : headAgentDeleteHandler,
-    serviceAgentDelete : serviceAgentDeleteHandler,
-    serviceAgentDeleteValidate:  serviceAgentDeleteValidator(),
+    delete : deleteHandler,
+    deleteValidate:  deleteValidator(),
 };

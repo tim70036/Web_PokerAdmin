@@ -7,8 +7,9 @@ const
  // Make Express use these routers
 function init(app) {
 
+    // Index page is /home/dashboard
     app.get('/', function (req, res) {
-        res.redirect('/home');
+        res.redirect('/home/dashboard');
     });
 
      // Make Express use these routers

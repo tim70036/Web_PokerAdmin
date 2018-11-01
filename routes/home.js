@@ -1,59 +1,67 @@
 // Export a router that is set with custom routes
 // Import handlers for routes
 const
-    express = require('express'),
-    homeController = require('../controllers/home');
+    express = require('express');
 
 let router = express.Router();
 
 
-// Register routes to a router
+// Extract handlers
+const {index, personnel, credit, game, account, login, authorize} = require('../controllers/home');
+
+
+// Authorize route
+router.use(/\/(dashboard|personnel|credit|game|account).*/, authorize); // used on all pages, except login
+
 // Dashboard routes
-router.get('/', homeController.authorize, homeController.index);
+router.get('/dashboard', index);
+
+// Login routes
+router.get('/login', login);
 
 // Personnel management routes
-router.get('/personnel/member', homeController.authorize, homeController.personnel.member);
-router.get('/personnel/agent', homeController.authorize, homeController.personnel.agent);
-router.get('/personnel/head-agent', homeController.authorize, homeController.personnel.headAgent);
-router.get('/personnel/service-agent', homeController.authorize, homeController.personnel.serviceAgent);
+const {serviceAgent, headAgent, agent, member} = personnel;
 
-// Personnel CRUD ajax
-router.get('/personnel/member/read', homeController.authorize, homeController.personnel.memberRead);
-router.get('/personnel/agent/read', homeController.authorize, homeController.personnel.agentRead);
-router.get('/personnel/head-agent/read', homeController.authorize, homeController.personnel.headAgentRead);
-router.get('/personnel/service-agent/read', homeController.authorize, homeController.personnel.serviceAgentRead);
+router.get('/personnel/service-agent', serviceAgent.render);
+router.get('/personnel/head-agent', headAgent.render);
+router.get('/personnel/agent', agent.render);
+router.get('/personnel/member', member.render);
 
-router.post('/personnel/member/create', homeController.authorize, homeController.personnel.memberCreate);
-router.post('/personnel/agent/create', homeController.authorize, homeController.personnel.agentCreate);
-router.post('/personnel/head-agent/create', homeController.authorize, homeController.personnel.headAgentCreate);
-router.post('/personnel/service-agent/create', homeController.authorize, homeController.personnel.serviceAgentCreateValidate, homeController.personnel.serviceAgentCreate);
+router.get('/personnel/service-agent/read', serviceAgent.read);
+router.get('/personnel/head-agent/read', headAgent.read);
+router.get('/personnel/agent/read', agent.read);
+router.get('/personnel/member/read', member.read);
 
-router.post('/personnel/member/update', homeController.authorize, homeController.personnel.memberUpdate);
-router.post('/personnel/agent/update', homeController.authorize, homeController.personnel.agentUpdate);
-router.post('/personnel/head-agent/update', homeController.authorize, homeController.personnel.headAgentUpdate);
-router.post('/personnel/service-agent/update', homeController.authorize, homeController.personnel.serviceAgentUpdateValidate, homeController.personnel.serviceAgentUpdate);
+router.post('/personnel/service-agent/create', serviceAgent.createValidate, serviceAgent.create);
+router.post('/personnel/head-agent/create', headAgent.createValidate, headAgent.create);
+router.post('/personnel/agent/create', agent.createValidate, agent.create);
+router.post('/personnel/member/create', member.createValidate, member.create);
 
-router.post('/personnel/member/delete', homeController.authorize, homeController.personnel.memberDelete);
-router.post('/personnel/agent/delete', homeController.authorize, homeController.personnel.agentDelete);
-router.post('/personnel/head-agent/delete', homeController.authorize, homeController.personnel.headAgentDelete);
-router.post('/personnel/service-agent/delete', homeController.authorize, homeController.personnel.serviceAgentDeleteValidate,  homeController.personnel.serviceAgentDelete);
+router.post('/personnel/service-agent/update', serviceAgent.updateValidate, serviceAgent.update);
+router.post('/personnel/head-agent/update', headAgent.updateValidate, headAgent.update);
+router.post('/personnel/agent/update', agent.updateValidate, agent.update);
+router.post('/personnel/member/update', member.updateValidate, member.update);
+
+router.post('/personnel/service-agent/delete', serviceAgent.deleteValidate,  serviceAgent.delete);
+router.post('/personnel/head-agent/delete', headAgent.deleteValidate, headAgent.delete);
+router.post('/personnel/agent/delete', agent.deleteValidate, agent.delete);
+router.post('/personnel/member/delete', member.deleteValidate, member.delete);
 
 // Credit management routes
-router.get('/credit/transfer', homeController.authorize, homeController.credit.transfer);
-router.get('/credit/history', homeController.authorize, homeController.credit.history);
+router.get('/credit/transfer', credit.transfer);
+router.get('/credit/history', credit.history);
 
 // Game management routes
-router.get('/game/verify', homeController.authorize, homeController.game.verify);
-router.get('/game/present-games', homeController.authorize, homeController.game.presentGames);
-router.get('/game/history', homeController.authorize, homeController.game.history);
-router.get('/game/import', homeController.authorize, homeController.game.import);
+router.get('/game/verify', game.verify);
+router.get('/game/present-games', game.presentGames);
+router.get('/game/history', game.history);
+router.get('/game/import', game.import);
 
 // Account management routes
-router.get('/account/misc', homeController.authorize, homeController.account.misc);
-router.get('/account/game', homeController.authorize, homeController.account.game);
-router.get('/account/club', homeController.authorize, homeController.account.club);
+router.get('/account/misc', account.misc);
+router.get('/account/game', account.game);
+router.get('/account/club', account.club);
 
-// Authorization routes
-router.get('/login', homeController.login);
+
 
 module.exports = router;

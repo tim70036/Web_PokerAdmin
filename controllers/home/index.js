@@ -1,14 +1,10 @@
-// Handlers for home page
-const 
-    credentials = require('../../configs/credentials');
-    
 
 // Import hadnlers from each sub module
-let 
-    personnelHandler = require('./personnel'),
-    creditHandler = require('./credit'),
-    gameHandler = require('./game'),
-    accountHandler = require('./account');
+const 
+    personnelHandlers = require('./personnel'),
+    creditHandlers = require('./credit'),
+    gameHandlers = require('./game'),
+    accountHandlers = require('./account');
 
 // Handler for home page
 let indexHandler = function(req,res) {
@@ -47,22 +43,18 @@ let authorizeHandler = function(req, res, next){
     return next();
 }
 
-let cmsHandler = function(req, res, next) {
-    // check connection?
-
-}
 
 
 module.exports = {
     index : indexHandler,
-    personnel : personnelHandler,
-    credit : creditHandler,
-    game : gameHandler,
-    account : accountHandler,
     login : loginHandler,
     authorize : authorizeHandler,
-    cms : cmsHandler,
 
+    personnel : personnelHandlers,
+    credit : creditHandlers,
+    game : gameHandlers,
+    account : accountHandlers,
+    
 };
 
 

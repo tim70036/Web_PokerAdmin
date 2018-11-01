@@ -17,24 +17,7 @@
 {{!-- Import custom script to layout --}}
 {{#section 'js'}}
 	<script src="/home/assets/vendors/custom/jquery-ui/jquery-ui.bundle.js" type="text/javascript"></script>
-	<script src="/home/assets/demo/default/custom/components/portlets/tools.js" type="text/javascript"></script>
-	<script src="/home/assets/demo/default/custom/components/portlets/draggable.js" type="text/javascript"></script>
-	
-	<script>
-		function fillEditModal(portletId){
-			// Read data from selected portlet
-			var pickedPortlet = $('#' + portletId);
-			var pickedClubName = pickedPortlet.find('.club-name').html();
-			var pickedClubId = pickedPortlet.find('.club-id').html();
-			var pickedClubAccount = pickedPortlet.find('.club-account').html();
-			
-			// Fill it into edit modal
-			$('#edit-club-name').val(pickedClubName);
-			$('#edit-club-id').val(pickedClubId);
-			$('#edit-club-account').val(pickedClubAccount);
-
-		}
-	</script>
+	<script src="/home/account/js/club.js" type="text/javascript"></script>
 {{/section}}
 
 {{!-- Header goes here --}}
