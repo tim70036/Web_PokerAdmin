@@ -4,7 +4,6 @@ const
     { sanitizeBody } = require('express-validator/filter');
 
 
-
 // Page rendering
 let renderHandler = function(req,res){
     res.render('home/personnel/service-agent', {layout : 'home'});
@@ -18,16 +17,20 @@ let readHandler = function(req,res){
 
     // Init return data (must suit DataTable's format)
 	let data = {
-    	"data":[]
+    	data : []
     };
 
     // Prepare query
-    let sqlString = `SELECT id, name, userAccount, lineId, wechatId,
-    				 	facebookId, phoneNumber, bankSymbol, bankName, 
-    				 	bankAccount,  comment, createtime, updatetime
-                     FROM ServiceAgentInfo
-                     WHERE adminId=?
-                     `;
+    let sqlString = `SELECT 
+                        Ser.id, Ser.userAccount, Ser.name, S.status,
+                        Ser.lineId, Ser.wechatId, Ser.facebookId, Ser.phoneNumber, 
+                        Ser.bankSymbol, Ser.bankName, Ser.bankAccount,  Ser.comment, Ser.createtime, Ser.updatetime
+                    FROM ServiceAgentInfo AS Ser
+                    INNER JOIN UserAccount AS U
+                        ON Ser.uid=U.id 
+                    INNER JOIN Status AS S
+                        ON U.statusId=S.id
+                    WHERE Ser.adminId=?`;
     let values = [adminId];
     sqlString = req.db.format(sqlString, values);
 
@@ -42,7 +45,7 @@ let readHandler = function(req,res){
             return res.json(data);  
         }
                 	
-        data["data"] = results;
+        data.data= results;
         return res.json(data);         
     });
 
@@ -116,7 +119,7 @@ let updateHandler = function(req,res){
         let firstError = result.array()[0].msg;
         return res.json({err: true, msg: firstError});
     }
-    
+
     // Receive data array
     let updateData = req.body.data;
     
@@ -130,7 +133,7 @@ let updateHandler = function(req,res){
 	for(let i=0 ; i<updateData.length ; i++){
         let element = updateData[i];
         let values = [element.name, element.lineId, element.wechatId, element.facebookId, element.phoneNumber,
-            element.bankAccount, element.bankName, element.bankAccount, element.comment, element.id];
+            element.bankSymbol, element.bankName, element.bankAccount, element.comment, element.id];
 
         // Append a statement to query string array
         queryStrings.push(req.db.format(sqlString, values)); 
@@ -251,8 +254,8 @@ function createValidator(){
 
             // Prepare query
             let sqlString =`SELECT * 
-            FROM UserAccount 
-            WHERE account=?`;
+                            FROM UserAccount 
+                            WHERE account=?`;
             let values = [data];
             sqlString = req.db.format(sqlString, values);
 
@@ -329,13 +332,11 @@ function updateValidator(){
         // Check in database
         body('data.*.id').custom(function(data, {req}){
 
-            const curAdminId = req.user.roleId;
-
             // Prepare query
-            let sqlString =`SELECT adminId 
+            let sqlString =`SELECT * 
                                 FROM ServiceAgentInfo 
-                                WHERE id=?`;
-            let values = [data];
+                                WHERE id=? AND adminId=?`;
+            let values = [data, req.user.roleId];
             sqlString = req.db.format(sqlString, values);
 
             // Check if duplicate account exists
@@ -347,13 +348,9 @@ function updateValidator(){
                     if(error) { 
                         return reject('Server 錯誤');
                     }                
-                    // This id does not exist
+                    // This id does not exist or this admin has no permission to update
                     else if (results.length <= 0) {
-                        return reject('不存在此筆資料');
-                    }
-                    // This admin has no permission to update
-                    else if (results[0].adminId !== curAdminId){
-                        return reject('您沒有權限更新');
+                        return reject('更新無效');
                     }
 
                     // Validation success, this is a valid update
@@ -361,7 +358,6 @@ function updateValidator(){
                 });
             });
         }),
-
     ];
 }
 
@@ -381,6 +377,8 @@ function deleteValidator(){
         body('data.*.id')
             .isInt({ min:0, max:9999999999 }).withMessage('Wrong data format'),
         
+    
+
         // Sanitize all values 
         sanitizeBody('data.*.*')
             .escape() // Esacpe characters to prevent XSS attack, replace <, >, &, ', " and / with HTML entities
@@ -390,13 +388,11 @@ function deleteValidator(){
         // Check in database
         body('data.*.id').custom(function(data, {req}){
 
-            const curAdminId = req.user.roleId;
-
             // Prepare query
-            let sqlString =`SELECT adminId 
+            let sqlString =`SELECT * 
                                 FROM ServiceAgentInfo 
-                                WHERE id=?`;
-            let values = [data];
+                                WHERE id=? AND adminId=?`;
+            let values = [data, req.user.roleId];
             sqlString = req.db.format(sqlString, values);
 
             // Check if duplicate account exists
@@ -408,16 +404,12 @@ function deleteValidator(){
                     if(error) { 
                         return reject('Server 錯誤');
                     }                
-                    // This id does not exist
+                    // This id does not exist or this admin has no permission to update
                     else if (results.length <= 0) {
-                        return reject('不存在此筆資料');
-                    }
-                    // This admin has no permission to delete
-                    else if (results[0].adminId !== curAdminId){
-                        return reject('您沒有權限刪除');
+                        return reject('刪除無效');
                     }
 
-                    // Validation success, this is a valid delete
+                    // Validation success, this is a valid update
                     return resolve(true);
                 });
             });

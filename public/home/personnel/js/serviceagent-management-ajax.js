@@ -34,39 +34,43 @@ var ServiceAgent = function() {
 
 			// Data table button
 			buttons: [
-				{ 
+                { 
 					text: '<i class="fa fa-user-edit"></i> <span>編輯選取</span>',
 					attr: {
 						id: 'editButton',
-						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
-						style: "display:block; margin-right:0.5em;"
+						class: 'table-btn btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
+					},
+                },
+                { 
+					text: '<i class="fa fa-user-lock"></i> <span>凍結選取</span>', 
+					attr: {
+						id: 'frozenButton',
+						class: 'table-btn btn btn-outline-danger m-btn m-btn--custom m-btn--icon m-btn--pill m-btn--bolder',
 					},
 				},
-
+                { 
+					text: '<i class="fa fa-user-slash"></i> <span>刪除選取</span>', 
+					attr: {
+						id: 'deleteButton',
+						class: 'table-btn btn btn-danger m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--air m-btn--bolder ',
+					},
+				},
 				{ 
 					text: '<i class="fa fa-save"></i> <span>保存變更</span>', 
 					attr: {
 						id: 'saveButton',
-						class: 'btn btn-outline-success m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
-						style: "display:none; margin-right:0.5em;"
+                        class: 'table-btn btn btn-outline-success m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
+                        style: "display:none;",
 					},	
-				},
+                },
 				{ 	
 					text: '<i class="fa fa-walking"></i> <span>離開編輯</span>', 
 					attr: {
 						id: 'cancelButton',
-						class: 'btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
-						style: "display:none; margin-right:0.5em;"
+						class: 'table-btn btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
+						style: "display:none;",
 					},
-				},
-				{ 
-					text: '<i class="fa fa-user-slash"></i> <span>刪除選取</span>', 
-					attr: {
-						id: 'deleteButton',
-						class: 'btn btn-outline-danger m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
-						style: "display:block; margin-right:0.5em;"
-					},
-				},
+                },
 			],
 			
 			// Column data
@@ -413,15 +417,19 @@ var ServiceAgent = function() {
 
 		function editModeButton(){
 			oTable.column(0).visible(false);
-			$('#saveButton').css('display', 'block');
-			$('#cancelButton').css('display', 'block');
+            $('#saveButton').css('display', 'inline');
+			$('#cancelButton').css('display', 'inline');
+
 			$('#editButton').css('display', 'none');
+			$('#frozenButton').css('display', 'none');
 			$('#deleteButton').css('display', 'none');
 		}
 		function normalModeButton(){
-			$('#editButton').css('display', 'block');
-			$('#deleteButton').css('display', 'block');
-			$('#saveButton').css('display', 'none');
+			$('#editButton').css('display', 'inline');
+			$('#frozenButton').css('display', 'inline');
+			$('#deleteButton').css('display', 'inline');
+
+            $('#saveButton').css('display', 'none');
 			$('#cancelButton').css('display', 'none');
 			oTable.column(0).visible(true);
 		}

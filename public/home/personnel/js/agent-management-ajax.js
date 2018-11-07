@@ -1,4 +1,4 @@
-var HeadAgent = function() {
+var Agent = function() {
 
 	var oTable;
 
@@ -381,7 +381,7 @@ var HeadAgent = function() {
 
 			// Sweet alert, make user confirm
 			swal({
-                title: '確定刪除 ' + data.length + ' 位總代理商?',
+                title: '確定刪除 ' + data.length + ' 位代理商?',
                 text: '這項變動將無法復原!',
                 type: 'warning',
                 showCancelButton: true,
@@ -414,7 +414,7 @@ var HeadAgent = function() {
 							if(!result.err){
 								swal({
 									title: "執行成功",
-									text: "客服人員已刪除!",
+									text: "代理商已刪除!",
 									type: "success",
 									confirmButtonText: "OK"
 								});
@@ -469,8 +469,49 @@ var HeadAgent = function() {
 	};
 
 	var initForm = function() {
-		// http://jqueryvalidation.org/validate/
+        
+        // Select 2, modal
+        $('#create-modal').on('shown.bs.modal', function () {
+            // Set select 2 when modal show
+            $('#head-agent').select2({
+                placeholder: "請選擇歸屬的總代理",
+                data: data
+            });
+        });
 
+        // loading data from array
+        var data = [{
+            id: 0,
+            text: 'Tim'
+        }, {
+            id: 1,
+            text: 'Shawn'
+        }, {
+            id: 2,
+            text: 'Poker'
+        }, {
+            id: 3,
+            text: 'Admin'
+        }, {
+            id: 4,
+            text: '阿亮'
+        }, {
+            id: 5,
+            text: '小王'
+        }, {
+            id: 6,
+            text: '小陳'
+        }, {
+            id: 7,
+            text: 'ttA'
+        }, {
+            id: 8,
+            text: 'David'
+        }];
+
+
+        // Form Validate
+		// http://jqueryvalidation.org/validate/
 		// Custom email validator, the original one is like shit(cannot allow blank)
 		$.validator.methods.email = function( value, element ) {
 			console.log(value);
@@ -509,20 +550,16 @@ var HeadAgent = function() {
 					maxlength: 40
                 },
                 cash: {
-					required: true,
                     number: true
                 },
                 credit: {
-					required: true,
                     number: true
                 },
                 posRb: {
-					required: true,
                     float: true,
                     range: [-100, 100]
                 },
                 negRb: {
-					required: true,
                     float: true,
                     range: [-100, 100]
                 },
@@ -579,20 +616,16 @@ var HeadAgent = function() {
 					maxlength: '長度不可超過 40'
                 },
                 cash: {
-					required: '現金額度為必填欄位',
                     number: "必須是整數"
                 },
                 credit: {
-					required: '信用額度為必填欄位',
                     number: "必須是整數"
                 },
                 posRb: {
-					required: '正退水為必填欄位',
                     float: "必須是數字",
                     range: "必須介於 -100 ～ 100"
                 },
                 negRb: {
-					required: '負退水為必填欄位',
                     float: "必須是數字",
                     range: "必須介於 -100 ～ 100"
                 },
@@ -665,7 +698,7 @@ var HeadAgent = function() {
 
 							swal({
 								title: "執行成功",
-								text: "總代理商已新增!",
+								text: "代理商已新增!",
 								type: "success",
 								confirmButtonText: "OK"
 							});
@@ -693,6 +726,6 @@ var HeadAgent = function() {
 }();
 
 jQuery(document).ready(function() {
-	HeadAgent.initTable();
-	HeadAgent.initForm();
+	Agent.initTable();
+	Agent.initForm();
 });

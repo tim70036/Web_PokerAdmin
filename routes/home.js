@@ -57,6 +57,9 @@ router.get('/game/present-games', game.presentGames);
 router.get('/game/history', game.history);
 router.get('/game/import', game.import);
 
+router.post('/game/verify/acceptBuyin', game.acceptBuyin);
+router.post('/game/verify/denyBuyin', game.denyBuyin);
+
 // Account management routes
 router.get('/account/misc', account.misc);
 router.get('/account/game', account.game);

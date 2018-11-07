@@ -15,6 +15,7 @@ function init(app){
     let client = redis.createClient({
         host     : credentials.redisProviders.host,
         port     : credentials.redisProviders.port,
+        password : credentials.redisProviders.pwd,
     });
 
     // Set logging function
