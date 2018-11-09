@@ -1,5 +1,4 @@
 const 
-    sqlTransaction = require('../../../libs/sqlTransaction'),
     sqlAsync = require('../../../libs/sqlAsync'),
     { body, validationResult } = require('express-validator/check'),
     { sanitizeBody } = require('express-validator/filter');
@@ -19,13 +18,14 @@ let readHandler = async function(req,res){
     	data : []
     };
 
-    // Get admin 
+    // Get the admin of this user
     let admin;
     try{
         admin = await getAdmin(req);
     }
     catch(error) {
-        return res.json({err: true, msg: error.message});
+        console.log(error);
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
     
     // Prepare query
@@ -47,9 +47,6 @@ let readHandler = async function(req,res){
     // Execute query
     try {
         let results = await sqlAsync.query(req.db, sqlStringRead);
-
-        // Check result
-        if(results.length <= 0 ) throw Error(`Cannot find any head agent for adminId = ${admin.id}`);
 
         // Return result
         data.data = results;
@@ -93,13 +90,14 @@ let createHandler = async function(req,res){
             wechatId, 
             comment } = req.body;
     
-    // Get admin 
+    // Get the admin of this user
     let admin;
     try{
         admin = await getAdmin(req);
     }
     catch(error) {
-        return res.json({err: true, msg: error.message});
+        console.log(error);
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
 
     // Check if admin has enough balance 
@@ -139,14 +137,12 @@ let createHandler = async function(req,res){
     // Execute transaction
     try{
         await sqlAsync.query(req.db, 'START TRANSACTION');
-        
         let results = await sqlAsync.query(req.db, sqlStringInsert1 + sqlStringInsert2 + sqlStringUpdate);
-
     }
     catch(error) {
         await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
         console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
     await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
     
@@ -155,7 +151,7 @@ let createHandler = async function(req,res){
 
 // Datatable ajax update
 let updateHandler = async function(req,res){
-    console.log(req.body.data);
+    
     const result = validationResult(req);
    
     // If the form data is invalid
@@ -168,13 +164,14 @@ let updateHandler = async function(req,res){
     // Receive data array
     let updateData = req.body.data;
 
-    // Get admin 
+    // Get the admin of this user
     let admin;
     try{
         admin = await getAdmin(req);
     }
     catch(error) {
-        return res.json({err: true, msg: error.message});
+        console.log(error);
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
     
     // Prepare query for validate availBalance
@@ -182,25 +179,25 @@ let updateHandler = async function(req,res){
                          FROM HeadAgentInfo
                          WHERE id IN(?)
                          `;
-    values = [ updateData.map((element) => element.id) ]; // a list of id of all the head agent that required update
+    values = [ updateData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
     sqlStringCash = req.db.format(sqlStringCash, values);
 
     // Execute query to get orginal total cash and new total cash of all the head agent that required update
-    let newTotalCash = updateData.reduce( (sum, element) => sum + Number(element.cash) ,0);
+    let newTotalCash = updateData.reduce( (sum, headAgent) => sum + Number(headAgent.cash) ,0);
     let orgTotalCash;
     try {
         let results = await sqlAsync.query(req.db, sqlStringCash);
 
         // Check result
-        if(results.length <= 0 ) throw Error(`Cannot find calculate SUM of all head agents' cash`);
+        if(results.length <= 0 ) throw Error(`Cannot calculate SUM of all head agents' cash`);
         orgTotalCash = results[0].totalCash;
     }
     catch(error) {
         console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
 
-    console.log({newTotalCash, orgTotalCash});
+    //console.log({newTotalCash, orgTotalCash});
 
     // Calculate change and validate with admin's availBalance
     if(newTotalCash - orgTotalCash > admin.availBalance){
@@ -210,12 +207,13 @@ let updateHandler = async function(req,res){
 
     // Now, these updates are all valid, execute all 
     // Prepare query
+    // Query for update all head agents
     let sqlStringTmp = `UPDATE HeadAgentInfo 
-                            SET  name=?, cash=?, credit=?, frozenBalance=?, posRb=?, negRb=?,
-                                lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
-                                bankSymbol=?, bankName=?, bankAccount=?, comment=?
-                            WHERE id=?
-                            ;`;
+                        SET  name=?, cash=?, credit=?, frozenBalance=?, posRb=?, negRb=?,
+                            lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
+                            bankSymbol=?, bankName=?, bankAccount=?, comment=?
+                        WHERE id=?
+                        ;`;
     let sqlStringUpdate1 = '';
     for(let i=0 ; i<updateData.length ; i++) {
 
@@ -226,6 +224,7 @@ let updateHandler = async function(req,res){
         sqlStringUpdate1  += req.db.format(sqlStringTmp, values);
     }
 
+    // Query for update admin
     let sqlStringUpdate2 = `UPDATE AdminInfo
                             SET cash=cash-?, frozenBalance=frozenBalance+?
                             WHERE id=?
@@ -241,7 +240,7 @@ let updateHandler = async function(req,res){
     catch(error) {
         await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
         console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
     await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
     
@@ -262,48 +261,51 @@ let deleteHandler = async function(req,res){
 
     let deleteData = req.body.data;
 
-    // Return cash to admin?
-
-    // Get admin 
+    // Get the admin of this user
     let admin;
     try{
         admin = await getAdmin(req);
     }
     catch(error) {
-        return res.json({err: true, msg: error.message});
+        console.log(error);
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
 
 
-    // Prepare query
-    let sqlStringCash = `SELECT SUM(cash) AS totalCash
-                            FROM HeadAgentInfo
-                            WHERE id IN(?)
-                            `;
-    values = [ deleteData.map((element) => element.id) ]; // a list of id of all the head agent that required update
+    // Prepare query, get total cash of all the head agents that pepare to be deleted
+    let sqlStringCash =`SELECT SUM(cash) AS totalCash
+                        FROM HeadAgentInfo
+                        WHERE id IN(?)
+                        `;
+    values = [ deleteData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
     sqlStringCash = req.db.format(sqlStringCash, values);
 
-    // Execute query to get total cash of all the head agent that pepare to be deleted
+    // Get total cash of all the head agents that pepare to be deleted
+    // Execute query
     let totalCash;
     try {
         let results = await sqlAsync.query(req.db, sqlStringCash);
 
         // Check result
-        if(results.length <= 0 ) throw Error(`Cannot find calculate SUM of all head agents' cash`);
+        if(results.length <= 0 ) throw Error(`Cannot calculate SUM of all head agents' cash`);
         totalCash = results[0].totalCash;
     }
     catch(error) {
         console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
 
     console.log({totalCash});
 
     // Now, delete all head agents
-    // Prepare query
-    let sqlStringDel = `DELETE FROM HeadAgentInfo
-                        WHERE id IN (?)
+    // Prepare query, return cash to admin?
+    let sqlStringDel = `DELETE Usr 
+                        FROM UserAccount AS Usr
+                        WHERE Usr.id IN (   SELECT H.uid 
+                                            FROM HeadAgentInfo AS H
+                                            WHERE H.id in (?) )
                         ;`;
-    values = [ deleteData.map((element) => element.id) ]; // a list of id of all the head agent that pepare to be deleted
+    values = [ deleteData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
     sqlStringDel = req.db.format(sqlStringDel, values);
 
     let sqlStringUpdate = `UPDATE AdminInfo
@@ -321,7 +323,7 @@ let deleteHandler = async function(req,res){
     catch(error) {
         await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
         console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
+        return res.json({err: true, msg: 'Server 錯誤'});
     }
     await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
     
@@ -358,13 +360,13 @@ function createValidator(){
             .isEmail({ min:0 }).withMessage('信箱格式錯誤'), 
 
         body('cash')
-            .isInt().withMessage('現金額度必須是數字'),
+            .isInt({ min:-999999999 , max:999999999}).withMessage('現金額度必須是數字'),
         body('credit')
-            .isInt().withMessage('信用額度必須是數字'),
+            .isInt({ min:-999999999 , max:999999999}).withMessage('信用額度必須是數字'),
         body('posRb')
-            .isFloat().withMessage('正退水必須是小數'),
+            .isFloat({ min:-100 , max:100}).withMessage('正退水必須是小數'),
         body('negRb')
-            .isFloat().withMessage('負退水必須是小數'),
+            .isFloat({ min:-100 , max:100}).withMessage('負退水必須是小數'),
 
         body('bankSymbol')
             .isLength({ min:0, max:20 }).withMessage('銀行代碼長度不可超過 20')
@@ -395,34 +397,29 @@ function createValidator(){
             .escape() // Esacpe characters to prevent XSS attack, replace <, >, &, ', " and / with HTML entities
             .trim(), // trim white space from both end
         
-        // Check in database
-        body('account').custom(function(data, {req}){
+        // Check duplicate account in database
+        body('account').custom(async function(data, {req}){
 
             // Prepare query
             let sqlString =`SELECT * 
-            FROM UserAccount 
-            WHERE account=?`;
+                            FROM UserAccount 
+                            WHERE account=?`;
             let values = [data];
             sqlString = req.db.format(sqlString, values);
 
             // Check if duplicate account exists
-            return new Promise(function(resolve, reject) {
-                req.db.query(sqlString, function(error, results, fields){
-                    // error will be an Error if one occurred during the query
-                    // results will contain the results of the query
-                    // fields will contain information about the returned results fields (if any)
-                    if(error) { 
-                        return reject('Server 錯誤');
-                    }                
-                    // This account is duplicate
-                    else if (results.length > 0) {
-                        return reject('使用者帳號重複');
-                    }
+            let results;
+            try {
+                results = await sqlAsync.query(req.db, sqlString);
+            }
+            catch(error) {
+                console.log(error);
+                throw Error('Server 錯誤');
+            }
 
-                    // Validation success, this is not a duplicate account
-                    return resolve(true);
-                });
-            });
+            if(results.length > 0) throw Error('使用者帳號重複');
+
+            return true;
         }),
     ];
 }
@@ -447,15 +444,15 @@ function updateValidator(){
             .isLength({ max:20 }).withMessage('名稱長度不可超過 20'),  
 
         body('data.*.cash')
-            .isInt().withMessage('現金額度必須是數字'),
+            .isInt({ min:-999999999 , max:999999999}).withMessage('現金額度必須是數字'),
         body('data.*.credit')
-            .isInt().withMessage('信用額度必須是數字'),
+            .isInt({ min:-999999999 , max:999999999}).withMessage('信用額度必須是數字'),
         body('data.*.frozenBalance')
-            .isInt().withMessage('凍結資產必須是數字'),
+            .isInt({ min:-999999999 , max:999999999}).withMessage('凍結資產必須是數字'),
         body('data.*.posRb')
-            .isFloat().withMessage('正退水必須是小數'),
+            .isFloat({ min:-100 , max:100}).withMessage('正退水必須是小數'),
         body('data.*.negRb')
-            .isFloat().withMessage('負退水必須是小數'),
+            .isFloat({ min:-100 , max:100}).withMessage('負退水必須是小數'),
 
         body('data.*.lineId')
             .isLength({ min:0, max:20 }).withMessage('Line Id 長度不可超過 20'),  // length 0 means this field is optional
@@ -486,49 +483,42 @@ function updateValidator(){
             .escape() // Esacpe characters to prevent XSS attack, replace <, >, &, ', " and / with HTML entities
             .trim(), // trim white space from both end
         
-        // Check in database
-        body('data.*.id').custom(function(data, {req}){
+        // Check permission from database
+        body('data.*.id').custom(async function(data, {req}){
 
             // Prepare query
             // Based on different of this user, we will use different query string
-            let sqlString;
+            let sqlString, values;
             if(req.user.role === "serviceAgent"){
-                let sqlTmpString = `SELECT * 
-                                    FROM HeadAgentInfo AS H
-                                    WHERE H.id=? AND H.adminId=(SELECT Ser.adminId from ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
-                let values = [data, req.user.roleId];
-                sqlString = req.db.format(sqlTmpString, values);
+                sqlString = `SELECT * 
+                             FROM HeadAgentInfo AS H
+                             WHERE H.id=? AND H.adminId=(SELECT Ser.adminId from ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
             }
             else if(req.user.role === "admin"){
-                let sqlTmpString = `SELECT * 
-                                    FROM HeadAgentInfo 
-                                    WHERE id=? AND adminId=?`;
-                let values = [data, req.user.roleId];
-                sqlString = req.db.format(sqlTmpString, values);
+                sqlString = `SELECT * 
+                             FROM HeadAgentInfo 
+                             WHERE id=? AND adminId=?`;
             }
             else{
                 // Invalid role
-                return false;
+                throw Error('更新無效');
+            }
+            values = [data, req.user.roleId];
+            sqlString = req.db.format(sqlString, values);
+
+            // Check if this head agent is valid for this user to update
+            let results;
+            try {
+                results = await sqlAsync.query(req.db, sqlString);
+            }
+            catch(error) {
+                console.log(error);
+                throw Error('Server 錯誤');
             }
 
-            // Check if duplicate account exists
-            return new Promise(function(resolve, reject) {
-                req.db.query(sqlString, function(error, results, fields){
-                    // error will be an Error if one occurred during the query
-                    // results will contain the results of the query
-                    // fields will contain information about the returned results fields (if any)
-                    if(error) { 
-                        return reject('Server 錯誤');
-                    }                
-                    // This id does not exist or this user has no permission to update
-                    else if (results.length <= 0) {
-                        return reject('更新無效');
-                    }
+            if(results.length <= 0) throw Error('更新無效');
 
-                    // Validation success, this is a valid update
-                    return resolve(true);
-                });
-            });
+            return true;
         }),
     ];
 }
@@ -557,49 +547,42 @@ function deleteValidator(){
             .trim(), // trim white space from both end 
 
 
-        // Check in database
-        body('data.*.id').custom(function(data, {req}){
+        // Check permission from database
+        body('data.*.id').custom(async function(data, {req}){
 
             // Prepare query
             // Based on different of this user, we will use different query string
-            let sqlString;
+            let sqlString, values;
             if(req.user.role === "serviceAgent"){
-                let sqlTmpString = `SELECT * 
-                                    FROM HeadAgentInfo AS H
-                                    WHERE H.id=? AND H.adminId=(SELECT Ser.adminId from ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
-                let values = [data, req.user.roleId];
-                sqlString = req.db.format(sqlTmpString, values);
+                sqlString = `SELECT * 
+                             FROM HeadAgentInfo AS H
+                             WHERE H.id=? AND H.adminId=(SELECT Ser.adminId from ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
             }
             else if(req.user.role === "admin"){
-                let sqlTmpString = `SELECT * 
-                                    FROM HeadAgentInfo 
-                                    WHERE id=? AND adminId=?`;
-                let values = [data, req.user.roleId];
-                sqlString = req.db.format(sqlTmpString, values);
+                sqlString = `SELECT * 
+                             FROM HeadAgentInfo 
+                             WHERE id=? AND adminId=?`;
             }
             else{
                 // Invalid role
-                return false;
+                throw Error('刪除無效');
+            }
+            values = [data, req.user.roleId];
+            sqlString = req.db.format(sqlString, values);
+
+            // Check if this head agent is valid for this user to delete
+            let results;
+            try {
+                results = await sqlAsync.query(req.db, sqlString);
+            }
+            catch(error) {
+                console.log(error);
+                throw Error('Server 錯誤');
             }
 
-            // Check if duplicate account exists
-            return new Promise(function(resolve, reject) {
-                req.db.query(sqlString, function(error, results, fields){
-                    // error will be an Error if one occurred during the query
-                    // results will contain the results of the query
-                    // fields will contain information about the returned results fields (if any)
-                    if(error) { 
-                        return reject('Server 錯誤');
-                    }                
-                    // This id does not exist or this user has no permission to update
-                    else if (results.length <= 0) {
-                        return reject('刪除無效');
-                    }
+            if(results.length <= 0) throw Error('刪除無效');
 
-                    // Validation success, this is a valid update
-                    return resolve(true);
-                });
-            });
+            return true;
         }),
     ];
 }
@@ -610,34 +593,29 @@ function deleteValidator(){
 async function getAdmin(req){
     // Prepare query
     // Based on different of this user, we will use different query string
-    let sqlStringCheck;
-    let values;
+    let sqlStringCheck, values;
     if(req.user.role === "serviceAgent"){
-        let sqlTmpString = `SELECT 
-                                *
-                            FROM AdminInfo AS Adm
-                            WHERE Adm.id=(SELECT Ser.adminId FROM ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
-        values = [req.user.roleId];
-        sqlStringCheck = req.db.format(sqlTmpString, values);
+        sqlStringCheck  = `SELECT *
+                           FROM AdminInfo AS Adm
+                           WHERE Adm.id=(SELECT Ser.adminId FROM ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
     }
     else if(req.user.role === "admin"){
-        let sqlTmpString = `SELECT 
-                                *
-                            FROM AdminInfo
-                            WHERE id=?`;
-        values = [req.user.roleId];
-        sqlStringCheck = req.db.format(sqlTmpString, values);
+        sqlStringCheck = `SELECT *
+                          FROM AdminInfo
+                          WHERE id=?`;
     }
     else{
         throw Error(`權限不足`);
     }
+    values = [req.user.roleId];
+    sqlStringCheck = req.db.format(sqlStringCheck, values);
 
     // Get availBalance and id of this admin
     // Execute query
     let results = await sqlAsync.query(req.db, sqlStringCheck);
 
     // Check result
-    if(results.length <= 0 ) throw Error(`Cannot find admin's avail balance`);
+    if(results.length <= 0 ) throw Error(`Cannot find the admin of this user`);
 
     return results[0];
 

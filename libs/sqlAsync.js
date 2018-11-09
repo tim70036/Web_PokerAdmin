@@ -1,12 +1,12 @@
 // Execute a sql string that allow using async/await
 // Ex : 
-    // try {
-    //     let result = await sqlAsync.query(dbConneciton, sqlString);
-    // }
-    // catch(error)
-    // {
+// try {
+//     let result = await sqlAsync.query(dbConneciton, sqlString);
+// }
+// catch(error)
+// {
 
-    // }
+// }
 
 
 let query = function( db, sql ) {

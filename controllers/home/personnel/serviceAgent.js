@@ -249,7 +249,7 @@ function createValidator(){
             .escape() // Esacpe characters to prevent XSS attack, replace <, >, &, ', " and / with HTML entities
             .trim(), // trim white space from both end
         
-        // Check in database
+        // Check duplicate account in database
         body('account').custom(function(data, {req}){
 
             // Prepare query
@@ -329,7 +329,7 @@ function updateValidator(){
             .escape() // Esacpe characters to prevent XSS attack, replace <, >, &, ', " and / with HTML entities
             .trim(), // trim white space from both end
         
-        // Check in database
+        // Check permission from database
         body('data.*.id').custom(function(data, {req}){
 
             // Prepare query

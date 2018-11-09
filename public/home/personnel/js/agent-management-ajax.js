@@ -14,7 +14,7 @@ var Agent = function() {
 
 			// Data source
 			ajax: {
-				url: '/home/personnel/head-agent/read',
+				url: '/home/personnel/agent/read',
 			},
 
 			//== Pagination settings
@@ -85,7 +85,8 @@ var Agent = function() {
                 {data: 'totalBalance'},
                 {data: 'posRb'},
                 {data: 'negRb'},
-                {data: 'status'},
+				{data: 'status'},
+				{data: 'headAgent'},
 				{data: 'lineId'},
 				{data: 'wechatId'},
 				{data: 'facebookId'},
@@ -158,14 +159,14 @@ var Agent = function() {
                     var frozenBalance =oTable.cell(rowIdx, 5).data();
                     var posRb =oTable.cell(rowIdx, 8).data();
                     var negRb =oTable.cell(rowIdx, 9).data();
-					var lineId = oTable.cell(rowIdx, 11).data();
-					var wechatId = oTable.cell(rowIdx, 12).data();
-					var facebookId = oTable.cell(rowIdx, 13).data();
-					var phoneNumber = oTable.cell(rowIdx, 14).data();
-					var bankSymbol = oTable.cell(rowIdx, 15).data();
-					var bankName = oTable.cell(rowIdx, 16).data();
-					var bankAccount = oTable.cell(rowIdx, 17).data();
-					var comment = oTable.cell(rowIdx, 18).data();
+					var lineId = oTable.cell(rowIdx, 12).data();
+					var wechatId = oTable.cell(rowIdx, 13).data();
+					var facebookId = oTable.cell(rowIdx, 14).data();
+					var phoneNumber = oTable.cell(rowIdx, 15).data();
+					var bankSymbol = oTable.cell(rowIdx, 16).data();
+					var bankName = oTable.cell(rowIdx, 17).data();
+					var bankAccount = oTable.cell(rowIdx, 18).data();
+					var comment = oTable.cell(rowIdx, 19).data();
 					
 					//console.log('index is cheched : ' + rowIdx);
                     oTable.cell(rowIdx,2).node().innerHTML = `<input type="text" class="form-control input-small" value=${name}>`;
@@ -174,14 +175,14 @@ var Agent = function() {
                     oTable.cell(rowIdx,5).node().innerHTML = `<input type="text" class="form-control input-small" value=${frozenBalance}>`;
                     oTable.cell(rowIdx,8).node().innerHTML = `<input type="text" class="form-control input-small" value=${posRb}>`;
                     oTable.cell(rowIdx,9).node().innerHTML = `<input type="text" class="form-control input-small" value=${negRb}>`;
-					oTable.cell(rowIdx,11).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
-					oTable.cell(rowIdx,12).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
-					oTable.cell(rowIdx,13).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
-					oTable.cell(rowIdx,14).node().innerHTML = `<input type="text" class="form-control input-small" value=${phoneNumber}>`;
-					oTable.cell(rowIdx,15).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankSymbol}>`;
-					oTable.cell(rowIdx,16).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankName}>`;
-					oTable.cell(rowIdx,17).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankAccount}>`;
-					oTable.cell(rowIdx,18).node().innerHTML = `<input type="text" class="form-control input-small" value=${comment}>`;
+					oTable.cell(rowIdx,12).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
+					oTable.cell(rowIdx,13).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
+					oTable.cell(rowIdx,14).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
+					oTable.cell(rowIdx,15).node().innerHTML = `<input type="text" class="form-control input-small" value=${phoneNumber}>`;
+					oTable.cell(rowIdx,16).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankSymbol}>`;
+					oTable.cell(rowIdx,17).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankName}>`;
+					oTable.cell(rowIdx,18).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankAccount}>`;
+					oTable.cell(rowIdx,19).node().innerHTML = `<input type="text" class="form-control input-small" value=${comment}>`;
 				}
 			});
 
@@ -213,14 +214,14 @@ var Agent = function() {
                     var frozenBalance =oTable.cell(rowIdx, 5).data();
                     var posRb =oTable.cell(rowIdx, 8).data();
                     var negRb =oTable.cell(rowIdx, 9).data();
-					var lineId = oTable.cell(rowIdx, 11).data();
-					var wechatId = oTable.cell(rowIdx, 12).data();
-					var facebookId = oTable.cell(rowIdx, 13).data();
-					var phoneNumber = oTable.cell(rowIdx, 14).data();
-					var bankSymbol = oTable.cell(rowIdx, 15).data();
-					var bankName = oTable.cell(rowIdx, 16).data();
-					var bankAccount = oTable.cell(rowIdx, 17).data();
-					var comment = oTable.cell(rowIdx, 18).data();
+					var lineId = oTable.cell(rowIdx, 12).data();
+					var wechatId = oTable.cell(rowIdx, 13).data();
+					var facebookId = oTable.cell(rowIdx, 14).data();
+					var phoneNumber = oTable.cell(rowIdx, 15).data();
+					var bankSymbol = oTable.cell(rowIdx, 16).data();
+					var bankName = oTable.cell(rowIdx, 17).data();
+					var bankAccount = oTable.cell(rowIdx, 18).data();
+					var comment = oTable.cell(rowIdx, 19).data();
 					
 					//console.log('index is restored : ' + rowIdx);
                     oTable.cell(rowIdx,2).node().innerHTML = name;
@@ -229,14 +230,14 @@ var Agent = function() {
                     oTable.cell(rowIdx,5).node().innerHTML = frozenBalance;
                     oTable.cell(rowIdx,8).node().innerHTML = posRb;
                     oTable.cell(rowIdx,9).node().innerHTML = negRb;
-					oTable.cell(rowIdx,11).node().innerHTML = lineId;
-					oTable.cell(rowIdx,12).node().innerHTML = wechatId;
-					oTable.cell(rowIdx,13).node().innerHTML = facebookId;
-					oTable.cell(rowIdx,14).node().innerHTML = phoneNumber;
-					oTable.cell(rowIdx,15).node().innerHTML = bankSymbol;
-					oTable.cell(rowIdx,16).node().innerHTML = bankName;
-					oTable.cell(rowIdx,17).node().innerHTML = bankAccount;
-					oTable.cell(rowIdx,18).node().innerHTML = comment;
+					oTable.cell(rowIdx,12).node().innerHTML = lineId;
+					oTable.cell(rowIdx,13).node().innerHTML = wechatId;
+					oTable.cell(rowIdx,14).node().innerHTML = facebookId;
+					oTable.cell(rowIdx,15).node().innerHTML = phoneNumber;
+					oTable.cell(rowIdx,16).node().innerHTML = bankSymbol;
+					oTable.cell(rowIdx,17).node().innerHTML = bankName;
+					oTable.cell(rowIdx,18).node().innerHTML = bankAccount;
+					oTable.cell(rowIdx,19).node().innerHTML = comment;
 				}
 			});
 
@@ -268,14 +269,14 @@ var Agent = function() {
                     obj["frozenBalance"] = oTable.cell(rowIdx, 5).node().childNodes[0].value;
                     obj["posRb"] = oTable.cell(rowIdx, 8).node().childNodes[0].value;
                     obj["negRb"] = oTable.cell(rowIdx, 9).node().childNodes[0].value;
-					obj["lineId"] = oTable.cell(rowIdx, 11).node().childNodes[0].value;
-					obj["wechatId"] = oTable.cell(rowIdx, 12).node().childNodes[0].value;
-					obj["facebookId"] = oTable.cell(rowIdx, 13).node().childNodes[0].value;
-					obj["phoneNumber"] = oTable.cell(rowIdx, 14).node().childNodes[0].value;
-					obj["bankSymbol"] = oTable.cell(rowIdx, 15).node().childNodes[0].value;
-					obj["bankName"] = oTable.cell(rowIdx, 16).node().childNodes[0].value;
-					obj["bankAccount"] = oTable.cell(rowIdx, 17).node().childNodes[0].value;
-					obj["comment"] = oTable.cell(rowIdx, 18).node().childNodes[0].value;
+					obj["lineId"] = oTable.cell(rowIdx, 12).node().childNodes[0].value;
+					obj["wechatId"] = oTable.cell(rowIdx, 13).node().childNodes[0].value;
+					obj["facebookId"] = oTable.cell(rowIdx, 14).node().childNodes[0].value;
+					obj["phoneNumber"] = oTable.cell(rowIdx, 15).node().childNodes[0].value;
+					obj["bankSymbol"] = oTable.cell(rowIdx, 16).node().childNodes[0].value;
+					obj["bankName"] = oTable.cell(rowIdx, 17).node().childNodes[0].value;
+					obj["bankAccount"] = oTable.cell(rowIdx, 18).node().childNodes[0].value;
+					obj["comment"] = oTable.cell(rowIdx, 19).node().childNodes[0].value;
 
 					data.push(obj);
 				}
@@ -305,7 +306,7 @@ var Agent = function() {
 					// Send to server
 					$.ajax({
 						type: "POST",
-						url: "/home/personnel/head-agent/update",
+						url: "/home/personnel/agent/update",
 						data: {data : data},
 						success: function(result){
 							console.log({result});
@@ -400,7 +401,7 @@ var Agent = function() {
 					// Send to server
 					$.ajax({
 						type: "POST",
-						url: "/home/personnel/head-agent/delete",
+						url: "/home/personnel/agent/delete",
 						data: {data: data},
 						success: function(result){
 							console.log({result});
@@ -475,40 +476,8 @@ var Agent = function() {
             // Set select 2 when modal show
             $('#head-agent').select2({
                 placeholder: "請選擇歸屬的總代理",
-                data: data
             });
         });
-
-        // loading data from array
-        var data = [{
-            id: 0,
-            text: 'Tim'
-        }, {
-            id: 1,
-            text: 'Shawn'
-        }, {
-            id: 2,
-            text: 'Poker'
-        }, {
-            id: 3,
-            text: 'Admin'
-        }, {
-            id: 4,
-            text: '阿亮'
-        }, {
-            id: 5,
-            text: '小王'
-        }, {
-            id: 6,
-            text: '小陳'
-        }, {
-            id: 7,
-            text: 'ttA'
-        }, {
-            id: 8,
-            text: 'David'
-        }];
-
 
         // Form Validate
 		// http://jqueryvalidation.org/validate/
@@ -683,7 +652,7 @@ var Agent = function() {
 
 				$.ajax({
 					type: "POST",
-					url: "/home/personnel/head-agent/create",
+					url: "/home/personnel/agent/create",
 					data: $(form).serialize(), // serializes the form, note it is different from other AJAX in this module
 					success: function(result){
 						console.log(result);

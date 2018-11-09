@@ -134,17 +134,17 @@
 						<th>正退水</th>			{{!-- 8 --}}
 						<th>負退水</th>			{{!-- 9 --}}
 						<th>狀態</th>			{{!-- 10 --}}
-						<th>總代理</th>			{{!-- 12 --}}
-						<th>Line Id</th>		{{!-- 13 --}}
-						<th>Wechat Id</th>		{{!-- 14 --}}
-						<th>Facebook Id</th>	{{!-- 15 --}}
-						<th>電話</th>			{{!-- 16 --}}
-						<th>銀行代號</th>		{{!-- 17 --}}
-						<th>銀行名稱</th>		{{!-- 18 --}}
-						<th>銀行帳號</th>		{{!-- 19 --}}
-						<th>備註</th>			{{!-- 20 --}}
-						<th>最後更新時間</th>	{{!-- 21 --}}
-						<th>創立時間</th>		{{!-- 22 --}}
+						<th>總代理</th>			{{!-- 11 --}}
+						<th>Line Id</th>		{{!-- 12 --}}
+						<th>Wechat Id</th>		{{!-- 13 --}}
+						<th>Facebook Id</th>	{{!-- 14 --}}
+						<th>電話</th>			{{!-- 15 --}}
+						<th>銀行代號</th>		{{!-- 16 --}}
+						<th>銀行名稱</th>		{{!-- 17 --}}
+						<th>銀行帳號</th>		{{!-- 18 --}}
+						<th>備註</th>			{{!-- 19 --}}
+						<th>最後更新時間</th>	{{!-- 20 --}}
+						<th>創立時間</th>		{{!-- 21 --}}
 					</tr>
 				</thead>
 			</table>
@@ -232,8 +232,13 @@
 							<div class="form-group m-form__group row">
 								<label class="col-lg-2 col-form-label">總代理 *</label>
 								<div class="col-lg-10 m-form__group-sub">
-									<select class="form-control m-select2" id="head-agent" name="headAgent">
+									<select class="form-control m-select2" id="head-agent" name="headAgentAccount">
 										<option></option> {{!--  placeholder --}}
+
+										{{#each headAgents}}
+											<option value="{{userAccount}}">{{name}}({{userAccount}})</option>
+										{{/each}}
+
 									</select>
 								</div>
 							</div>
