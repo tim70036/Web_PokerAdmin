@@ -13,13 +13,13 @@ let query = function( db, sql ) {
     return new Promise(( resolve, reject ) => {
         db.query(sql, ( err, rows) => {
             if ( err ) {
-              reject( err )
+              reject( err );
             } else {
-              resolve( rows )
+              resolve( rows );
             }
         });
         
     });
-}
+};
   
-module.exports = { query }
+module.exports = { query };

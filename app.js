@@ -25,10 +25,10 @@ app.engine('handlebars', exphbs({
                 this._sections = {};
                 this._sections._get = function(arg){
                     if(typeof helper._sections[arg] === 'undefined'){
-                        throw new Error('The section "' + arg + '" is required.')
+                        throw new Error('The section "' + arg + '" is required.');
                     }
                     return helper._sections[arg];
-                }
+                };
             }
             if(!this._sections[name]){
                 this._sections[name] = options.fn(this);
@@ -55,7 +55,7 @@ const session = require('./libs/session');
 session.init(app); // Now session based on redis is set, and we can use req.redis to access connection instance to redis server
 
 // Authorization init
-const auth = require('./libs/auth')
+const auth = require('./libs/auth');
 auth.init(app); // must set up express-session before initializing passport
 
 // Database init

@@ -35,7 +35,7 @@ let clubHandler = function(req,res){
         // Not found 
         else if (results.length <= 0) {
             res.render('home/account/club', {layout : 'home'});
-            return console.log("results is empty");
+            return console.log('results is empty');
         }
 
         // Spilt results into 2 array

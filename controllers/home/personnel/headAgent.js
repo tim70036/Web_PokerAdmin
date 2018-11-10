@@ -8,14 +8,14 @@ const
 // Page rendering
 let renderHandler = function(req,res){
     res.render('home/personnel/head-agent', {layout : 'home'});
-}
+};
 
 // Datatable ajax read
 let readHandler = async function(req,res){
 
     // Init return data (must suit DataTable's format)
 	let data = {
-    	data : []
+        data : []
     };
 
     // Get the admin of this user
@@ -33,7 +33,9 @@ let readHandler = async function(req,res){
                             H.id, H.userAccount, H.name,
                             H.cash, H.credit, H.frozenBalance, H.availBalance, H.totalBalance, H.posRb, H.negRb, S.status,
                             H.lineId, H.wechatId, H.facebookId, H.phoneNumber, 
-                            H.bankSymbol, H.bankName, H.bankAccount,  H.comment, H.createtime, H.updatetime
+                            H.bankSymbol, H.bankName, H.bankAccount,  H.comment,
+                            DATE_FORMAT(CONVERT_TZ(H.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
+                            DATE_FORMAT(CONVERT_TZ(H.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                         FROM HeadAgentInfo AS H
                         INNER JOIN UserAccount AS U
                             ON H.uid=U.id 
@@ -56,7 +58,7 @@ let readHandler = async function(req,res){
         console.log(error);
         return res.json(data); 
     }
-}
+};
 
 // Datatable ajax create
 let createHandler = async function(req,res){
@@ -147,7 +149,7 @@ let createHandler = async function(req,res){
     await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
     
     return res.json({err: false, msg: 'success'});
-}
+};
 
 // Datatable ajax update
 let updateHandler = async function(req,res){
@@ -179,7 +181,7 @@ let updateHandler = async function(req,res){
                          FROM HeadAgentInfo
                          WHERE id IN(?)
                          `;
-    values = [ updateData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
+    let values = [ updateData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
     sqlStringCash = req.db.format(sqlStringCash, values);
 
     // Execute query to get orginal total cash and new total cash of all the head agent that required update
@@ -245,7 +247,7 @@ let updateHandler = async function(req,res){
     await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
     
     return res.json({err: false, msg: 'success'});
-}
+};
 
 // Datatable ajax delete
 let deleteHandler = async function(req,res){
@@ -277,7 +279,7 @@ let deleteHandler = async function(req,res){
                         FROM HeadAgentInfo
                         WHERE id IN(?)
                         `;
-    values = [ deleteData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
+    let values = [ deleteData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
     sqlStringCash = req.db.format(sqlStringCash, values);
 
     // Get total cash of all the head agents that pepare to be deleted
@@ -328,9 +330,7 @@ let deleteHandler = async function(req,res){
     await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
     
     return res.json({err: false, msg: 'success'});
-
-
-}
+};
 
 
 // Form data validate generators
@@ -489,21 +489,23 @@ function updateValidator(){
             // Prepare query
             // Based on different of this user, we will use different query string
             let sqlString, values;
-            if(req.user.role === "serviceAgent"){
+            if(req.user.role === 'serviceAgent'){
                 sqlString = `SELECT * 
                              FROM HeadAgentInfo AS H
-                             WHERE H.id=? AND H.adminId=(SELECT Ser.adminId from ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
+                             INNER JOIN ServiceAgentInfo AS Ser
+                                ON Ser.id=?
+                             WHERE H.id=? AND H.adminId=Ser.adminId`;
             }
-            else if(req.user.role === "admin"){
+            else if(req.user.role === 'admin'){
                 sqlString = `SELECT * 
                              FROM HeadAgentInfo 
-                             WHERE id=? AND adminId=?`;
+                             WHERE adminId=? AND id=?`;
             }
             else{
                 // Invalid role
                 throw Error('更新無效');
             }
-            values = [data, req.user.roleId];
+            values = [req.user.roleId, data];
             sqlString = req.db.format(sqlString, values);
 
             // Check if this head agent is valid for this user to update
@@ -553,21 +555,23 @@ function deleteValidator(){
             // Prepare query
             // Based on different of this user, we will use different query string
             let sqlString, values;
-            if(req.user.role === "serviceAgent"){
+            if(req.user.role === 'serviceAgent'){
                 sqlString = `SELECT * 
                              FROM HeadAgentInfo AS H
-                             WHERE H.id=? AND H.adminId=(SELECT Ser.adminId from ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
+                             INNER JOIN ServiceAgentInfo AS Ser
+                                ON Ser.id=?
+                             WHERE H.id=? AND H.adminId=Ser.adminId`;
             }
-            else if(req.user.role === "admin"){
+            else if(req.user.role === 'admin'){
                 sqlString = `SELECT * 
                              FROM HeadAgentInfo 
-                             WHERE id=? AND adminId=?`;
+                             WHERE adminId=? AND id=?`;
             }
             else{
                 // Invalid role
-                throw Error('刪除無效');
+                throw Error('更新無效');
             }
-            values = [data, req.user.roleId];
+            values = [req.user.roleId, data];
             sqlString = req.db.format(sqlString, values);
 
             // Check if this head agent is valid for this user to delete
@@ -594,12 +598,14 @@ async function getAdmin(req){
     // Prepare query
     // Based on different of this user, we will use different query string
     let sqlStringCheck, values;
-    if(req.user.role === "serviceAgent"){
+    if(req.user.role === 'serviceAgent'){
         sqlStringCheck  = `SELECT *
                            FROM AdminInfo AS Adm
-                           WHERE Adm.id=(SELECT Ser.adminId FROM ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
+                           INNER JOIN ServiceAgentInfo AS Ser
+                                ON Ser.id=?
+                           WHERE Adm.id=Ser.adminId`;
     }
-    else if(req.user.role === "admin"){
+    else if(req.user.role === 'admin'){
         sqlStringCheck = `SELECT *
                           FROM AdminInfo
                           WHERE id=?`;

@@ -1,5 +1,5 @@
 const 
-    sqlTransaction = require('../../../libs/sqlTransaction'),
+    sqlAsync = require('../../../libs/sqlAsync'),
     { body, validationResult } = require('express-validator/check'),
     { sanitizeBody } = require('express-validator/filter');
 
@@ -7,52 +7,50 @@ const
 // Page rendering
 let renderHandler = function(req,res){
     res.render('home/personnel/service-agent', {layout : 'home'});
-}
+};
 
 // Datatable ajax read
-let readHandler = function(req,res){
-
-    // Get the admin id of this user
-    let adminId = req.user.roleId;
+let readHandler = async function(req,res){
 
     // Init return data (must suit DataTable's format)
 	let data = {
-    	data : []
+        data : []
     };
 
     // Prepare query
     let sqlString = `SELECT 
                         Ser.id, Ser.userAccount, Ser.name, S.status,
                         Ser.lineId, Ser.wechatId, Ser.facebookId, Ser.phoneNumber, 
-                        Ser.bankSymbol, Ser.bankName, Ser.bankAccount,  Ser.comment, Ser.createtime, Ser.updatetime
+                        Ser.bankSymbol, Ser.bankName, Ser.bankAccount,  Ser.comment, 
+                        DATE_FORMAT(CONVERT_TZ(Ser.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
+                        DATE_FORMAT(CONVERT_TZ(Ser.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM ServiceAgentInfo AS Ser
                     INNER JOIN UserAccount AS U
                         ON Ser.uid=U.id 
                     INNER JOIN Status AS S
                         ON U.statusId=S.id
-                    WHERE Ser.adminId=?`;
-    let values = [adminId];
+                    WHERE Ser.adminId=?
+                    ;`;
+    let values = [req.user.roleId];
     sqlString = req.db.format(sqlString, values);
 
-    // Search all service agents of this admin
-    req.db.query(sqlString, function(error, results, fields){
-        // error will be an Error if one occurred during the query
-        // results will contain the results of the query
-        // fields will contain information about the returned results fields (if any)
-        if(error) { 
-            console.log(error);
-            // return empty data
-            return res.json(data);  
-        }
-                	
-        data.data= results;
-        return res.json(data);         
-    });
+    // Search all service agents managed by this user
+    // Execute query
+    try {
+        let results = await sqlAsync.query(req.db, sqlString);
 
-}
+        data.data = results;
+        return res.json(data);
+    }
+    catch(error) {
+        console.log(error);
+        return res.json(data); 
+    }
+
+};
 
 // Datatable ajax create
-let createHandler = function(req,res){
+let createHandler = async function(req,res){
 
     const result = validationResult(req);
 
@@ -82,34 +80,37 @@ let createHandler = function(req,res){
         role = 'serviceAgent';
 
 
-    // Insert new user accuont to 2 tables
-    // Prepare queries
-    let queryStrings = [];
-
-    let sqlString = `INSERT INTO UserAccount (account, password, role, email) VALUES (?, ?, ?, ?)`;
+    // Prepare query
+    // Query for insert into UserAccount
+    let sqlStringInsert1 = `INSERT INTO UserAccount (account, password, role, email) VALUES (?, ?, ?, ?);`;
     let values = [account, password, role, email];
-    queryStrings.push(req.db.format(sqlString, values));
+    sqlStringInsert1 = req.db.format(sqlStringInsert1, values);
     
-    sqlString =`INSERT INTO ServiceAgentInfo (uid, adminId, userAccount, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment) 
-                VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
-                `;
+    // Query for insert into ServiceAgentInfo
+    let sqlStringInsert2 = `INSERT INTO ServiceAgentInfo (uid, adminId, userAccount, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment) 
+                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                            ;`;
     values = [account, adminId, account, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment];
-    queryStrings.push(req.db.format(sqlString, values));
+    sqlStringInsert2 = req.db.format(sqlStringInsert2, values);
 
-    // Execute SQL transaction and return response to client
-    sqlTransaction(req.db, queryStrings, function(error, msg){
-        // Return the result of transaction to client
-        if(error) {
-            return res.json({err: true, msg: msg});
-        }
-        else {
-            return res.json({err: false, msg: 'success'});
-        }
-    });
-}
+    // Insert new service agent
+    // Execute transaction
+    try{
+        await sqlAsync.query(req.db, 'START TRANSACTION');
+        let results = await sqlAsync.query(req.db, sqlStringInsert1 + sqlStringInsert2);
+    }
+    catch(error) {
+        await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
+        console.log(error);
+        return res.json({err: true, msg: 'Server 錯誤'});
+    }
+    await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
+    
+    return res.json({err: false, msg: 'success'});
+};
 
 // Datatable ajax update
-let updateHandler = function(req,res){
+let updateHandler = async function(req,res){
     
     const result = validationResult(req);
    
@@ -123,36 +124,39 @@ let updateHandler = function(req,res){
     // Receive data array
     let updateData = req.body.data;
     
-    // Prepare queries
-    let queryStrings = [];
-    
-    let sqlString = `UPDATE ServiceAgentInfo 
+    // Prepare query
+    // Query for update all service agents
+    let sqlStringTmp = `UPDATE ServiceAgentInfo 
                             SET name=?, lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
                                 bankSymbol=?, bankName=?, bankAccount=?, comment=?
-                            WHERE id=?`;
+                            WHERE id=?
+                        ;`;
+    let sqlStringUpdate = '';
 	for(let i=0 ; i<updateData.length ; i++){
+
         let element = updateData[i];
         let values = [element.name, element.lineId, element.wechatId, element.facebookId, element.phoneNumber,
             element.bankSymbol, element.bankName, element.bankAccount, element.comment, element.id];
-
-        // Append a statement to query string array
-        queryStrings.push(req.db.format(sqlString, values)); 
+        sqlStringUpdate  += req.db.format(sqlStringTmp, values);
     }
 
-    // Execute SQL transaction and return response to client
-    sqlTransaction(req.db, queryStrings, function(error, msg){
-        // Return the result of transaction to client
-        if(error) {
-            return res.json({err: true, msg: msg});
-        }
-        else {
-            return res.json({err: false, msg: 'success'});
-        }
-    });
-}
+    // Execute all queries
+    try{
+        await sqlAsync.query(req.db, 'START TRANSACTION');
+        let results = await sqlAsync.query(req.db, sqlStringUpdate);
+    }
+    catch(error) {
+        await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
+        console.log(error);
+        return res.json({err: true, msg: 'Server 錯誤'});
+    }
+    await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
+    
+    return res.json({err: false, msg: 'success'});
+};
 
 // Datatable ajax delete
-let deleteHandler = function(req,res){
+let deleteHandler = async function(req,res){
 
     const result = validationResult(req);
 
@@ -165,33 +169,31 @@ let deleteHandler = function(req,res){
 
     let deleteData = req.body.data;
 
-    // Prepare queries
-    let queryStrings = [];
+    // Prepare query
+    let sqlStringDel = `DELETE Usr  
+                        FROM UserAccount AS Usr
+                        WHERE Usr.id IN (   SELECT Ser.uid 
+                                            FROM ServiceAgentInfo AS Ser
+                                            WHERE Ser.id IN (?)
+                                        )
+                        ;`;
+	let values = [ deleteData.map((serviceAgent) => serviceAgent.id) ]; // bind a list of service agent id to the sql string
+    sqlStringDel = req.db.format(sqlStringDel, values);
 
-    let sqlString =`DELETE FROM UserAccount 
-                    WHERE id=(SELECT uid 
-                              FROM ServiceAgentInfo 
-                              WHERE id=?)
-                    `;
-	for(let i=0 ; i<deleteData.length ; i++){
-        let element = deleteData[i];
-        let values = [element.id];
-
-        // Append a statement to query string array
-        queryStrings.push(req.db.format(sqlString, values));
+    // Execute all queries
+    try{
+        await sqlAsync.query(req.db, 'START TRANSACTION');
+        let results = await sqlAsync.query(req.db, sqlStringDel);
     }
-
-    // Execute SQL transaction and return response to client
-    sqlTransaction(req.db, queryStrings, function(error, msg){
-        // Return the result of transaction to client
-        if(error) {
-            return res.json({err: true, msg: msg});
-        }
-        else {
-            return res.json({err: false, msg: 'success'});
-        }
-    });
-}
+    catch(error) {
+        await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
+        console.log(error);
+        return res.json({err: true, msg: 'Server 錯誤'});
+    }
+    await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
+    
+    return res.json({err: false, msg: 'success'});
+};
 
 
 // Form data validate generators
@@ -250,7 +252,7 @@ function createValidator(){
             .trim(), // trim white space from both end
         
         // Check duplicate account in database
-        body('account').custom(function(data, {req}){
+        body('account').custom(async function(data, {req}){
 
             // Prepare query
             let sqlString =`SELECT * 
@@ -260,23 +262,18 @@ function createValidator(){
             sqlString = req.db.format(sqlString, values);
 
             // Check if duplicate account exists
-            return new Promise(function(resolve, reject) {
-                req.db.query(sqlString, function(error, results, fields){
-                    // error will be an Error if one occurred during the query
-                    // results will contain the results of the query
-                    // fields will contain information about the returned results fields (if any)
-                    if(error) { 
-                        return reject('Server 錯誤');
-                    }                
-                    // This account is duplicate
-                    else if (results.length > 0) {
-                        return reject('使用者帳號重複');
-                    }
+            let results;
+            try {
+                results = await sqlAsync.query(req.db, sqlString);
+            }
+            catch(error) {
+                console.log(error);
+                throw Error('Server 錯誤');
+            }
 
-                    // Validation success, this is not a duplicate account
-                    return resolve(true);
-                });
-            });
+            if(results.length > 0) throw Error('使用者帳號重複');
+
+            return true;
         }),
     ];
 }
@@ -330,33 +327,29 @@ function updateValidator(){
             .trim(), // trim white space from both end
         
         // Check permission from database
-        body('data.*.id').custom(function(data, {req}){
+        body('data.*.id').custom(async function(data, {req}){
 
             // Prepare query
-            let sqlString =`SELECT * 
-                                FROM ServiceAgentInfo 
-                                WHERE id=? AND adminId=?`;
-            let values = [data, req.user.roleId];
+            let sqlString = `SELECT * 
+                             FROM ServiceAgentInfo 
+                             WHERE adminId=? AND id=?`;
+
+            let values = [req.user.roleId, data];
             sqlString = req.db.format(sqlString, values);
 
-            // Check if duplicate account exists
-            return new Promise(function(resolve, reject) {
-                req.db.query(sqlString, function(error, results, fields){
-                    // error will be an Error if one occurred during the query
-                    // results will contain the results of the query
-                    // fields will contain information about the returned results fields (if any)
-                    if(error) { 
-                        return reject('Server 錯誤');
-                    }                
-                    // This id does not exist or this admin has no permission to update
-                    else if (results.length <= 0) {
-                        return reject('更新無效');
-                    }
+            // Check if this service agent is valid for this user to update
+            let results;
+            try {
+                results = await sqlAsync.query(req.db, sqlString);
+            }
+            catch(error) {
+                console.log(error);
+                throw Error('Server 錯誤');
+            }
 
-                    // Validation success, this is a valid update
-                    return resolve(true);
-                });
-            });
+            if(results.length <= 0) throw Error('更新無效');
+
+            return true;
         }),
     ];
 }
@@ -385,34 +378,30 @@ function deleteValidator(){
             .trim(), // trim white space from both end 
 
 
-        // Check in database
-        body('data.*.id').custom(function(data, {req}){
+        // Check permission from database
+        body('data.*.id').custom(async function(data, {req}){
 
             // Prepare query
-            let sqlString =`SELECT * 
-                                FROM ServiceAgentInfo 
-                                WHERE id=? AND adminId=?`;
-            let values = [data, req.user.roleId];
+            let sqlString = `SELECT * 
+                             FROM ServiceAgentInfo 
+                             WHERE adminId=? AND id=?`;
+
+            let values = [req.user.roleId, data];
             sqlString = req.db.format(sqlString, values);
 
-            // Check if duplicate account exists
-            return new Promise(function(resolve, reject) {
-                req.db.query(sqlString, function(error, results, fields){
-                    // error will be an Error if one occurred during the query
-                    // results will contain the results of the query
-                    // fields will contain information about the returned results fields (if any)
-                    if(error) { 
-                        return reject('Server 錯誤');
-                    }                
-                    // This id does not exist or this admin has no permission to update
-                    else if (results.length <= 0) {
-                        return reject('刪除無效');
-                    }
+            // Check if this service agent is valid for this user to delete
+            let results;
+            try {
+                results = await sqlAsync.query(req.db, sqlString);
+            }
+            catch(error) {
+                console.log(error);
+                throw Error('Server 錯誤');
+            }
 
-                    // Validation success, this is a valid update
-                    return resolve(true);
-                });
-            });
+            if(results.length <= 0) throw Error('刪除無效');
+
+            return true;
         }),
     ];
 }

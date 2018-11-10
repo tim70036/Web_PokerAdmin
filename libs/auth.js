@@ -132,4 +132,4 @@ function configLocalStrategy() {
 
 module.exports = {
     init : init
-}
+};

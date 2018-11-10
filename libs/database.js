@@ -12,6 +12,7 @@ function init(app) {
         user     : credentials.dbProviders.user,
         password : credentials.dbProviders.pwd,
         database : credentials.dbProviders.db,
+        timezone : credentials.dbProviders.timezone,
         multipleStatements: true,
     });
 
@@ -27,4 +28,4 @@ function init(app) {
 
 module.exports = {
     init : init
-}
+};

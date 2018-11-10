@@ -18,12 +18,11 @@ let renderHandler = async function(req,res){
                     ;`;
     }
     else if(req.user.role === 'serviceAgent'){
-        sqlString =`SELECT name, userAccount
-                    FROM HeadAgentInfo
-                    WHERE adminId = (   SELECT adminId
-                                        FROM ServiceAgentInfo 
-                                        WHERE id=?
-                                    )
+        sqlString =`SELECT H.name, H.userAccount
+                    FROM HeadAgentInfo AS H
+                    INNER JOIN ServiceAgentInfo AS Ser
+                        ON Ser.id=?
+                    WHERE H.adminId=Ser.adminId
                     ;`;
     }
     else if(req.user.role === 'admin'){
@@ -50,14 +49,14 @@ let renderHandler = async function(req,res){
         console.log(error);
         return res.render('home/personnel/agent', {layout : 'home'});
     }
-}
+};
 
 // Datatable ajax read
 let readHandler = async function(req,res){
 
     // Init return data (must suit DataTable's format)
 	let data = {
-    	data : []
+        data : []
     };
 
     // Determine all agents managed by this user
@@ -69,15 +68,16 @@ let readHandler = async function(req,res){
                         A.cash, A.credit, A.frozenBalance, A.availBalance, A.totalBalance, A.posRb, A.negRb, 
                         S.status, H.name AS headAgentName, H.userAccount AS headAgentAccount,
                         A.lineId, A.wechatId, A.facebookId, A.phoneNumber, 
-                        A.bankSymbol, A.bankName, A.bankAccount,  A.comment, A.createtime, A.updatetime
+                        A.bankSymbol, A.bankName, A.bankAccount,  A.comment,
+                        DATE_FORMAT(CONVERT_TZ(A.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
+                        DATE_FORMAT(CONVERT_TZ(A.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM AgentInfo AS A
                     INNER JOIN UserAccount AS U
                         ON A.uid=U.id 
                     INNER JOIN Status AS S
                         ON U.statusId=S.id
                     INNER JOIN HeadAgentInfo AS H
-                        ON A.headAgentId=H.id
-                    WHERE headAgentId=?
+                        ON A.headAgentId=H.id AND H.id=?
                     ;`;
     }
     else if(req.user.role === 'serviceAgent'){
@@ -86,21 +86,19 @@ let readHandler = async function(req,res){
                         A.cash, A.credit, A.frozenBalance, A.availBalance, A.totalBalance, A.posRb, A.negRb,
                         S.status, H.name AS headAgentName, H.userAccount AS headAgentAccount,
                         A.lineId, A.wechatId, A.facebookId, A.phoneNumber, 
-                        A.bankSymbol, A.bankName, A.bankAccount,  A.comment, A.createtime, A.updatetime
+                        A.bankSymbol, A.bankName, A.bankAccount,  A.comment, 
+                        DATE_FORMAT(CONVERT_TZ(A.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
+                        DATE_FORMAT(CONVERT_TZ(A.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM AgentInfo AS A
                     INNER JOIN UserAccount AS U
                         ON A.uid=U.id 
                     INNER JOIN Status AS S
                         ON U.statusId=S.id
+                    
+                    INNER JOIN ServiceAgentInfo AS Ser
+                        ON Ser.id=?
                     INNER JOIN HeadAgentInfo AS H
-                        ON A.headAgentId=H.id
-                    WHERE A.headAgentId IN  (   SELECT H2.id 
-                                                FROM HeadAgentInfo AS H2 
-                                                WHERE H2.adminId=(  SELECT Ser.adminId
-                                                                    FROM ServiceAgentInfo AS Ser
-                                                                    WHERE Ser.id=?
-                                                                 )
-                                            )
+                        ON A.headAgentId=H.id AND H.adminId=Ser.adminId
                     ;`;
     }
     else if(req.user.role === 'admin'){
@@ -109,18 +107,17 @@ let readHandler = async function(req,res){
                         A.cash, A.credit, A.frozenBalance, A.availBalance, A.totalBalance, A.posRb, A.negRb,
                         S.status, H.name AS headAgentName, H.userAccount AS headAgentAccount,
                         A.lineId, A.wechatId, A.facebookId, A.phoneNumber, 
-                        A.bankSymbol, A.bankName, A.bankAccount,  A.comment, A.createtime, A.updatetime
+                        A.bankSymbol, A.bankName, A.bankAccount,  A.comment, 
+                        DATE_FORMAT(CONVERT_TZ(A.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
+                        DATE_FORMAT(CONVERT_TZ(A.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM AgentInfo AS A
                     INNER JOIN UserAccount AS U
                         ON A.uid=U.id 
                     INNER JOIN Status AS S
                         ON U.statusId=S.id
+                        
                     INNER JOIN HeadAgentInfo AS H
-                        ON A.headAgentId=H.id
-                    WHERE A.headAgentId IN (   SELECT H2.id 
-                                                FROM HeadAgentInfo AS H2 
-                                                WHERE H2.adminId=?
-                                           )
+                        ON A.headAgentId=H.id AND H.adminId=?
                     ;`;
     }
     else{
@@ -143,7 +140,7 @@ let readHandler = async function(req,res){
         console.log(error);
         return res.json(data); 
     }
-}
+};
 
 // Datatable ajax create
 let createHandler = async function(req,res){
@@ -157,7 +154,6 @@ let createHandler = async function(req,res){
         return res.json({err: true, msg: firstError});
     }
 
-    console.log(req.body);
     // Gather all required data
     const 
         {   name, 
@@ -246,7 +242,7 @@ let createHandler = async function(req,res){
     await sqlAsync.query(req.db, 'COMMIT');  // commit transaction only if all statement has executed without error
     
     return res.json({err: false, msg: 'success'});
-}
+};
 
 // Datatable ajax update
 let updateHandler = async function(req,res){
@@ -294,7 +290,7 @@ let updateHandler = async function(req,res){
             if(!newList.find(element => element.id === headAgent.id))  
                 newList.push(headAgent);
             return newList;
-        }  , [])
+        }  , []);
     }
     catch(error) {
         console.log(error);
@@ -378,7 +374,7 @@ let updateHandler = async function(req,res){
     
     return res.json({err: false, msg: 'success'});
 
-}
+};
 // Datatable ajax delete
 let deleteHandler = async function(req,res){
     
@@ -424,7 +420,7 @@ let deleteHandler = async function(req,res){
             if(!newList.find(element => element.id === headAgent.id))  
                 newList.push(headAgent);
             return newList;
-        }  , [])
+        }  , []);
     }
     catch(error) {
         console.log(error);
@@ -493,7 +489,7 @@ let deleteHandler = async function(req,res){
     
     return res.json({err: false, msg: 'success'});
 
-}
+};
 
 
 // Form data validate generators
@@ -589,18 +585,51 @@ function createValidator(){
         }),
 
         // Check head agent account against this user
-        body('headAgentAccount').custom(function(data, {req}){
+        body('headAgentAccount').custom(async function(data, {req}){
 
-            // No need to check for admin and service agent
-            if(req.user.role === 'admin' || req.user.role === 'serviceAgent'){
-                return true;
+            if(req.user.role === 'headAgent' && req.user.account === data){
+                return true;  // Head agent account must equal to the user's account, if that user is a head agent  
             }
-            // Head agent account must equal to the user's account, if that user is a head agent  
-            else if(req.user.role === 'headAgent' && req.user.account === data){
-                return true; 
+
+            // Prepare query
+            // Based on different of this user, we will use different query string
+            let sqlString, values;
+            if(req.user.role === 'serviceAgent'){
+                sqlString =`SELECT *
+                            FROM HeadAgentInfo AS H
+                            INNER JOIN ServiceAgentInfo AS Ser
+                                ON Ser.id=?
+                            WHERE H.adminId=Ser.id AND H.userAccount=? 
+                            ;`;
             }
-            // All other circumstances are invalid
-            throw Error('總代理商錯誤');
+            else if(req.user.role === 'admin'){
+                sqlString =`SELECT *
+                            FROM HeadAgentInfo AS H
+                            WHERE H.adminId=? AND H.userAccount=? 
+                            ;`;
+            }
+            else{
+                // All other circumstances are invalid
+                throw Error('總代理商錯誤');
+            }
+
+            values = [req.user.roleId, data];
+            sqlString = req.db.format(sqlString, values);
+
+            // Check if this head agent managed by this user
+            let results;
+            try {
+                results = await sqlAsync.query(req.db, sqlString);
+            }
+            catch(error) {
+                console.log(error);
+                throw Error('Server 錯誤');
+            }
+
+            if(results.length <= 0) throw Error('新增無效');
+
+            return true;
+            
         }),
     ];
 }
@@ -670,35 +699,35 @@ function updateValidator(){
             // Prepare query
             // Based on different of this user, we will use different query string
             let sqlString, values;
-            if(req.user.role === "headAgent"){
+            if(req.user.role === 'headAgent'){
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
-                            WHERE A.id=? AND A.headAgentId=?
+                            WHERE A.headAgentId=? AND A.id=?
                             ;`;
             }
-            else if(req.user.role === "serviceAgent"){
+            else if(req.user.role === 'serviceAgent'){
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
-                            WHERE A.id=? AND A.headAgentId IN ( SELECT H.id 
-                                                                FROM HeadAgentInfo AS H 
-                                                                WHERE H.adminId= (SELECT Ser.adminId FROM ServiceAgentInfo AS Ser WHERE Ser.id=?)
-                                                              )
+                            INNER JOIN ServiceAgentInfo AS Ser
+                                ON Ser.id=?
+                            INNER JOIN HeadAgentInfo AS H
+                                ON A.headAgentId=H.id AND H.adminId=Ser.adminId
+                            WHERE A.id=?
                             ;`;
             }
-            else if(req.user.role === "admin"){
+            else if(req.user.role === 'admin'){
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
-                            WHERE A.id=? AND A.headAgentId IN ( SELECT H.id 
-                                                                FROM HeadAgentInfo AS H 
-                                                                WHERE H.adminId=?
-                                                              )
+                            INNER JOIN HeadAgentInfo AS H
+                                ON A.headAgentId=H.id AND H.adminId=?
+                            WHERE A.id=?
                             ;`;
             }
             else {
                 // Invalid role
                 throw Error('更新無效');
             }
-            values = [data, req.user.roleId];
+            values = [req.user.roleId, data];
             sqlString = req.db.format(sqlString, values);
 
             // Check if this agent is valid for this user to update
@@ -748,38 +777,38 @@ function deleteValidator(){
             // Prepare query
             // Based on different of this user, we will use different query string
             let sqlString, values;
-            if(req.user.role === "headAgent"){
+            if(req.user.role === 'headAgent'){
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
-                            WHERE A.id=? AND A.headAgentId=?
+                            WHERE A.headAgentId=? AND A.id=?
                             ;`;
             }
-            else if(req.user.role === "serviceAgent"){
+            else if(req.user.role === 'serviceAgent'){
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
-                            WHERE A.id=? AND A.headAgentId IN ( SELECT H.id 
-                                                                FROM HeadAgentInfo AS H 
-                                                                WHERE H.adminId= (SELECT Ser.adminId FROM ServiceAgentInfo AS Ser WHERE Ser.id=?)
-                                                              )
+                            INNER JOIN ServiceAgentInfo AS Ser
+                                ON Ser.id=?
+                            INNER JOIN HeadAgentInfo AS H
+                                ON A.headAgentId=H.id AND H.adminId=Ser.adminId
+                            WHERE A.id=?
                             ;`;
             }
-            else if(req.user.role === "admin"){
+            else if(req.user.role === 'admin'){
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
-                            WHERE A.id=? AND A.headAgentId IN ( SELECT H.id 
-                                                                FROM HeadAgentInfo AS H 
-                                                                WHERE H.adminId=?
-                                                              )
+                            INNER JOIN HeadAgentInfo AS H
+                                ON A.headAgentId=H.id AND H.adminId=?
+                            WHERE A.id=?
                             ;`;
             }
             else {
                 // Invalid role
                 throw Error('刪除無效');
             }
-            values = [data, req.user.roleId];
+            values = [req.user.roleId, data];
             sqlString = req.db.format(sqlString, values);
 
-            // Check if this agent is valid for this user to update
+            // Check if this agent is valid for this user to delete
             let results;
             try {
                 results = await sqlAsync.query(req.db, sqlString);
@@ -794,39 +823,6 @@ function deleteValidator(){
             return true;
         }),
     ];
-}
-
-// Function for get the admin of this user
-// It returns admin instance in db
-// Please execute it in try catch 
-async function getAdmin(req){
-    // Prepare query
-    // Based on different of this user, we will use different query string
-    let sqlStringCheck, values;
-    if(req.user.role === "serviceAgent"){
-        sqlStringCheck  = `SELECT *
-                           FROM AdminInfo AS Adm
-                           WHERE Adm.id=(SELECT Ser.adminId FROM ServiceAgentInfo AS Ser WHERE Ser.id=?)`;
-    }
-    else if(req.user.role === "admin"){
-        sqlStringCheck = `SELECT *
-                          FROM AdminInfo
-                          WHERE id=?`;
-    }
-    else{
-        throw Error(`權限不足`);
-    }
-    values = [req.user.roleId];
-    sqlStringCheck = req.db.format(sqlStringCheck, values);
-
-    // Get availBalance and id of this admin
-    // Execute query
-    let results = await sqlAsync.query(req.db, sqlStringCheck);
-
-    // Check result
-    if(results.length <= 0 ) throw Error(`Cannot find the admin of this user`);
-
-    return results[0];
 }
 
 module.exports = {

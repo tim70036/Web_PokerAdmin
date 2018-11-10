@@ -1,5 +1,5 @@
 const   
-    redis = require("redis"),
+    redis = require('redis'),
     session = require('express-session'),
     uuid = require('uuid/v4'),
     redisStore = require('connect-redis')(session),
@@ -23,8 +23,8 @@ function init(app){
         console.log('Redis client connected');
     });
 
-    client.on("error", function (err) {
-        console.log("Redis error : " + err);
+    client.on('error', function (err) {
+        console.log('Redis error : ' + err);
     });
 
     // Set connection instance to req.redis
@@ -52,4 +52,4 @@ function init(app){
 
 module.exports = {
     init : init
-}
+};

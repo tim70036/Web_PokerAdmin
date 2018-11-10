@@ -453,15 +453,19 @@ var Agent = function() {
 			oTable.column(0).visible(false);
             $('#saveButton').css('display', 'inline');
 			$('#cancelButton').css('display', 'inline');
+			
 
 			$('#editButton').css('display', 'none');
 			$('#frozenButton').css('display', 'none');
 			$('#deleteButton').css('display', 'none');
+			$('#createFormButton').css('display', 'none');
+
 		}
 		function normalModeButton(){
 			$('#editButton').css('display', 'inline');
 			$('#frozenButton').css('display', 'inline');
 			$('#deleteButton').css('display', 'inline');
+			$('#createFormButton').css('display', 'inline');
 
             $('#saveButton').css('display', 'none');
 			$('#cancelButton').css('display', 'none');

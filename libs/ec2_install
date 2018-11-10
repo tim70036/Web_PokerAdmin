@@ -1,6 +1,10 @@
 npm
 
-
 restart
 
 nvm install node
+
+-------------------
+RDS parameter group
+timezone
+time language

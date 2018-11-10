@@ -1,4 +1,4 @@
-var HeadAgent = function() {
+var Member = function() {
 
 	var oTable;
 
@@ -14,7 +14,7 @@ var HeadAgent = function() {
 
 			// Data source
 			ajax: {
-				url: '/home/personnel/head-agent/read',
+				url: '/home/personnel/member/read',
 			},
 
 			//== Pagination settings
@@ -83,9 +83,9 @@ var HeadAgent = function() {
                 {data: 'frozenBalance'},
                 {data: 'availBalance'},
                 {data: 'totalBalance'},
-                {data: 'posRb'},
-                {data: 'negRb'},
-                {data: 'status'},
+                {data: 'rb'},
+				{data: 'status'},
+				{data: 'agent'},
 				{data: 'lineId'},
 				{data: 'wechatId'},
 				{data: 'facebookId'},
@@ -156,8 +156,7 @@ var HeadAgent = function() {
                     var cash =oTable.cell(rowIdx, 3).data();
                     var credit =oTable.cell(rowIdx, 4).data();
                     var frozenBalance =oTable.cell(rowIdx, 5).data();
-                    var posRb =oTable.cell(rowIdx, 8).data();
-                    var negRb =oTable.cell(rowIdx, 9).data();
+                    var rb =oTable.cell(rowIdx, 8).data();
 					var lineId = oTable.cell(rowIdx, 11).data();
 					var wechatId = oTable.cell(rowIdx, 12).data();
 					var facebookId = oTable.cell(rowIdx, 13).data();
@@ -172,8 +171,7 @@ var HeadAgent = function() {
                     oTable.cell(rowIdx,3).node().innerHTML = `<input type="text" class="form-control input-small" value=${cash}>`;
                     oTable.cell(rowIdx,4).node().innerHTML = `<input type="text" class="form-control input-small" value=${credit}>`;
                     oTable.cell(rowIdx,5).node().innerHTML = `<input type="text" class="form-control input-small" value=${frozenBalance}>`;
-                    oTable.cell(rowIdx,8).node().innerHTML = `<input type="text" class="form-control input-small" value=${posRb}>`;
-                    oTable.cell(rowIdx,9).node().innerHTML = `<input type="text" class="form-control input-small" value=${negRb}>`;
+                    oTable.cell(rowIdx,8).node().innerHTML = `<input type="text" class="form-control input-small" value=${rb}>`;
 					oTable.cell(rowIdx,11).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
 					oTable.cell(rowIdx,12).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
 					oTable.cell(rowIdx,13).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
@@ -211,8 +209,7 @@ var HeadAgent = function() {
                     var cash =oTable.cell(rowIdx, 3).data();
                     var credit =oTable.cell(rowIdx, 4).data();
                     var frozenBalance =oTable.cell(rowIdx, 5).data();
-                    var posRb =oTable.cell(rowIdx, 8).data();
-                    var negRb =oTable.cell(rowIdx, 9).data();
+                    var rb =oTable.cell(rowIdx, 8).data();
 					var lineId = oTable.cell(rowIdx, 11).data();
 					var wechatId = oTable.cell(rowIdx, 12).data();
 					var facebookId = oTable.cell(rowIdx, 13).data();
@@ -227,8 +224,7 @@ var HeadAgent = function() {
                     oTable.cell(rowIdx,3).node().innerHTML = cash;
                     oTable.cell(rowIdx,4).node().innerHTML = credit;
                     oTable.cell(rowIdx,5).node().innerHTML = frozenBalance;
-                    oTable.cell(rowIdx,8).node().innerHTML = posRb;
-                    oTable.cell(rowIdx,9).node().innerHTML = negRb;
+                    oTable.cell(rowIdx,8).node().innerHTML = rb;
 					oTable.cell(rowIdx,11).node().innerHTML = lineId;
 					oTable.cell(rowIdx,12).node().innerHTML = wechatId;
 					oTable.cell(rowIdx,13).node().innerHTML = facebookId;
@@ -266,8 +262,7 @@ var HeadAgent = function() {
                     obj["cash"] = oTable.cell(rowIdx, 3).node().childNodes[0].value;
                     obj["credit"] = oTable.cell(rowIdx, 4).node().childNodes[0].value;
                     obj["frozenBalance"] = oTable.cell(rowIdx, 5).node().childNodes[0].value;
-                    obj["posRb"] = oTable.cell(rowIdx, 8).node().childNodes[0].value;
-                    obj["negRb"] = oTable.cell(rowIdx, 9).node().childNodes[0].value;
+                    obj["rb"] = oTable.cell(rowIdx, 8).node().childNodes[0].value;
 					obj["lineId"] = oTable.cell(rowIdx, 11).node().childNodes[0].value;
 					obj["wechatId"] = oTable.cell(rowIdx, 12).node().childNodes[0].value;
 					obj["facebookId"] = oTable.cell(rowIdx, 13).node().childNodes[0].value;
@@ -305,7 +300,7 @@ var HeadAgent = function() {
 					// Send to server
 					$.ajax({
 						type: "POST",
-						url: "/home/personnel/head-agent/update",
+						url: "/home/personnel/member/update",
 						data: {data : data},
 						success: function(result){
 							console.log({result});
@@ -381,7 +376,7 @@ var HeadAgent = function() {
 
 			// Sweet alert, make user confirm
 			swal({
-                title: '確定刪除 ' + data.length + ' 位總代理商?',
+                title: '確定刪除 ' + data.length + ' 位會員?',
                 text: '這項變動將無法復原!',
                 type: 'warning',
                 showCancelButton: true,
@@ -400,7 +395,7 @@ var HeadAgent = function() {
 					// Send to server
 					$.ajax({
 						type: "POST",
-						url: "/home/personnel/head-agent/delete",
+						url: "/home/personnel/member/delete",
 						data: {data: data},
 						success: function(result){
 							console.log({result});
@@ -414,7 +409,7 @@ var HeadAgent = function() {
 							if(!result.err){
 								swal({
 									title: "執行成功",
-									text: "客服人員已刪除!",
+									text: "會員已刪除!",
 									type: "success",
 									confirmButtonText: "OK"
 								});
@@ -473,8 +468,17 @@ var HeadAgent = function() {
 	};
 
 	var initForm = function() {
-		// http://jqueryvalidation.org/validate/
+        
+        // Select 2, modal
+        $('#create-modal').on('shown.bs.modal', function () {
+            // Set select 2 when modal show
+            $('#agent').select2({
+                placeholder: "請選擇歸屬的代理",
+            });
+        });
 
+        // Form Validate
+		// http://jqueryvalidation.org/validate/
 		// Custom email validator, the original one is like shit(cannot allow blank)
 		$.validator.methods.email = function( value, element ) {
 			console.log(value);
@@ -513,20 +517,12 @@ var HeadAgent = function() {
 					maxlength: 40
                 },
                 cash: {
-					required: true,
                     number: true
                 },
                 credit: {
-					required: true,
                     number: true
                 },
-                posRb: {
-					required: true,
-                    float: true,
-                    range: [-100, 100]
-                },
-                negRb: {
-					required: true,
+                rb: {
                     float: true,
                     range: [-100, 100]
                 },
@@ -583,20 +579,12 @@ var HeadAgent = function() {
 					maxlength: '長度不可超過 40'
                 },
                 cash: {
-					required: '現金額度為必填欄位',
                     number: "必須是整數"
                 },
                 credit: {
-					required: '信用額度為必填欄位',
                     number: "必須是整數"
                 },
-                posRb: {
-					required: '正退水為必填欄位',
-                    float: "必須是數字",
-                    range: "必須介於 -100 ～ 100"
-                },
-                negRb: {
-					required: '負退水為必填欄位',
+                rb: {
                     float: "必須是數字",
                     range: "必須介於 -100 ～ 100"
                 },
@@ -654,7 +642,7 @@ var HeadAgent = function() {
 
 				$.ajax({
 					type: "POST",
-					url: "/home/personnel/head-agent/create",
+					url: "/home/personnel/member/create",
 					data: $(form).serialize(), // serializes the form, note it is different from other AJAX in this module
 					success: function(result){
 						console.log(result);
@@ -669,7 +657,7 @@ var HeadAgent = function() {
 
 							swal({
 								title: "執行成功",
-								text: "總代理商已新增!",
+								text: "會員已新增!",
 								type: "success",
 								confirmButtonText: "OK"
 							});
@@ -697,6 +685,6 @@ var HeadAgent = function() {
 }();
 
 jQuery(document).ready(function() {
-	HeadAgent.initTable();
-	HeadAgent.initForm();
+	Member.initTable();
+	Member.initForm();
 });
