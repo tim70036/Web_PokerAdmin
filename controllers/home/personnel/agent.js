@@ -33,7 +33,7 @@ let renderHandler = async function(req,res){
     }
     else{
         // Invalid role
-        return res.redirect(303, '/');
+        return res.render('home/personnel/agent', {layout : 'home'});
     }
     values = [req.user.roleId];
     sqlString = req.db.format(sqlString, values);

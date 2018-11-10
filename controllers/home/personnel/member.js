@@ -738,7 +738,7 @@ function updateValidator(){
             if(req.user.role === 'agent'){
                 sqlString =`SELECT *
                             FROM MemberInfo AS M
-                            WHERE M.agentId=? AN M.id=?
+                            WHERE M.agentId=? AND M.id=?
                             ;`;
             }
             else if(req.user.role === 'headAgent'){
@@ -828,7 +828,7 @@ function deleteValidator(){
             if(req.user.role === 'agent'){
                 sqlString =`SELECT *
                             FROM MemberInfo AS M
-                            WHERE M.agentId=? AN M.id=?
+                            WHERE M.agentId=? AND M.id=?
                             ;`;
             }
             else if(req.user.role === 'headAgent'){

@@ -414,7 +414,7 @@ var HeadAgent = function() {
 							if(!result.err){
 								swal({
 									title: "執行成功",
-									text: "客服人員已刪除!",
+									text: "總代理商已刪除!",
 									type: "success",
 									confirmButtonText: "OK"
 								});

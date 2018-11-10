@@ -630,7 +630,7 @@ var Member = function() {
             },
 
             submitHandler: function (form) {
-
+				console.log($(form).serialize());
 				// Ready to send data
 				// Block modal
 				mApp.block('#create-modal .modal-content', {

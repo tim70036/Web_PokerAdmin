@@ -599,7 +599,7 @@ async function getAdmin(req){
     // Based on different of this user, we will use different query string
     let sqlStringCheck, values;
     if(req.user.role === 'serviceAgent'){
-        sqlStringCheck  = `SELECT *
+        sqlStringCheck  = `SELECT Adm.*
                            FROM AdminInfo AS Adm
                            INNER JOIN ServiceAgentInfo AS Ser
                                 ON Ser.id=?
@@ -622,7 +622,7 @@ async function getAdmin(req){
 
     // Check result
     if(results.length <= 0 ) throw Error(`Cannot find the admin of this user`);
-
+    console.log(results);
     return results[0];
 
 }
