@@ -507,10 +507,12 @@ function createValidator(){
             .isLength({ max:20 }).withMessage('名稱長度不可超過 20'),
         body('account')
             .isLength({ min:1 }).withMessage('帳號不可為空')
-            .isLength({ max:20 }).withMessage('帳號長度不可超過 20'),
+            .isLength({ max:20 }).withMessage('帳號長度不可超過 20')
+            .isAlphanumeric().withMessage('帳號只能含有數字或英文字母'),
         body('password')
             .isLength({ min:1 }).withMessage('密碼不可為空')
-            .isLength({ max:20 }).withMessage('密碼長度不可超過 20'), 
+            .isLength({ max:20 }).withMessage('密碼長度不可超過 20')
+            .isAlphanumeric().withMessage('密碼只能含有數字或英文字母'),
         body('passwordConfirm')
             .custom( function(data, {req}) { return data === req.body.password; }).withMessage('確認密碼與密碼不相同'),
         body('email')
@@ -616,7 +618,7 @@ function createValidator(){
             values = [req.user.roleId, data];
             sqlString = req.db.format(sqlString, values);
 
-            // Check if this head agent managed by this user
+            // Check if this head agent is managed by this user
             let results;
             try {
                 results = await sqlAsync.query(req.db, sqlString);

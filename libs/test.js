@@ -42,7 +42,7 @@ $.ajax({
 $.ajax({
     type: "POST",
     url: "/home/personnel/member/create",
-    data: 'agentAccount=agent3&name=1213&account=2131231&password=123&passwordConfirm=123&email=&cash=0&credit=0&rb=0&bankSymbol=&bankName=&bankAccount=&phoneNumber=&facebookId=&lineId=&wechatId=&comment=',
+    data: 'agentAccount=agent2&name=1213&account=2131231&password=123&passwordConfirm=123&email=&cash=0&credit=0&rb=0&bankSymbol=&bankName=&bankAccount=&phoneNumber=&facebookId=&lineId=&wechatId=&comment=',
     success: function(result){
         console.log(result);
     }

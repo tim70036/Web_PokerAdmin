@@ -2,6 +2,30 @@ var Member = function() {
 
 	var oTable;
 
+	var colMappings = {
+		id : 0,
+		userAccount : 1,
+		name : 2,
+		cash : 3,
+		credit : 4,
+		frozenBalance : 5,
+		availBalance : 6,
+		totalBalance : 7,
+		rb : 8,
+		status : 9,
+		agent : 10,
+		lineId : 11,
+		wechatId : 12,
+		facebookId : 13,
+		phoneNumber : 14,
+		bankSymbol : 15,
+		bankName : 16,
+		bankAccount : 17,
+		comment : 18,
+		updatetime : 19,
+		createtime : 20,
+	};
+
 	// Data table init function
 	var initTable = function() {
 		var table = $('#data-table');
@@ -22,7 +46,8 @@ var Member = function() {
 			<'row'<'col-sm-6 text-left'f><'col-sm-6 text-right'B>>
 			<'row'<'col-sm-12'tr>>
 			<'row'<'col-sm-12 col-md-5'i><'col-sm-12 col-md-7 dataTables_pager'lp>>`,
-			order: [[1, 'desc']],
+			
+			order: [[colMappings.updatetime, 'desc']],
 
 			headerCallback: function(thead, data, start, end, display) {
 				thead.getElementsByTagName('th')[0].innerHTML = `
@@ -38,28 +63,28 @@ var Member = function() {
 					text: '<i class="fa fa-user-edit"></i> <span>編輯選取</span>',
 					attr: {
 						id: 'editButton',
-						class: 'table-btn btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
+						class: 'table-btn btn btn-outline-primary m-btn m-btn--custom m-btn--icon m-btn--bolder',
 					},
                 },
                 { 
 					text: '<i class="fa fa-user-lock"></i> <span>凍結選取</span>', 
 					attr: {
 						id: 'frozenButton',
-						class: 'table-btn btn btn-outline-danger m-btn m-btn--custom m-btn--icon m-btn--pill m-btn--bolder',
+						class: 'table-btn btn btn-outline-danger m-btn m-btn--custom m-btn--icon m-btn--bolder',
 					},
 				},
                 { 
 					text: '<i class="fa fa-user-slash"></i> <span>刪除選取</span>', 
 					attr: {
 						id: 'deleteButton',
-						class: 'table-btn btn btn-danger m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--air m-btn--bolder ',
+						class: 'table-btn btn btn-danger m-btn m-btn--custom m-btn--icon  m-btn--bolder ',
 					},
 				},
 				{ 
 					text: '<i class="fa fa-save"></i> <span>保存變更</span>', 
 					attr: {
 						id: 'saveButton',
-                        class: 'table-btn btn btn-outline-success m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
+                        class: 'table-btn btn btn-outline-success m-btn m-btn--custom m-btn--icon m-btn--bolder',
                         style: "display:none;",
 					},	
                 },
@@ -67,7 +92,7 @@ var Member = function() {
 					text: '<i class="fa fa-walking"></i> <span>離開編輯</span>', 
 					attr: {
 						id: 'cancelButton',
-						class: 'table-btn btn btn-outline-primary m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--bolder',
+						class: 'table-btn btn btn-outline-primary m-btn m-btn--custom m-btn--icon m-btn--bolder',
 						style: "display:none;",
 					},
                 },
@@ -100,7 +125,8 @@ var Member = function() {
 			
 			columnDefs: [
 				{
-					targets: 0,
+					targets: colMappings.id,
+					responsivePriority : 0,
 					width: '30px',
 					className: 'dt-right',
 					orderable: false,
@@ -112,6 +138,34 @@ var Member = function() {
                         </label>`;
 					},
 				},
+				{ targets: colMappings.userAccount, 	responsivePriority : 1, 	},
+				{ targets: colMappings.name, 			responsivePriority : 2, 	width: '100px',},
+				{ targets: colMappings.cash, 			responsivePriority : 3, 	},
+				{ targets: colMappings.credit, 			responsivePriority : 4, 	},
+				{ targets: colMappings.frozenBalance, 	responsivePriority : 5, 	},
+				{ targets: colMappings.availBalance, 	responsivePriority : 6, 	},
+				{ targets: colMappings.totalBalance, 	responsivePriority : 7, 	},
+				{ targets: colMappings.rb, 				responsivePriority : 8, 	},
+				{ targets: colMappings.agent, 			responsivePriority : 9, 	},
+				{ targets: colMappings.status, 			responsivePriority : 10, 	
+					render: function(data, type, full, meta) {
+						  var map = {
+							'active' :   {'state': 'success', 'title' : '正常'},
+							'frozen':    {'state': 'danger',  'title' : '凍結'},
+							'undefined': {'state': 'metal',   'title' : '不明'},
+						  };
+						  if (typeof map[data] === 'undefined') {
+							  return data;
+						  }
+						  return '<span class="m-badge m-badge--' + map[data].state + ' m-badge--dot"></span>&nbsp;' +
+							  '<span class="m--font-bold m--font-' + map[data].state + '">' + map[data].title + '</span>';
+					},
+				},
+				{ targets: colMappings.updatetime, 		responsivePriority : 11, 	},
+				{ targets: colMappings.bankSymbol, 		responsivePriority : 12, 	},
+				{ targets: colMappings.bankAccount, 	responsivePriority : 13, 	},
+				{ targets: colMappings.bankName, 		responsivePriority : 14, 	},
+				{ targets: colMappings.comment, 		responsivePriority : 15, 	},
 			],
 		});
 
@@ -152,34 +206,34 @@ var Member = function() {
 
 				if (isChecked) {
 					empty = false;
-                    var name =oTable.cell(rowIdx, 2).data();
-                    var cash =oTable.cell(rowIdx, 3).data();
-                    var credit =oTable.cell(rowIdx, 4).data();
-                    var frozenBalance =oTable.cell(rowIdx, 5).data();
-                    var rb =oTable.cell(rowIdx, 8).data();
-					var lineId = oTable.cell(rowIdx, 11).data();
-					var wechatId = oTable.cell(rowIdx, 12).data();
-					var facebookId = oTable.cell(rowIdx, 13).data();
-					var phoneNumber = oTable.cell(rowIdx, 14).data();
-					var bankSymbol = oTable.cell(rowIdx, 15).data();
-					var bankName = oTable.cell(rowIdx, 16).data();
-					var bankAccount = oTable.cell(rowIdx, 17).data();
-					var comment = oTable.cell(rowIdx, 18).data();
+					var name = oTable.cell(rowIdx, colMappings.name).data();
+                    var cash = oTable.cell(rowIdx, colMappings.cash).data();
+                    var credit = oTable.cell(rowIdx, colMappings.credit).data();
+                    var frozenBalance = oTable.cell(rowIdx, colMappings.frozenBalance).data();
+                    var rb = oTable.cell(rowIdx, colMappings.rb).data();
+					var lineId = oTable.cell(rowIdx, colMappings.lineId).data();
+					var wechatId = oTable.cell(rowIdx, colMappings.wechatId).data();
+					var facebookId = oTable.cell(rowIdx, colMappings.facebookId).data();
+					var phoneNumber = oTable.cell(rowIdx, colMappings.phoneNumber).data();
+					var bankSymbol = oTable.cell(rowIdx, colMappings.bankSymbol).data();
+					var bankName = oTable.cell(rowIdx, colMappings.bankName).data();
+					var bankAccount = oTable.cell(rowIdx, colMappings.bankAccount).data();
+					var comment = oTable.cell(rowIdx, colMappings.comment).data();
 					
 					//console.log('index is cheched : ' + rowIdx);
-                    oTable.cell(rowIdx,2).node().innerHTML = `<input type="text" class="form-control input-small" value=${name}>`;
-                    oTable.cell(rowIdx,3).node().innerHTML = `<input type="text" class="form-control input-small" value=${cash}>`;
-                    oTable.cell(rowIdx,4).node().innerHTML = `<input type="text" class="form-control input-small" value=${credit}>`;
-                    oTable.cell(rowIdx,5).node().innerHTML = `<input type="text" class="form-control input-small" value=${frozenBalance}>`;
-                    oTable.cell(rowIdx,8).node().innerHTML = `<input type="text" class="form-control input-small" value=${rb}>`;
-					oTable.cell(rowIdx,11).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
-					oTable.cell(rowIdx,12).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
-					oTable.cell(rowIdx,13).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
-					oTable.cell(rowIdx,14).node().innerHTML = `<input type="text" class="form-control input-small" value=${phoneNumber}>`;
-					oTable.cell(rowIdx,15).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankSymbol}>`;
-					oTable.cell(rowIdx,16).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankName}>`;
-					oTable.cell(rowIdx,17).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankAccount}>`;
-					oTable.cell(rowIdx,18).node().innerHTML = `<input type="text" class="form-control input-small" value=${comment}>`;
+					oTable.cell(rowIdx,colMappings.name).node().innerHTML = `<input type="text" class="form-control input-small" value=${name}>`;
+                    oTable.cell(rowIdx,colMappings.cash).node().innerHTML = `<input type="text" class="form-control input-small" value=${cash}>`;
+                    oTable.cell(rowIdx,colMappings.credit).node().innerHTML = `<input type="text" class="form-control input-small" value=${credit}>`;
+                    oTable.cell(rowIdx,colMappings.frozenBalance).node().innerHTML = `<input type="text" class="form-control input-small" value=${frozenBalance}>`;
+                    oTable.cell(rowIdx,colMappings.rb).node().innerHTML = `<input type="text" class="form-control input-small" value=${rb}>`;
+					oTable.cell(rowIdx,colMappings.lineId).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
+					oTable.cell(rowIdx,colMappings.wechatId).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
+					oTable.cell(rowIdx,colMappings.facebookId).node().innerHTML = `<input type="text" class="form-control input-small" value=${facebookId}>`;
+					oTable.cell(rowIdx,colMappings.phoneNumber).node().innerHTML = `<input type="text" class="form-control input-small" value=${phoneNumber}>`;
+					oTable.cell(rowIdx,colMappings.bankSymbol).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankSymbol}>`;
+					oTable.cell(rowIdx,colMappings.bankName).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankName}>`;
+					oTable.cell(rowIdx,colMappings.bankAccount).node().innerHTML = `<input type="text" class="form-control input-small" value=${bankAccount}>`;
+					oTable.cell(rowIdx,colMappings.comment).node().innerHTML = `<input type="text" class="form-control input-small" value=${comment}>`;
 				}
 			});
 
@@ -205,34 +259,34 @@ var Member = function() {
 
 				if (isChecked) {
 					
-					var name =oTable.cell(rowIdx, 2).data();
-                    var cash =oTable.cell(rowIdx, 3).data();
-                    var credit =oTable.cell(rowIdx, 4).data();
-                    var frozenBalance =oTable.cell(rowIdx, 5).data();
-                    var rb =oTable.cell(rowIdx, 8).data();
-					var lineId = oTable.cell(rowIdx, 11).data();
-					var wechatId = oTable.cell(rowIdx, 12).data();
-					var facebookId = oTable.cell(rowIdx, 13).data();
-					var phoneNumber = oTable.cell(rowIdx, 14).data();
-					var bankSymbol = oTable.cell(rowIdx, 15).data();
-					var bankName = oTable.cell(rowIdx, 16).data();
-					var bankAccount = oTable.cell(rowIdx, 17).data();
-					var comment = oTable.cell(rowIdx, 18).data();
+					var name = oTable.cell(rowIdx, colMappings.name).data();
+                    var cash = oTable.cell(rowIdx, colMappings.cash).data();
+                    var credit = oTable.cell(rowIdx, colMappings.credit).data();
+                    var frozenBalance = oTable.cell(rowIdx, colMappings.frozenBalance).data();
+                    var rb = oTable.cell(rowIdx, colMappings.rb).data();
+					var lineId = oTable.cell(rowIdx, colMappings.lineId).data();
+					var wechatId = oTable.cell(rowIdx, colMappings.wechatId).data();
+					var facebookId = oTable.cell(rowIdx, colMappings.facebookId).data();
+					var phoneNumber = oTable.cell(rowIdx, colMappings.phoneNumber).data();
+					var bankSymbol = oTable.cell(rowIdx, colMappings.bankSymbol).data();
+					var bankName = oTable.cell(rowIdx, colMappings.bankName).data();
+					var bankAccount = oTable.cell(rowIdx, colMappings.bankAccount).data();
+					var comment = oTable.cell(rowIdx, colMappings.comment).data();
 					
 					//console.log('index is restored : ' + rowIdx);
-                    oTable.cell(rowIdx,2).node().innerHTML = name;
-                    oTable.cell(rowIdx,3).node().innerHTML = cash;
-                    oTable.cell(rowIdx,4).node().innerHTML = credit;
-                    oTable.cell(rowIdx,5).node().innerHTML = frozenBalance;
-                    oTable.cell(rowIdx,8).node().innerHTML = rb;
-					oTable.cell(rowIdx,11).node().innerHTML = lineId;
-					oTable.cell(rowIdx,12).node().innerHTML = wechatId;
-					oTable.cell(rowIdx,13).node().innerHTML = facebookId;
-					oTable.cell(rowIdx,14).node().innerHTML = phoneNumber;
-					oTable.cell(rowIdx,15).node().innerHTML = bankSymbol;
-					oTable.cell(rowIdx,16).node().innerHTML = bankName;
-					oTable.cell(rowIdx,17).node().innerHTML = bankAccount;
-					oTable.cell(rowIdx,18).node().innerHTML = comment;
+					oTable.cell(rowIdx,colMappings.name).node().innerHTML 			= name;
+                    oTable.cell(rowIdx,colMappings.cash).node().innerHTML 			= cash;
+                    oTable.cell(rowIdx,colMappings.credit).node().innerHTML 		= credit;
+                    oTable.cell(rowIdx,colMappings.frozenBalance).node().innerHTML  = frozenBalance;
+                    oTable.cell(rowIdx,colMappings.rb).node().innerHTML			= rb;
+					oTable.cell(rowIdx,colMappings.lineId).node().innerHTML 		= lineId;
+					oTable.cell(rowIdx,colMappings.wechatId).node().innerHTML 		= wechatId;
+					oTable.cell(rowIdx,colMappings.facebookId).node().innerHTML 	= facebookId;
+					oTable.cell(rowIdx,colMappings.phoneNumber).node().innerHTML 	= phoneNumber;
+					oTable.cell(rowIdx,colMappings.bankSymbol).node().innerHTML 	= bankSymbol;
+					oTable.cell(rowIdx,colMappings.bankName).node().innerHTML 		= bankName;
+					oTable.cell(rowIdx,colMappings.bankAccount).node().innerHTML 	= bankAccount;
+					oTable.cell(rowIdx,colMappings.comment).node().innerHTML 		= comment;
 				}
 			});
 
@@ -257,20 +311,20 @@ var Member = function() {
 				if (isChecked) {
 
 					var obj = {};
-					obj["id"] = oTable.cell(rowIdx, 0).data();
-                    obj["name"] = oTable.cell(rowIdx, 2).node().childNodes[0].value;
-                    obj["cash"] = oTable.cell(rowIdx, 3).node().childNodes[0].value;
-                    obj["credit"] = oTable.cell(rowIdx, 4).node().childNodes[0].value;
-                    obj["frozenBalance"] = oTable.cell(rowIdx, 5).node().childNodes[0].value;
-                    obj["rb"] = oTable.cell(rowIdx, 8).node().childNodes[0].value;
-					obj["lineId"] = oTable.cell(rowIdx, 11).node().childNodes[0].value;
-					obj["wechatId"] = oTable.cell(rowIdx, 12).node().childNodes[0].value;
-					obj["facebookId"] = oTable.cell(rowIdx, 13).node().childNodes[0].value;
-					obj["phoneNumber"] = oTable.cell(rowIdx, 14).node().childNodes[0].value;
-					obj["bankSymbol"] = oTable.cell(rowIdx, 15).node().childNodes[0].value;
-					obj["bankName"] = oTable.cell(rowIdx, 16).node().childNodes[0].value;
-					obj["bankAccount"] = oTable.cell(rowIdx, 17).node().childNodes[0].value;
-					obj["comment"] = oTable.cell(rowIdx, 18).node().childNodes[0].value;
+					obj["id"] = oTable.cell(rowIdx, colMappings.id).data();
+                    obj["name"] = oTable.cell(rowIdx, colMappings.name).node().childNodes[0].value;
+                    obj["cash"] = oTable.cell(rowIdx, colMappings.cash).node().childNodes[0].value;
+                    obj["credit"] = oTable.cell(rowIdx, colMappings.credit).node().childNodes[0].value;
+                    obj["frozenBalance"] = oTable.cell(rowIdx, colMappings.frozenBalance).node().childNodes[0].value;
+                    obj["rb"] = oTable.cell(rowIdx, colMappings.rb).node().childNodes[0].value;
+					obj["lineId"] = oTable.cell(rowIdx, colMappings.lineId).node().childNodes[0].value;
+					obj["wechatId"] = oTable.cell(rowIdx, colMappings.wechatId).node().childNodes[0].value;
+					obj["facebookId"] = oTable.cell(rowIdx, colMappings.facebookId).node().childNodes[0].value;
+					obj["phoneNumber"] = oTable.cell(rowIdx, colMappings.phoneNumber).node().childNodes[0].value;
+					obj["bankSymbol"] = oTable.cell(rowIdx, colMappings.bankSymbol).node().childNodes[0].value;
+					obj["bankName"] = oTable.cell(rowIdx, colMappings.bankName).node().childNodes[0].value;
+					obj["bankAccount"] = oTable.cell(rowIdx, colMappings.bankAccount).node().childNodes[0].value;
+					obj["comment"] = oTable.cell(rowIdx, colMappings.comment).node().childNodes[0].value;
 
 					data.push(obj);
 				}
@@ -363,7 +417,7 @@ var Member = function() {
 
 				if (isChecked) {
 					var obj = {};
-					obj["id"] = oTable.cell(rowIdx, 0).data();
+					obj["id"] = oTable.cell(rowIdx, colMappings.id).data();
 
 					data.push(obj);
 				}
@@ -444,7 +498,13 @@ var Member = function() {
 		});
 
 		function editModeButton(){
-			oTable.column(0).visible(false);
+			oTable.column(colMappings.id).visible(false);
+			oTable.column(colMappings.availBalance).visible(false);
+			oTable.column(colMappings.totalBalance).visible(false);
+			oTable.column(colMappings.agent).visible(false);
+			oTable.column(colMappings.status).visible(false);
+			oTable.column(colMappings.updatetime).visible(false);
+			oTable.column(colMappings.createtime).visible(false);
             $('#saveButton').css('display', 'inline');
 			$('#cancelButton').css('display', 'inline');
 			
@@ -463,7 +523,13 @@ var Member = function() {
 
             $('#saveButton').css('display', 'none');
 			$('#cancelButton').css('display', 'none');
-			oTable.column(0).visible(true);
+			oTable.column(colMappings.id).visible(true);
+			oTable.column(colMappings.availBalance).visible(true);
+			oTable.column(colMappings.totalBalance).visible(true);
+			oTable.column(colMappings.agent).visible(true);
+			oTable.column(colMappings.status).visible(true);
+			oTable.column(colMappings.updatetime).visible(true);
+			oTable.column(colMappings.createtime).visible(true);
 		}
 	};
 
@@ -483,7 +549,13 @@ var Member = function() {
 		$.validator.methods.email = function( value, element ) {
 			console.log(value);
 			return this.optional( element ) ||  /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9]))\.){3}(?:(2(5[0-5]|[0-4][0-9])|1[0-9][0-9]|[1-9]?[0-9])|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])/.test( value ) ;
-          }
+		}
+		
+		// Custom alphaNumeric validator
+		$.validator.methods.alphaNumeric = function( value, element ) {
+			console.log(value);
+			return this.optional( element ) ||  /^[a-z0-9]+$/i.test( value ) ;
+        }
           
         // Custom float validator
 		$.validator.methods.float = function( value, element ) {
@@ -501,16 +573,19 @@ var Member = function() {
                 },
                 account: {
 					required: true,
-					maxlength: 20
+					maxlength: 20,
+					alphaNumeric: true,
                 },
                 password: {
 					required: true,
-					maxlength: 20
+					maxlength: 20,
+					alphaNumeric: true,
                 },
                 passwordConfirm: {
                     required: true,
 					equalTo: "#password",
-					maxlength: 20
+					maxlength: 20,
+					alphaNumeric: true,
                 },
                 email: {
 					email: true,
@@ -563,16 +638,19 @@ var Member = function() {
                 },
                 account: {
 					required: '帳號為必填欄位',
-					maxlength: '長度不可超過 20'
+					maxlength: '長度不可超過 20',
+					alphaNumeric: '必須是數字或英文字母',
                 },
                 password: {
 					required: '密碼為必填欄位',
-					maxlength: '長度不可超過 20'
+					maxlength: '長度不可超過 20',
+					alphaNumeric: '必須是數字或英文字母',
                 },
                 passwordConfirm: {
                     required: '確認密碼為必填欄位',
 					equalTo: '請輸入相同的密碼',
-					maxlength: '長度不可超過 20'
+					maxlength: '長度不可超過 20',
+					alphaNumeric: '必須是數字或英文字母',
                 },
                 email: {
 					email: '請輸入正確的 email 格式',

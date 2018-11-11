@@ -4,8 +4,8 @@
 	<!-- begin::Head -->
 	<head>
 		<meta charset="utf-8" />
-		<title>Metronic | Inner Page</title>
-		<meta name="description" content="Blank inner page examples">
+		<title>Poker Admin</title>
+		<meta name="description" content="Poker Administration">
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
 		<meta http-equiv="content-language" content="zh" />
 
@@ -53,7 +53,7 @@
 						<div class="m-stack__item m-brand  m-brand--skin-dark ">
 							<div class="m-stack m-stack--ver m-stack--general">
 								<div class="m-stack__item m-stack__item--middle m-brand__logo">
-									<a href="index.html" class="m-brand__logo-wrapper">
+									<a href="/" class="m-brand__logo-wrapper">
 										<img alt="" src="/home/assets/demo/demo12/media/img/logo/logo.png" />
 									</a>
 								</div>
@@ -309,7 +309,7 @@
 																<img src="/home/assets/app/media/img/users/user4.jpg" class="m--img-rounded m--marginless" alt="" />
 															</div>
 															<div class="m-card-user__details">
-																<span class="m-card-user__name m--font-weight-500"> {{user.name}}({{user.role}})</span>
+																<span class="m-card-user__name m--font-weight-500"> {{user.name}}({{user.roleName}})</span>
 																<a href="" class="m-card-user__email m--font-weight-300 m-link"> {{user.email}} </a>
 															</div>
 														</div>
@@ -395,43 +395,80 @@
 					<!-- BEGIN: Aside Menu -->
 					<div id="m_ver_menu" class="m-aside-menu  m-aside-menu--skin-dark m-aside-menu--submenu-skin-dark " m-menu-vertical="1" m-menu-scrollable="0" m-menu-dropdown-timeout="500">
 						<ul class="m-menu__nav ">
-							<li id="index-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">基本資訊</span></a></li>
-                            <li class="m-menu__section m-menu__section--first">
-								<h4 class="m-menu__section-text">人員管理</h4>
-								<i class="m-menu__section-icon flaticon-more-v2"></i>
-							</li>
-							<li id="personnel-member-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/member" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
-							<li id="personnel-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-light"></i><span class="m-menu__link-text">代理商管理</span></a></li>
-							<li id="personnel-head-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/head-agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">總代理商管理</span></a></li>
-                            <li id="personnel-service-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/service-agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">客服管理</span></a></li>
-							
+							<li id="index-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">基本資訊</span></a></li>
                             
-                            <li class="m-menu__section ">
+
+							{{#unless user.isMember}}
+								<li class="m-menu__section m-menu__section--first">
+									<h4 class="m-menu__section-text">人員管理</h4>
+									<i class="m-menu__section-icon flaticon-more-v2"></i>
+								</li>
+							{{/unless}}
+
+
+							{{#if user.isAgent}}
+								<li id="personnel-member-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/member" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
+							{{/if}}
+							{{#if user.isHeadAgent}}
+								<li id="personnel-member-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/member" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
+								<li id="personnel-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-light"></i><span class="m-menu__link-text">代理商管理</span></a></li>
+							{{/if}}
+							{{#if user.isServiceAgent}}
+								<li id="personnel-member-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/member" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
+								<li id="personnel-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-light"></i><span class="m-menu__link-text">代理商管理</span></a></li>
+								<li id="personnel-head-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/head-agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">總代理商管理</span></a></li>
+							{{/if}}
+							{{#if user.isAdmin}}
+								<li id="personnel-member-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/member" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-suitcase"></i><span class="m-menu__link-text">會員管理</span></a></li>
+								<li id="personnel-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-light"></i><span class="m-menu__link-text">代理商管理</span></a></li>
+								<li id="personnel-head-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/head-agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">總代理商管理</span></a></li>
+                            	<li id="personnel-service-agent-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/personnel/service-agent" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">客服管理</span></a></li>
+							{{/if}}
+
+							<li class="m-menu__section ">
 								<h4 class="m-menu__section-text">帳務管理</h4>
 								<i class="m-menu__section-icon flaticon-more-v2"></i>
 							</li>
 							<li id="credit-transfer-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/credit/transfer" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-graphic"></i><span class="m-menu__link-text">額度存提</span></a></li>
 							<li id="credit-history-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/credit/history" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-network"></i><span class="m-menu__link-text">存提紀錄</span></a></li>
-
+					
+							{{#if user.isServiceAgent}}
+								<li class="m-menu__section ">
+									<h4 class="m-menu__section-text">牌局管理</h4>
+									<i class="m-menu__section-icon flaticon-more-v2"></i>
+								</li>
+								<li id="game-verify-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/verify" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">入桌審核</span></a></li>
+								<li id="game-present-games-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/present-games" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">當前牌局</span></a></li>
+								<li id="game-history-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/history" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">戰績紀錄</span></a></li>
+								<li id="game-import-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/import" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-settings"></i><span class="m-menu__link-text">戰績導入</span></a></li>
+                            {{/if}}
+                            {{#if user.isAdmin}}
+								<li class="m-menu__section ">
+									<h4 class="m-menu__section-text">牌局管理</h4>
+									<i class="m-menu__section-icon flaticon-more-v2"></i>
+								</li>
+								<li id="game-verify-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/verify" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">入桌審核</span></a></li>
+								<li id="game-present-games-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/present-games" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">當前牌局</span></a></li>
+								<li id="game-history-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/history" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">戰績紀錄</span></a></li>
+								<li id="game-import-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/import" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-settings"></i><span class="m-menu__link-text">戰績導入</span></a></li>
+							{{/if}}
                             
-                            
-                            <li class="m-menu__section ">
-								<h4 class="m-menu__section-text">牌局管理</h4>
-								<i class="m-menu__section-icon flaticon-more-v2"></i>
-							</li>
-                            <li id="game-verify-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/verify" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">入桌審核</span></a></li>
-							<li id="game-present-games-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/present-games" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">當前牌局</span></a></li>
-							<li id="game-history-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/history" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">戰績紀錄</span></a></li>
-							<li id="game-import-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/game/import" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-settings"></i><span class="m-menu__link-text">戰績導入</span></a></li>
-
                             
                             <li class="m-menu__section ">
 								<h4 class="m-menu__section-text">帳號設定</h4>
 								<i class="m-menu__section-icon flaticon-more-v2"></i>
 							</li>
                             <li id="account-misc-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/misc" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-share"></i><span class="m-menu__link-text">一般設定</span></a></li>
-							<li id="account-game-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/game" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">德撲帳號設定</span></a></li>
-							<li id="account-club-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/club" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">CMS帳號設定</span></a></li>
+
+							{{#if user.isServiceAgent}}
+								<li id="account-game-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/game" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">德撲帳號設定</span></a></li>
+							{{/if}}
+							{{#if user.isAdmin}}
+									<li id="account-game-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/game" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-cogwheel"></i><span class="m-menu__link-text">德撲帳號設定</span></a></li>
+									<li id="account-club-tag" class="m-menu__item " aria-haspopup="true" m-menu-link-redirect="1"><a href="/home/account/club" class="m-menu__link "><span class="m-menu__item-here"></span><i class="m-menu__link-icon flaticon-lifebuoy"></i><span class="m-menu__link-text">CMS帳號設定</span></a></li>
+							{{/if}}
+							
+							
 						</ul>
 					</div>
 
@@ -456,7 +493,7 @@
 					<div class="m-stack m-stack--flex-tablet-and-mobile m-stack--ver m-stack--desktop">
 						<div class="m-stack__item m-stack__item--left m-stack__item--middle m-stack__item--last">
 							<span class="m-footer__copyright">
-								2017 &copy; Metronic theme by <a href="https://keenthemes.com" class="m-link">Keenthemes</a>
+								2018 &copy; Poker Admin by <a href="#" class="m-link">@@</a>
 							</span>
 						</div>
 						<div class="m-stack__item m-stack__item--right m-stack__item--middle m-stack__item--first">

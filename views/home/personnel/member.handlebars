@@ -19,12 +19,12 @@
 			<h3 class="m-subheader__title m-subheader__title--separator">會員管理</h3>
 			<ul class="m-subheader__breadcrumbs m-nav m-nav--inline">
 				<li class="m-nav__item m-nav__item--home">
-					<a href="#" class="m-nav__link m-nav__link--icon">
+					<a href="/" class="m-nav__link m-nav__link--icon">
 						<i class="m-nav__link-icon la la-home"></i>
 					</a>
 				</li>
-				<li class="m-nav__separator">-</li>
-				<li class="m-nav__item">
+				{{!-- <li class="m-nav__separator">-</li> --}}
+				{{!-- <li class="m-nav__item">
 					<a href="" class="m-nav__link">
 						<span class="m-nav__link-text">Resources</span>
 					</a>
@@ -34,10 +34,10 @@
 					<a href="" class="m-nav__link">
 						<span class="m-nav__link-text">Timesheet</span>
 					</a>
-				</li>
+				</li> --}}
 			</ul>
 		</div>
-		<div>
+		{{!-- <div>
 			<div class="m-dropdown m-dropdown--inline m-dropdown--arrow m-dropdown--align-right m-dropdown--align-push" m-dropdown-toggle="hover" aria-expanded="true">
 				<a href="#" class="m-portlet__nav-link btn btn-lg btn-secondary  m-btn m-btn--outline-2x m-btn--air m-btn--icon m-btn--icon-only m-btn--pill  m-dropdown__toggle">
 					<i class="la la-plus m--hide"></i>
@@ -87,7 +87,7 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		</div> --}}
 	</div>
 </div>
 <!-- END: Subheader -->
@@ -107,7 +107,7 @@
 			<div class="m-portlet__head-tools">
 				<ul class="m-portlet__nav">
 					<li class="m-portlet__nav-item">
-						<button  id="createFormButton" data-toggle="modal" data-target="#create-modal" type="button" class="btn btn-accent m-btn m-btn--custom m-btn--icon  m-btn--pill m-btn--air m-btn--bolder">
+						<button  id="createFormButton" data-toggle="modal" data-target="#create-modal" type="button" class="btn btn-accent m-btn m-btn--custom m-btn--icon m-btn--bolder">
 							<span>
 								<i class="fa fa-user-plus"></i>
 								<span>新增會員</span>
@@ -120,30 +120,30 @@
 		
 		<div class="m-portlet__body">
 			
-			<table class="table table-striped- table-bordered table-hover table-checkable" id="data-table">
+			<table class="table table-bordered table-hover nowrap " id="data-table">
 				<thead>
 					<tr>
-						<th>RecordId</th>		{{!-- 0 --}}
-						<th>帳號</th>			{{!-- 1 --}}
-						<th>名稱</th>			{{!-- 2 --}}
-						<th>現金額度</th>		{{!-- 3 --}}
-						<th>信用額度</th>		{{!-- 4 --}}
-						<th>凍結資產</th>		{{!-- 5 --}}
-						<th>可用資產</th>		{{!-- 6 --}}
-						<th>總資產</th>			{{!-- 7 --}}
-						<th>退水</th>			{{!-- 8 --}}
-						<th>狀態</th>			{{!-- 9 --}}
-						<th>代理</th>			{{!-- 10 --}}
-						<th>Line Id</th>		{{!-- 11 --}}
-						<th>Wechat Id</th>		{{!-- 12 --}}
-						<th>Facebook Id</th>	{{!-- 13 --}}
-						<th>電話</th>			{{!-- 14 --}}
-						<th>銀行代號</th>		{{!-- 15 --}}
-						<th>銀行名稱</th>		{{!-- 16 --}}
-						<th>銀行帳號</th>		{{!-- 17 --}}
-						<th>備註</th>			{{!-- 18 --}}
-						<th>最後更新時間</th>	{{!-- 19 --}}
-						<th>創立時間</th>		{{!-- 20 --}}
+						<th class="dt-center">RecordId</th>		{{!-- 0 --}}
+						<th class="dt-center">帳號</th>			{{!-- 1 --}}
+						<th class="dt-center">名稱</th>			{{!-- 2 --}}
+						<th class="dt-center">現金額度</th>		{{!-- 3 --}}
+						<th class="dt-center">信用額度</th>		{{!-- 4 --}}
+						<th class="dt-center">凍結資產</th>		{{!-- 5 --}}
+						<th class="dt-center">可用資產</th>		{{!-- 6 --}}
+						<th class="dt-center">總資產</th>			{{!-- 7 --}}
+						<th class="dt-center">退水</th>			{{!-- 8 --}}
+						<th class="dt-center">狀態</th>			{{!-- 9 --}}
+						<th class="dt-center">代理</th>			{{!-- 10 --}}
+						<th class="dt-center">Line Id</th>		{{!-- 11 --}}
+						<th class="dt-center">Wechat Id</th>		{{!-- 12 --}}
+						<th class="dt-center">Facebook Id</th>	{{!-- 13 --}}
+						<th class="dt-center">電話</th>			{{!-- 14 --}}
+						<th class="dt-center">銀行代號</th>		{{!-- 15 --}}
+						<th class="dt-center">銀行名稱</th>		{{!-- 16 --}}
+						<th class="dt-center">銀行帳號</th>		{{!-- 17 --}}
+						<th class="dt-center">備註</th>			{{!-- 18 --}}
+						<th class="dt-center">最後更新時間</th>	{{!-- 19 --}}
+						<th class="dt-center">創立時間</th>		{{!-- 20 --}}
 					</tr>
 				</thead>
 			</table>

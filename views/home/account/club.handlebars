@@ -9,9 +9,13 @@
 	.clubCardIcon {
 		font-size: 2.8rem !important;
 	}
+  .tooltip-inner {
+    display : none;
+  }
 	i {
 		margin-right: 8px;
 	}
+
 	</style>
 {{/section}}
 {{!-- Import custom script to layout --}}
@@ -103,7 +107,7 @@
 
 {{!-- Content goes here --}}
 <div class="m-content">
-					
+
 	<div class="row" id="m_sortable_portlets">
 		<!--begin::col-->
 		<div class="col-lg-6">
@@ -111,7 +115,7 @@
 			{{#if clubs}}
 				{{#each clubs.left}}
 				<!--begin::Portlet-->
-				<div id="{{account}}" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
+				<div id="{{cmsId}}" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg m-portlet--collapse" m-portlet="true">
 					<div class="m-portlet__head">
 						<div class="m-portlet__head-caption">
 							<div class="m-portlet__head-title">
@@ -127,14 +131,14 @@
 						<div class="m-portlet__head-tools">
 							<ul class="m-portlet__nav">
 								<li class="m-portlet__nav-item">
-									<a href="#" m-portlet-tool="toggle" class="portlet-collapse-btn m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
-								<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
+									<a href="#" m-portlet-tool="toggle" class="m-portlet__nav-link m-portlet__nav-link--icon"><i class="la la-angle-down"></i></a>
+								</li>
 							</ul>
 						</div>
 						<!--end::m-portlet__head-tools-->
 					</div>
 
-					<div class="m-portlet__body">
+					<div class="m-portlet__body" style="display: none; overflow: hidden; padding-top: 0px; padding-bottom: 0px;">
 						<!--begin:: row -->
 						<div class="row m-row--no-padding m-row--col-separator-xl">
 							<!--begin:: col -->
@@ -233,25 +237,25 @@
 									<div class="m-widget1__item">
 										<div class="row m-row--no-padding align-items-center">
 											<div class="col">
-												<h3 class="m-widget1__title">俱樂部帳號</h3>
+												<h3 class="m-widget1__title">CMS帳號</h3>
 												{{!-- <span class="m-widget1__desc"></span> --}}
 											</div>
 											<div class="col m--align-right">
 												<span class="club-account m-widget1__number m--font-info">{{account}}</span>
 											</div>
-											
+
 										</div>
 									</div>
 									<div class="m-widget1__item">
 										<div class="row m-row--no-padding align-items-center">
 											<div class="col">
-												<h3 class="m-widget1__title">俱樂部密碼</h3>
+												<h3 class="m-widget1__title">CMS密碼</h3>
 												{{!-- <span class="m-widget1__desc"></span> --}}
 											</div>
 											<div class="col m--align-right">
 												<span class="m-widget1__number m--font-info">{{password}}</span>
 											</div>
-											
+
 										</div>
 									</div>
 									<div class="m-widget1__item">
@@ -260,18 +264,18 @@
 												{{!-- <h3 class="m-widget1__title"></h3> --}}
 												{{!-- <span class="m-widget1__desc"></span> --}}
 											</div>
-											<div class="col m--align-right">
-												<button onclick="fillEditModal({{account}})" data-toggle="modal" data-target="#edit-modal" type="button"  class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
+											 <div class="col m--align-right">
+												 <button onclick="deleteAccount({{cmsId}})" type="button"  class="btn m-btn--square  btn-danger m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>刪除此俱樂部</span></button>
 											</div>
-											
+
 										</div>
 									</div>
 								</div>
 							</div>
-							
+
 						</div>
 					</div>
-					<!--end::Portlet body-->	
+					<!--end::Portlet body-->
 					<!--begin::Portlet footer-->
 					{{!-- <div class="m-portlet__foot">
 
@@ -288,11 +292,11 @@
 					<div class="m-portlet__body">
 						<div class="row m-row--no-padding">
 							<div class="col">
-								<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--air m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增俱樂部帳號</button>
+								<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--air m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增CMS帳號</button>
 								{{!-- <button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-outline-accent m-btn m-btn--custom m-btn--bolder m-btn--outline-2x"><i class="la la-plus"></i>新增俱樂部帳號</button> --}}
 							</div>
 						</div>
-						
+
 					</div>
 				</div>
 				<!--end::add Portlet-->
@@ -310,9 +314,9 @@
 
 			{{!-- Iterate and print out the second part of club data --}}
 			{{#if clubs}}
-				{{#each clubs.right}} 
+				{{#each clubs.right}}
 				<!--begin::Portlet-->
-				<div id="{{account}}" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg" m-portlet="true">
+				<div id="{{cmsId}}" class="m-portlet m-portlet--mobile m-portlet--sortable m-portlet--success m-portlet--head-solid-bg m-portlet--collapse" m-portlet="true">
 					<div class="m-portlet__head">
 						<div class="m-portlet__head-caption">
 							<div class="m-portlet__head-title">
@@ -329,13 +333,13 @@
 							<ul class="m-portlet__nav">
 								<li class="m-portlet__nav-item">
 									<a href="#" m-portlet-tool="toggle" class="portlet-collapse-btn m-portlet__nav-link m-portlet__nav-link--icon" aria-describedby="tooltip_8zsd929i58"><i class="la la-angle-down"></i></a>
-								<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">Collapse</div>                        </div></li>
+								<div class="m-tooltip m-tooltip--portlet tooltip bs-tooltip-top" role="tooltip" id="tooltip_8zsd929i58" aria-hidden="true" x-placement="top" style="position: absolute; will-change: transform; visibility: hidden; top: 0px; left: 0px; transform: translate3d(589px, -32px, 0px);">                            <div class="tooltip-arrow arrow" style="left: 44px;"></div>                            <div class="tooltip-inner">展開</div>                        </div></li>
 							</ul>
 						</div>
 						<!--end::m-portlet__head-tools-->
 					</div>
 
-					<div class="m-portlet__body">
+					<div class="m-portlet__body" style="display: none; overflow: hidden; padding-top: 0px; padding-bottom: 0px;">
 						<!--begin:: row -->
 						<div class="row m-row--no-padding m-row--col-separator-xl">
 							<!--begin:: col -->
@@ -434,25 +438,25 @@
 									<div class="m-widget1__item">
 										<div class="row m-row--no-padding align-items-center">
 											<div class="col">
-												<h3 class="m-widget1__title">俱樂部帳號</h3>
+												<h3 class="m-widget1__title">CMS帳號</h3>
 												{{!-- <span class="m-widget1__desc"></span> --}}
 											</div>
 											<div class="col m--align-right">
 												<span class="club-account m-widget1__number m--font-info">{{account}}</span>
 											</div>
-											
+
 										</div>
 									</div>
 									<div class="m-widget1__item">
 										<div class="row m-row--no-padding align-items-center">
 											<div class="col">
-												<h3 class="m-widget1__title">俱樂部密碼</h3>
+												<h3 class="m-widget1__title">CMS密碼</h3>
 												{{!-- <span class="m-widget1__desc"></span> --}}
 											</div>
 											<div class="col m--align-right">
 												<span class="m-widget1__number m--font-info">{{password}}</span>
 											</div>
-											
+
 										</div>
 									</div>
 									<div class="m-widget1__item">
@@ -462,17 +466,17 @@
 												{{!-- <span class="m-widget1__desc"></span> --}}
 											</div>
 											<div class="col m--align-right">
-												<button onclick="fillEditModal({{account}})" data-toggle="modal" data-target="#edit-modal" type="button"  class="btn m-btn--square  btn-outline-accent m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>編輯設定</span></button>
+												<button onclick="deleteAccount({{cmsId}})" type="button"  class="btn m-btn--square  btn-danger m-btn m-btn--custom m-btn--outline-2x"><i class="la la-edit"></i> <span>刪除此俱樂部</span></button>
 											</div>
-											
+
 										</div>
 									</div>
 								</div>
 							</div>
-							
+
 						</div>
 					</div>
-					<!--end::Portlet body-->	
+					<!--end::Portlet body-->
 					<!--begin::Portlet footer-->
 					{{!-- <div class="m-portlet__foot">
 
@@ -489,11 +493,11 @@
 					<div class="m-portlet__body">
 						<div class="row m-row--no-padding">
 							<div class="col">
-								<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--air m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增俱樂部帳號</button>
+								<button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-accent m-btn m-btn--air m-btn--custom m-btn--bolder"><i class="la la-plus"></i>新增CMS帳號</button>
 								{{!-- <button data-toggle="modal" data-target="#add-modal" type="button" class="btn m-btn--square btn-block btn-lg btn-outline-accent m-btn m-btn--custom m-btn--bolder m-btn--outline-2x"><i class="la la-plus"></i>新增俱樂部帳號</button> --}}
 							</div>
 						</div>
-						
+
 					</div>
 				</div>
 				<!--end::add Portlet-->
@@ -510,74 +514,14 @@
 	</div>
 
 
-	<!--begin::edit Modal-->
-	<div class="modal fade" id="edit-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<!--begin::Form-->
-				<form autocomplete="off" class="m-form m-form--group-seperator-dashed" >
-					<div class="modal-header">
-						<h5 class="modal-title" id="exampleModalLabel">編輯俱樂部</h5>
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-							<span aria-hidden="true">&times;</span>
-						</button>
-					</div>
-					<div class="modal-body">
-						<div class="form-group m-form__group">
-							<label for="example_input_full_name">當前俱樂部名稱</label>
-							<div class="m-input-icon m-input-icon--left">
-								<input id="edit-club-name" type="text" class="form-control m-input"  disabled>
-								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-home"></i></span></span>
-							</div>
-						</div>
-						<div class="form-group m-form__group">
-							<label for="example_input_full_name">當前俱樂部ID</label>
-							<div class="m-input-icon m-input-icon--left">
-								<input id="edit-club-id" type="text" class="form-control m-input"  disabled>
-								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-info"></i></span></span>
-							</div>
-							
-						</div>
-						<span class="m-form__help">請檢查上述資料是否為欲修改的俱樂部</span>
-
-						<div class="form-group m-form__group">
-							<label for="example_input_full_name">俱樂部帳號</label>
-							<div class="m-input-icon m-input-icon--left">
-								<input id="edit-club-account" type="text" class="form-control m-input" placeholder="請輸入新的 CMS 帳號" required>
-								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-user"></i></span></span>
-							</div>
-						</div>
-						<div class="form-group m-form__group">
-							<label for="example_input_full_name">俱樂部密碼</label>
-							<div class="m-input-icon m-input-icon--left">
-								<input id="edit-club-password" type="password" class="form-control m-input" placeholder="請輸入新的 CMS 密碼" autocomplete="new-password" required>
-								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-key"></i></span></span>
-							</div>
-						</div>	
-						<span class="m-form__help">如果要修改，請填入新的 CMS 帳號或密碼 </span>
-					</div>
-					<div class="modal-footer">
-						<div class="col m--align-left">
-							<button type="button" class="btn m-btn--square  btn-danger m-btn m-btn--custom  ">刪除此帳號</button>
-						</div>
-						<div class="col m--align-right">
-							<button type="button" class="btn m-btn--square  btn-primary m-btn m-btn--custom  ">提交修改</button>
-							<button type="button" class="btn m-btn--square  btn-secondary m-btn m-btn--custom  "  data-dismiss="modal">取消</button>
-						</div>
-					</div>
-				</form>
-				<!--end::Form-->
-			</div>
-		</div>
-	</div>
-	<!--end::edit Modal-->
+	
 
 	<!--begin::add Modal-->
 	<div class="modal fade" id="add-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-lg  modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<!--begin::Form-->
-				<form class="m-form" autocomplete="off">
+				<form id="add-form" class="m-form" autocomplete="off">
 					<div class="modal-header">
 						<h5 class="modal-title" id="exampleModalLabel">新增俱樂部帳號</h5>
 						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -588,22 +532,22 @@
 						<div class="form-group m-form__group">
 							<label for="example_input_full_name">俱樂部帳號</label>
 							<div class="m-input-icon m-input-icon--left">
-								<input id="add-club-account" type="text" class="form-control m-input" placeholder="請輸入 CMS 帳號" required>
+								<input name="addaccount" id="add-club-account" type="text" class="form-control m-input" placeholder="請輸入 CMS 帳號" required>
 								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-user"></i></span></span>
 							</div>
 						</div>
 						<div class="form-group m-form__group">
 							<label for="example_input_full_name">俱樂部密碼</label>
 							<div class="m-input-icon m-input-icon--left">
-								<input id="add-club-password" type="password" class="form-control m-input" placeholder="請輸入 CMS 密碼" autocomplete="new-password" required>
+								<input name="addpassword" id="add-club-password" type="password" class="form-control m-input" placeholder="請輸入 CMS 密碼" autocomplete="new-password" required>
 								<span class="m-input-icon__icon m-input-icon__icon--left"><span><i class="la la-key"></i></span></span>
 							</div>
-						</div>	
+						</div>
 						<span class="m-form__help">請填入該俱樂部的 CMS 帳號和密碼 </span>
 					</div>
 					<div class="modal-footer">
 						<div class="col m--align-right">
-							<button type="button" class="btn m-btn--square  btn-primary m-btn m-btn--custom  ">確定新增</button>
+							<button type="submit" class="btn m-btn--square  btn-primary m-btn m-btn--custom  ">確定新增</button>
 							<button type="button" class="btn m-btn--square  btn-secondary m-btn m-btn--custom  "  data-dismiss="modal">取消</button>
 						</div>
 					</div>

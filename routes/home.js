@@ -7,11 +7,15 @@ let router = express.Router();
 
 
 // Extract handlers
-const {index, personnel, credit, game, account, login, authorize} = require('../controllers/home');
+const {index, personnel, credit, game, account, login, auth} = require('../controllers/home');
 
 
 // Authorize route
-router.use(/\/(dashboard|personnel|credit|game|account).*/, authorize); // used on all pages, except login
+router.use(/\/(dashboard|personnel|credit|game|account).*/, auth.isLogin); // used on all pages, except login
+router.use(/\/personnel\/service-agent.*/, auth.allowRole('admin'));
+router.use(/\/personnel\/head-agent.*/,    auth.allowRole('admin', 'serviceAgent'));
+router.use(/\/personnel\/agent.*/,         auth.allowRole('admin', 'serviceAgent', 'headAgent'));
+router.use(/\/personnel\/member.*/,        auth.allowRole('admin', 'serviceAgent', 'headAgent', 'agent'));
 
 // Dashboard routes
 router.get('/dashboard', index);
@@ -65,6 +69,9 @@ router.get('/account/misc', account.misc);
 router.get('/account/game', account.game);
 router.get('/account/club', account.club);
 
+//router.post('/account/club/update', account.updateValidate, account.update);
+router.post('/account/club/create', account.createValidate, account.create);
+router.post('/account/club/delete', account.delete);
 
 
 module.exports = router;
