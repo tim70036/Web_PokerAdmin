@@ -225,11 +225,6 @@ let createHandler = async function(req,res){
         return res.json({err: true, msg: 'Server 錯誤'});
     }
 
-    // Check if agent has enough balance 
-    if(cash > agent.availBalance){
-        return res.json({err: true, msg: '代理商現金額度不足'});
-    }
-
     // Prepare query
     // Query for insert into UserAccount
     let sqlStringInsert1 = `INSERT INTO UserAccount (account, password, role, email) VALUES (?, ?, ?, ?);`;
@@ -250,12 +245,12 @@ let createHandler = async function(req,res){
                 bankSymbol, bankName, bankAccount, comment];
     sqlStringInsert2 = req.db.format(sqlStringInsert2, values);
 
-    // Query for update AgentInfo cash and frozenBalance
+    // Query for update AgentInfo cash 
     let sqlStringUpdate = ` UPDATE AgentInfo
-                            SET cash=cash-?, frozenBalance=frozenBalance+?
+                            SET cash=cash-?
                             WHERE id=?
                             ;`;
-    values = [cash, cash, agent.id];
+    values = [cash, agent.id];
     sqlStringUpdate = req.db.format(sqlStringUpdate, values);
 
     // Insert new agent
@@ -290,111 +285,27 @@ let updateHandler = async function(req,res){
     // Receive data array
     let updateData = req.body.data;
 
-    // Prepare query, get agent for each member
-    let sqlString =`SELECT 
-                        M.id AS id, A.id AS agentId, A.availBalance AS agentAvailBalance 
-                    FROM MemberInfo AS M
-                    INNER JOIN AgentInfo AS A 
-                        ON M.agentId=A.id
-                    WHERE M.id IN (?)
-                    ;`;
-    let values = [ updateData.map( (obj) => (obj.id) ) ] ; // bind a list of member id to the sql string
-    sqlString = req.db.format(sqlString, values); 
-
-    // Get agent for each member
-    // Execute query
-    let agentList;
-    try{
-        let results = await sqlAsync.query(req.db, sqlString); 
-
-        // Check result
-        if(results.length <= 0 ) throw Error(`Cannot find agent`);
-
-        // Augment agentId for each member in update data 
-        updateData.forEach( function(member) {
-            member.agentId = results.find(  row => row.id === Number(member.id)  ).agentId;
-        });
-
-        // Get a distinct list of all involved agents
-        agentList = results.map( (row) => ({ id: row.agentId, availBalance: row.agentAvailBalance }) );
-        agentList = agentList.reduce( function(newList, agent){
-            if(!newList.find(element => element.id === agent.id))  
-                newList.push(agent);
-            return newList;
-        }  , []);
+    // Prepare query
+    // Query for update all members
+    let sqlStringTmp = `UPDATE MemberInfo 
+                        SET  name=?, credit=?, rb=?,
+                            lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
+                            bankSymbol=?, bankName=?, bankAccount=?, comment=?
+                        WHERE id=?
+                        ;`;
+    let sqlStringUpdate = '';
+    for(let i=0 ; i<updateData.length ; i++) {
+        let element = updateData[i];
+        let values = [  element.name, element.credit, element.rb,
+                        element.lineId, element.wechatId, element.facebookId, element.phoneNumber,
+                        element.bankSymbol, element.bankName, element.bankAccount, element.comment, element.id];
+        sqlStringUpdate  += req.db.format(sqlStringTmp, values);
     }
-    catch(error) {
-        console.log(error);
-        return res.json({err: true, msg: 'Server 錯誤'});
-    }
-
-    console.log({agentList});
-
-    // Ready to update
-    // Start Trnasaction first
+    
+    // Execute all queries
     try{
         await sqlAsync.query(req.db, 'START TRANSACTION');
-        
-        // For each agent, update its members
-        for(let i=0 ; i<agentList.length ; i++){
-            let curAgent = agentList[i];
-            let curMemberList = updateData.filter(member => member.agentId === curAgent.id);
-
-            // Prepare query for validate availBalance
-            let sqlStringCash =`SELECT SUM(cash) AS totalCash
-                                FROM MemberInfo
-                                WHERE id IN(?)
-                                `;
-            values = [ curMemberList.map((member) => member.id) ]; // bind a list of member id to the sql string
-            sqlStringCash = req.db.format(sqlStringCash, values);
-
-            // Execute query to get orginal total cash and new total cash of all the members that required update
-            let newTotalCash = curMemberList.reduce( (sum, member) => sum + Number(member.cash) ,0);
-            let orgTotalCash;
-            
-            let results = await sqlAsync.query(req.db, sqlStringCash);
-
-            // Check result
-            if(results.length <= 0 ) throw Error(`Cannot calculate SUM of all members' cash`);
-            orgTotalCash = results[0].totalCash;
-
-            console.log({newTotalCash, orgTotalCash});
-
-            // Calculate change and validate with agent's availBalance
-            if(newTotalCash - orgTotalCash > curAgent.availBalance){
-                return res.json({err: true, msg: '代理商現金額度不足'});
-            }
-
-            // Now, these updates are all valid
-            // Prepare query
-            // Query for update all members
-            let sqlStringTmp = `UPDATE MemberInfo 
-                                SET  name=?, cash=?, credit=?, frozenBalance=?, rb=?,
-                                    lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
-                                    bankSymbol=?, bankName=?, bankAccount=?, comment=?
-                                WHERE id=?
-                                ;`;
-            let sqlStringUpdate1 = '';
-            for(let i=0 ; i<curMemberList.length ; i++) {
-                let element = curMemberList[i];
-                let values = [  element.name, element.cash, element.credit, element.frozenBalance, element.rb,
-                                element.lineId, element.wechatId, element.facebookId, element.phoneNumber,
-                                element.bankSymbol, element.bankName, element.bankAccount, element.comment, element.id];
-                sqlStringUpdate1  += req.db.format(sqlStringTmp, values);
-            }
-
-            // Query for update agent
-            let sqlStringUpdate2 = `UPDATE AgentInfo
-                                    SET cash=cash-?, frozenBalance=frozenBalance+?
-                                    WHERE id=?
-                                    ;`;
-            values = [newTotalCash - orgTotalCash, newTotalCash - orgTotalCash, curAgent.id];
-            sqlStringUpdate2 = req.db.format(sqlStringUpdate2, values);
-
-            // Execute all queries
-            await sqlAsync.query(req.db, sqlStringUpdate1 +  sqlStringUpdate2);
-        }
-
+        let results = await sqlAsync.query(req.db, sqlStringUpdate);
     }
     catch(error) {
         await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
@@ -423,7 +334,7 @@ let deleteHandler = async function(req,res){
 
     // Prepare query, get agent for each member
     let sqlString =`SELECT 
-                        M.id AS id, A.id AS agentId, A.availBalance AS agentAvailBalance 
+                        M.id AS id, A.id AS agentId
                     FROM MemberInfo AS M
                     INNER JOIN AgentInfo AS A 
                         ON M.agentId=A.id
@@ -447,7 +358,7 @@ let deleteHandler = async function(req,res){
         });
 
         // Get a distinct list of all involved agents
-        agentList = results.map( (row) => ({ id: row.agentId, availBalance: row.agentAvailBalance }) );
+        agentList = results.map( (row) => ({ id: row.agentId}) );
         agentList = agentList.reduce( function(newList, agent){
             if(!newList.find(element => element.id === agent.id))  
                 newList.push(agent);
@@ -501,10 +412,10 @@ let deleteHandler = async function(req,res){
             sqlStringDel = req.db.format(sqlStringDel, values);
 
             let sqlStringUpdate =`  UPDATE AgentInfo
-                                    SET cash=cash+?, frozenBalance=frozenBalance-?
+                                    SET cash=cash+?
                                     WHERE id=?
                                     ;`;
-            values = [totalCash, totalCash, curAgent.id];
+            values = [totalCash, curAgent.id];
             sqlStringUpdate = req.db.format(sqlStringUpdate, values);
 
             // Execute all queries
@@ -693,12 +604,8 @@ function updateValidator(){
             .isLength({ min:1 }).withMessage('名稱不可為空')
             .isLength({ max:20 }).withMessage('名稱長度不可超過 20'),  
 
-        body('data.*.cash')
-            .isInt({ min:-999999999 , max:999999999}).withMessage('現金額度必須是數字'),
         body('data.*.credit')
             .isInt({ min:-999999999 , max:999999999}).withMessage('信用額度必須是數字'),
-        body('data.*.frozenBalance')
-            .isInt({ min:-999999999 , max:999999999}).withMessage('凍結資產必須是數字'),
         body('data.*.rb')
             .isFloat({ min:-100 , max:100}).withMessage('退水必須是小數'),
 

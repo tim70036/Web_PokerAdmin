@@ -10,20 +10,19 @@ var Member = function() {
 		credit : 4,
 		frozenBalance : 5,
 		availBalance : 6,
-		totalBalance : 7,
-		rb : 8,
-		status : 9,
-		agent : 10,
-		lineId : 11,
-		wechatId : 12,
-		facebookId : 13,
-		phoneNumber : 14,
-		bankSymbol : 15,
-		bankName : 16,
-		bankAccount : 17,
-		comment : 18,
-		updatetime : 19,
-		createtime : 20,
+		rb : 7,
+		status : 8,
+		agent : 9,
+		lineId : 10,
+		wechatId : 11,
+		facebookId : 12,
+		phoneNumber : 13,
+		bankSymbol : 14,
+		bankName : 15,
+		bankAccount : 16,
+		comment : 17,
+		updatetime : 18,
+		createtime : 19,
 	};
 
 	// Data table init function
@@ -107,7 +106,6 @@ var Member = function() {
                 {data: 'credit'},
                 {data: 'frozenBalance'},
                 {data: 'availBalance'},
-                {data: 'totalBalance'},
                 {data: 'rb'},
 				{data: 'status'},
 				{data: 'agent'},
@@ -140,27 +138,13 @@ var Member = function() {
 				},
 				{ targets: colMappings.userAccount, 	responsivePriority : 1, 	},
 				{ targets: colMappings.name, 			responsivePriority : 2, 	width: '100px',},
-				{ targets: colMappings.cash, 			responsivePriority : 3, 	},
-				{ targets: colMappings.credit, 			responsivePriority : 4, 	},
-				{ targets: colMappings.frozenBalance, 	responsivePriority : 5, 	},
-				{ targets: colMappings.availBalance, 	responsivePriority : 6, 	},
-				{ targets: colMappings.totalBalance, 	responsivePriority : 7, 	},
+				{ targets: colMappings.cash, 			responsivePriority : 3, 	render: numberColor},
+				{ targets: colMappings.credit, 			responsivePriority : 4, 	render: numberColor},
+				{ targets: colMappings.frozenBalance, 	responsivePriority : 5, 	render: numberColor},
+				{ targets: colMappings.availBalance, 	responsivePriority : 6, 	render: numberColor},
 				{ targets: colMappings.rb, 				responsivePriority : 8, 	},
 				{ targets: colMappings.agent, 			responsivePriority : 9, 	},
-				{ targets: colMappings.status, 			responsivePriority : 10, 	
-					render: function(data, type, full, meta) {
-						  var map = {
-							'active' :   {'state': 'success', 'title' : '正常'},
-							'frozen':    {'state': 'danger',  'title' : '凍結'},
-							'undefined': {'state': 'metal',   'title' : '不明'},
-						  };
-						  if (typeof map[data] === 'undefined') {
-							  return data;
-						  }
-						  return '<span class="m-badge m-badge--' + map[data].state + ' m-badge--dot"></span>&nbsp;' +
-							  '<span class="m--font-bold m--font-' + map[data].state + '">' + map[data].title + '</span>';
-					},
-				},
+				{ targets: colMappings.status, 			responsivePriority : 10, 	render: statusColor},
 				{ targets: colMappings.updatetime, 		responsivePriority : 11, 	},
 				{ targets: colMappings.bankSymbol, 		responsivePriority : 12, 	},
 				{ targets: colMappings.bankAccount, 	responsivePriority : 13, 	},
@@ -207,9 +191,7 @@ var Member = function() {
 				if (isChecked) {
 					empty = false;
 					var name = oTable.cell(rowIdx, colMappings.name).data();
-                    var cash = oTable.cell(rowIdx, colMappings.cash).data();
                     var credit = oTable.cell(rowIdx, colMappings.credit).data();
-                    var frozenBalance = oTable.cell(rowIdx, colMappings.frozenBalance).data();
                     var rb = oTable.cell(rowIdx, colMappings.rb).data();
 					var lineId = oTable.cell(rowIdx, colMappings.lineId).data();
 					var wechatId = oTable.cell(rowIdx, colMappings.wechatId).data();
@@ -222,9 +204,7 @@ var Member = function() {
 					
 					//console.log('index is cheched : ' + rowIdx);
 					oTable.cell(rowIdx,colMappings.name).node().innerHTML = `<input type="text" class="form-control input-small" value=${name}>`;
-                    oTable.cell(rowIdx,colMappings.cash).node().innerHTML = `<input type="text" class="form-control input-small" value=${cash}>`;
                     oTable.cell(rowIdx,colMappings.credit).node().innerHTML = `<input type="text" class="form-control input-small" value=${credit}>`;
-                    oTable.cell(rowIdx,colMappings.frozenBalance).node().innerHTML = `<input type="text" class="form-control input-small" value=${frozenBalance}>`;
                     oTable.cell(rowIdx,colMappings.rb).node().innerHTML = `<input type="text" class="form-control input-small" value=${rb}>`;
 					oTable.cell(rowIdx,colMappings.lineId).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
 					oTable.cell(rowIdx,colMappings.wechatId).node().innerHTML = `<input type="text" class="form-control input-small" value=${wechatId}>`;
@@ -260,9 +240,7 @@ var Member = function() {
 				if (isChecked) {
 					
 					var name = oTable.cell(rowIdx, colMappings.name).data();
-                    var cash = oTable.cell(rowIdx, colMappings.cash).data();
                     var credit = oTable.cell(rowIdx, colMappings.credit).data();
-                    var frozenBalance = oTable.cell(rowIdx, colMappings.frozenBalance).data();
                     var rb = oTable.cell(rowIdx, colMappings.rb).data();
 					var lineId = oTable.cell(rowIdx, colMappings.lineId).data();
 					var wechatId = oTable.cell(rowIdx, colMappings.wechatId).data();
@@ -275,9 +253,7 @@ var Member = function() {
 					
 					//console.log('index is restored : ' + rowIdx);
 					oTable.cell(rowIdx,colMappings.name).node().innerHTML 			= name;
-                    oTable.cell(rowIdx,colMappings.cash).node().innerHTML 			= cash;
                     oTable.cell(rowIdx,colMappings.credit).node().innerHTML 		= credit;
-                    oTable.cell(rowIdx,colMappings.frozenBalance).node().innerHTML  = frozenBalance;
                     oTable.cell(rowIdx,colMappings.rb).node().innerHTML			= rb;
 					oTable.cell(rowIdx,colMappings.lineId).node().innerHTML 		= lineId;
 					oTable.cell(rowIdx,colMappings.wechatId).node().innerHTML 		= wechatId;
@@ -313,9 +289,7 @@ var Member = function() {
 					var obj = {};
 					obj["id"] = oTable.cell(rowIdx, colMappings.id).data();
                     obj["name"] = oTable.cell(rowIdx, colMappings.name).node().childNodes[0].value;
-                    obj["cash"] = oTable.cell(rowIdx, colMappings.cash).node().childNodes[0].value;
                     obj["credit"] = oTable.cell(rowIdx, colMappings.credit).node().childNodes[0].value;
-                    obj["frozenBalance"] = oTable.cell(rowIdx, colMappings.frozenBalance).node().childNodes[0].value;
                     obj["rb"] = oTable.cell(rowIdx, colMappings.rb).node().childNodes[0].value;
 					obj["lineId"] = oTable.cell(rowIdx, colMappings.lineId).node().childNodes[0].value;
 					obj["wechatId"] = oTable.cell(rowIdx, colMappings.wechatId).node().childNodes[0].value;
@@ -499,8 +473,9 @@ var Member = function() {
 
 		function editModeButton(){
 			oTable.column(colMappings.id).visible(false);
+			oTable.column(colMappings.cash).visible(false);
+			oTable.column(colMappings.frozenBalance).visible(false);
 			oTable.column(colMappings.availBalance).visible(false);
-			oTable.column(colMappings.totalBalance).visible(false);
 			oTable.column(colMappings.agent).visible(false);
 			oTable.column(colMappings.status).visible(false);
 			oTable.column(colMappings.updatetime).visible(false);
@@ -524,13 +499,39 @@ var Member = function() {
             $('#saveButton').css('display', 'none');
 			$('#cancelButton').css('display', 'none');
 			oTable.column(colMappings.id).visible(true);
+			oTable.column(colMappings.cash).visible(true);
+			oTable.column(colMappings.frozenBalance).visible(true);
 			oTable.column(colMappings.availBalance).visible(true);
-			oTable.column(colMappings.totalBalance).visible(true);
 			oTable.column(colMappings.agent).visible(true);
 			oTable.column(colMappings.status).visible(true);
 			oTable.column(colMappings.updatetime).visible(true);
 			oTable.column(colMappings.createtime).visible(true);
 		}
+		// Function for rendering number colorful
+		function numberColor(data, type, full, meta) {
+			if (typeof data !== 'number') {
+				return data;
+			}
+			if(data <= 0){
+				return '<span class="m--font-bold m--font-danger">' + data + '</span>';
+			}
+			else{
+				return '<span class="m--font-bold m--font-info">' + data + '</span>';
+			}
+		}
+		// Function for rendering number colorful
+		function statusColor(data, type, full, meta) {
+			var map = {
+			  'active' :   {'state': 'success', 'title' : '正常'},
+			  'frozen':    {'state': 'danger',  'title' : '凍結'},
+			  'undefined': {'state': 'metal',   'title' : '不明'},
+			};
+			if (typeof map[data] === 'undefined') {
+				return data;
+			}
+			return '<span class="m-badge m-badge--' + map[data].state + ' m-badge--dot"></span>&nbsp;' +
+				'<span class="m--font-bold m--font-' + map[data].state + '">' + map[data].title + '</span>';
+	  	}
 	};
 
 	var initForm = function() {
@@ -708,7 +709,6 @@ var Member = function() {
             },
 
             submitHandler: function (form) {
-				console.log($(form).serialize());
 				// Ready to send data
 				// Block modal
 				mApp.block('#create-modal .modal-content', {

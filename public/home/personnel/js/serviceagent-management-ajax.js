@@ -126,20 +126,7 @@ var ServiceAgent = function() {
 				},
 				{ targets: colMappings.userAccount, 	responsivePriority : 1, 	},
 				{ targets: colMappings.name, 			responsivePriority : 2, 	width: '100px',},
-				{ targets: colMappings.status, 			responsivePriority : 3, 	
-					render: function(data, type, full, meta) {
-						  var map = {
-							'active' :   {'state': 'success', 'title' : '正常'},
-							'frozen':    {'state': 'danger',  'title' : '凍結'},
-							'undefined': {'state': 'metal',   'title' : '不明'},
-						  };
-						  if (typeof map[data] === 'undefined') {
-							  return data;
-						  }
-						  return '<span class="m-badge m-badge--' + map[data].state + ' m-badge--dot"></span>&nbsp;' +
-							  '<span class="m--font-bold m--font-' + map[data].state + '">' + map[data].title + '</span>';
-					},
-				},
+				{ targets: colMappings.status, 			responsivePriority : 3, 	render: statusColor},
 				{ targets: colMappings.updatetime, 		responsivePriority : 4, 	},
 				{ targets: colMappings.bankSymbol, 		responsivePriority : 5, 	},
 				{ targets: colMappings.bankAccount, 	responsivePriority : 6, 	},
@@ -484,6 +471,19 @@ var ServiceAgent = function() {
 			oTable.column(colMappings.updatetime).visible(true);
 			oTable.column(colMappings.createtime).visible(true);
 		}
+		// Function for rendering number colorful
+		function statusColor(data, type, full, meta) {
+			var map = {
+			  'active' :   {'state': 'success', 'title' : '正常'},
+			  'frozen':    {'state': 'danger',  'title' : '凍結'},
+			  'undefined': {'state': 'metal',   'title' : '不明'},
+			};
+			if (typeof map[data] === 'undefined') {
+				return data;
+			}
+			return '<span class="m-badge m-badge--' + map[data].state + ' m-badge--dot"></span>&nbsp;' +
+				'<span class="m--font-bold m--font-' + map[data].state + '">' + map[data].title + '</span>';
+	  	}
 	};
 
 	var initForm = function() {

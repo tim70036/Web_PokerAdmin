@@ -65,13 +65,15 @@ let readHandler = async function(req,res){
     if(req.user.role === 'headAgent'){
         sqlString =`SELECT 
                         A.id, A.userAccount, A.name,
-                        A.cash, A.credit, A.frozenBalance, A.availBalance, A.totalBalance, A.posRb, A.negRb, 
+                        A.cash, A.credit, Ab.totalCash, Ab.totalFrozen, Ab.totalAvail, A.posRb, A.negRb,
                         S.status, H.name AS headAgentName, H.userAccount AS headAgentAccount,
                         A.lineId, A.wechatId, A.facebookId, A.phoneNumber, 
                         A.bankSymbol, A.bankName, A.bankAccount,  A.comment,
                         DATE_FORMAT(CONVERT_TZ(A.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                         DATE_FORMAT(CONVERT_TZ(A.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM AgentInfo AS A
+                    INNER JOIN AgentBalance AS Ab
+                            ON A.id = Ab.id
                     INNER JOIN UserAccount AS U
                         ON A.uid=U.id 
                     INNER JOIN Status AS S
@@ -83,13 +85,15 @@ let readHandler = async function(req,res){
     else if(req.user.role === 'serviceAgent'){
         sqlString =`SELECT 
                         A.id, A.userAccount, A.name,
-                        A.cash, A.credit, A.frozenBalance, A.availBalance, A.totalBalance, A.posRb, A.negRb,
+                        A.cash, A.credit, Ab.totalCash, Ab.totalFrozen, Ab.totalAvail, A.posRb, A.negRb,
                         S.status, H.name AS headAgentName, H.userAccount AS headAgentAccount,
                         A.lineId, A.wechatId, A.facebookId, A.phoneNumber, 
                         A.bankSymbol, A.bankName, A.bankAccount,  A.comment, 
                         DATE_FORMAT(CONVERT_TZ(A.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                         DATE_FORMAT(CONVERT_TZ(A.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM AgentInfo AS A
+                    INNER JOIN AgentBalance AS Ab
+                            ON A.id = Ab.id
                     INNER JOIN UserAccount AS U
                         ON A.uid=U.id 
                     INNER JOIN Status AS S
@@ -104,13 +108,15 @@ let readHandler = async function(req,res){
     else if(req.user.role === 'admin'){
         sqlString =`SELECT 
                         A.id, A.userAccount, A.name,
-                        A.cash, A.credit, A.frozenBalance, A.availBalance, A.totalBalance, A.posRb, A.negRb,
+                        A.cash, A.credit, Ab.totalCash, Ab.totalFrozen, Ab.totalAvail, A.posRb, A.negRb,
                         S.status, H.name AS headAgentName, H.userAccount AS headAgentAccount,
                         A.lineId, A.wechatId, A.facebookId, A.phoneNumber, 
                         A.bankSymbol, A.bankName, A.bankAccount,  A.comment, 
                         DATE_FORMAT(CONVERT_TZ(A.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                         DATE_FORMAT(CONVERT_TZ(A.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM AgentInfo AS A
+                    INNER JOIN AgentBalance AS Ab
+                            ON A.id = Ab.id
                     INNER JOIN UserAccount AS U
                         ON A.uid=U.id 
                     INNER JOIN Status AS S
@@ -195,11 +201,6 @@ let createHandler = async function(req,res){
         return res.json({err: true, msg: 'Server 錯誤'});
     }
 
-    // Check if head agent has enough balance 
-    if(cash > headAgent.availBalance){
-        return res.json({err: true, msg: '總代理商現金額度不足'});
-    }
-
     // Prepare query
     // Query for insert into UserAccount
     let sqlStringInsert1 = `INSERT INTO UserAccount (account, password, role, email) VALUES (?, ?, ?, ?);`;
@@ -209,23 +210,23 @@ let createHandler = async function(req,res){
     // Query for insert into AgentInfo
     let sqlStringInsert2 = `INSERT INTO AgentInfo (
                                 uid, headAgentId, userAccount, name, 
-                                cash, credit, frozenBalance, posRb, negRb, 
+                                cash, credit, posRb, negRb, 
                                 lineId, wechatId, facebookId, phoneNumber, 
                                 bankSymbol, bankName, bankAccount, comment) 
-                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
                             ;`;
     values = [  account, headAgent.id, account, name, 
-                cash, credit, 0, posRb, negRb,
+                cash, credit, posRb, negRb,
                 lineId, wechatId, facebookId, phoneNumber, 
                 bankSymbol, bankName, bankAccount, comment];
     sqlStringInsert2 = req.db.format(sqlStringInsert2, values);
 
     // Query for update headAgentInfo cash and frozenBalance
     let sqlStringUpdate = ` UPDATE HeadAgentInfo
-                            SET cash=cash-?, frozenBalance=frozenBalance+?
+                            SET cash=cash-?
                             WHERE id=?
                             ;`;
-    values = [cash, cash, headAgent.id];
+    values = [cash, headAgent.id];
     sqlStringUpdate = req.db.format(sqlStringUpdate, values);
 
     // Insert new agent
@@ -259,111 +260,27 @@ let updateHandler = async function(req,res){
     // Receive data array
     let updateData = req.body.data;
 
-    // Prepare query, get head agent for each agent
-    let sqlString =`SELECT 
-                        A.id AS id, H.id AS headAgentId, H.availBalance AS headAgentAvailBalance 
-                    FROM AgentInfo AS A
-                    INNER JOIN HeadAgentInfo AS H 
-                        ON A.headAgentId=H.id
-                    WHERE A.id IN (?)
-                    ;`;
-    let values = [ updateData.map( (obj) => (obj.id) ) ] ; // bind a list of agent id to the sql string
-    sqlString = req.db.format(sqlString, values); 
-
-    // Get head agent for each agent
-    // Execute query
-    let headAgentList;
-    try{
-        let results = await sqlAsync.query(req.db, sqlString); 
-
-        // Check result
-        if(results.length <= 0 ) throw Error(`Cannot find head agent`);
-
-        // Augment headAgentId for each agent in update data 
-        updateData.forEach( function(agent) {
-            agent.headAgentId = results.find(  row => row.id === Number(agent.id)  ).headAgentId;
-        });
-
-        // Get a distinct list of all involved head agents
-        headAgentList = results.map( (row) => ({ id: row.headAgentId, availBalance: row.headAgentAvailBalance }) );
-        headAgentList = headAgentList.reduce( function(newList, headAgent){
-            if(!newList.find(element => element.id === headAgent.id))  
-                newList.push(headAgent);
-            return newList;
-        }  , []);
-    }
-    catch(error) {
-        console.log(error);
-        return res.json({err: true, msg: 'Server 錯誤'});
+    // Prepare query
+    // Query for update all agents
+    let sqlStringTmp = `UPDATE AgentInfo 
+                        SET  name=?, credit=?, posRb=?, negRb=?,
+                            lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
+                            bankSymbol=?, bankName=?, bankAccount=?, comment=?
+                        WHERE id=?
+                        ;`;
+    let sqlStringUpdate = '';
+    for(let i=0 ; i<updateData.length ; i++) {
+        let element = updateData[i];
+        let values = [  element.name, element.credit, element.posRb, element.negRb,
+                        element.lineId, element.wechatId, element.facebookId, element.phoneNumber,
+                        element.bankSymbol, element.bankName, element.bankAccount, element.comment, element.id];
+        sqlStringUpdate  += req.db.format(sqlStringTmp, values);
     }
 
-    console.log({headAgentList});
-    
-    // Ready to update
-    // Start Trnasaction first
+    // Execute all queries
     try{
         await sqlAsync.query(req.db, 'START TRANSACTION');
-        
-        // For each head agent, update its agents
-        for(let i=0 ; i<headAgentList.length ; i++){
-            let curHeadAgent = headAgentList[i];
-            let curAgentList = updateData.filter(agent => agent.headAgentId === curHeadAgent.id);
-
-            // Prepare query for validate availBalance
-            let sqlStringCash =`SELECT SUM(cash) AS totalCash
-                                FROM AgentInfo
-                                WHERE id IN(?)
-                                `;
-            values = [ curAgentList.map((agent) => agent.id) ]; // bind a list of agent id to the sql string
-            sqlStringCash = req.db.format(sqlStringCash, values);
-
-            // Execute query to get orginal total cash and new total cash of all the agents that required update
-            let newTotalCash = curAgentList.reduce( (sum, agent) => sum + Number(agent.cash) ,0);
-            let orgTotalCash;
-            
-            let results = await sqlAsync.query(req.db, sqlStringCash);
-
-            // Check result
-            if(results.length <= 0 ) throw Error(`Cannot calculate SUM of all agents' cash`);
-            orgTotalCash = results[0].totalCash;
-
-            console.log({newTotalCash, orgTotalCash});
-
-            // Calculate change and validate with head agent's availBalance
-            if(newTotalCash - orgTotalCash > curHeadAgent.availBalance){
-                return res.json({err: true, msg: '總代理商現金額度不足'});
-            }
-
-            // Now, these updates are all valid
-            // Prepare query
-            // Query for update all agents
-            let sqlStringTmp = `UPDATE AgentInfo 
-                                SET  name=?, cash=?, credit=?, frozenBalance=?, posRb=?, negRb=?,
-                                    lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
-                                    bankSymbol=?, bankName=?, bankAccount=?, comment=?
-                                WHERE id=?
-                                ;`;
-            let sqlStringUpdate1 = '';
-            for(let i=0 ; i<curAgentList.length ; i++) {
-                let element = curAgentList[i];
-                let values = [  element.name, element.cash, element.credit, element.frozenBalance, element.posRb, element.negRb,
-                                element.lineId, element.wechatId, element.facebookId, element.phoneNumber,
-                                element.bankSymbol, element.bankName, element.bankAccount, element.comment, element.id];
-                sqlStringUpdate1  += req.db.format(sqlStringTmp, values);
-            }
-
-            // Query for update head agent
-            let sqlStringUpdate2 = `UPDATE HeadAgentInfo
-                                    SET cash=cash-?, frozenBalance=frozenBalance+?
-                                    WHERE id=?
-                                    ;`;
-            values = [newTotalCash - orgTotalCash, newTotalCash - orgTotalCash, curHeadAgent.id];
-            sqlStringUpdate2 = req.db.format(sqlStringUpdate2, values);
-
-            // Execute all queries
-            await sqlAsync.query(req.db, sqlStringUpdate1 +  sqlStringUpdate2);
-        }
-
+        let results = await sqlAsync.query(req.db, sqlStringUpdate);
     }
     catch(error) {
         await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
@@ -391,7 +308,7 @@ let deleteHandler = async function(req,res){
 
     // Prepare query, get head agent for each agent
     let sqlString =`SELECT 
-                        A.id AS id, H.id AS headAgentId, H.availBalance AS headAgentAvailBalance 
+                        A.id AS id, H.id AS headAgentId
                     FROM AgentInfo AS A
                     INNER JOIN HeadAgentInfo AS H 
                         ON A.headAgentId=H.id
@@ -415,7 +332,7 @@ let deleteHandler = async function(req,res){
         });
 
         // Get a distinct list of all involved head agents
-        headAgentList = results.map( (row) => ({ id: row.headAgentId, availBalance: row.headAgentAvailBalance }) );
+        headAgentList = results.map( (row) => ({ id: row.headAgentId}) );
         headAgentList = headAgentList.reduce( function(newList, headAgent){
             if(!newList.find(element => element.id === headAgent.id))  
                 newList.push(headAgent);
@@ -469,10 +386,10 @@ let deleteHandler = async function(req,res){
             sqlStringDel = req.db.format(sqlStringDel, values);
 
             let sqlStringUpdate =`  UPDATE HeadAgentInfo
-                                    SET cash=cash+?, frozenBalance=frozenBalance-?
+                                    SET cash=cash+?
                                     WHERE id=?
                                     ;`;
-            values = [totalCash, totalCash, curHeadAgent.id];
+            values = [totalCash, curHeadAgent.id];
             sqlStringUpdate = req.db.format(sqlStringUpdate, values);
 
             // Execute all queries
@@ -655,12 +572,8 @@ function updateValidator(){
             .isLength({ min:1 }).withMessage('名稱不可為空')
             .isLength({ max:20 }).withMessage('名稱長度不可超過 20'),  
 
-        body('data.*.cash')
-            .isInt({ min:-999999999 , max:999999999}).withMessage('現金額度必須是數字'),
         body('data.*.credit')
             .isInt({ min:-999999999 , max:999999999}).withMessage('信用額度必須是數字'),
-        body('data.*.frozenBalance')
-            .isInt({ min:-999999999 , max:999999999}).withMessage('凍結資產必須是數字'),
         body('data.*.posRb')
             .isFloat({ min:-100 , max:100}).withMessage('正退水必須是小數'),
         body('data.*.negRb')

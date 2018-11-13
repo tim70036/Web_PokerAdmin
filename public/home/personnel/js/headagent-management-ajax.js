@@ -8,9 +8,9 @@ var HeadAgent = function() {
 		name : 2,
 		cash : 3,
 		credit : 4,
-		frozenBalance : 5,
-		availBalance : 6,
-		totalBalance : 7,
+		totalCash : 5,
+		totalFrozen : 6,
+		totalAvail : 7,
 		posRb : 8,
 		negRb : 9,
 		status : 10,
@@ -105,10 +105,10 @@ var HeadAgent = function() {
 				{data: 'userAccount'},
                 {data: 'name'},
                 {data: 'cash'},
-                {data: 'credit'},
-                {data: 'frozenBalance'},
-                {data: 'availBalance'},
-                {data: 'totalBalance'},
+				{data: 'credit'},
+				{data: 'totalCash'},
+                {data: 'totalFrozen'},
+                {data: 'totalAvail'},
                 {data: 'posRb'},
                 {data: 'negRb'},
                 {data: 'status'},
@@ -141,27 +141,14 @@ var HeadAgent = function() {
 				},
 				{ targets: colMappings.userAccount, 	responsivePriority : 1, 	},
 				{ targets: colMappings.name, 			responsivePriority : 2, 	width: '100px',},
-				{ targets: colMappings.cash, 			responsivePriority : 3, 	},
-				{ targets: colMappings.credit, 			responsivePriority : 4, 	},
-				{ targets: colMappings.frozenBalance, 	responsivePriority : 5, 	},
-				{ targets: colMappings.availBalance, 	responsivePriority : 6, 	},
-				{ targets: colMappings.totalBalance, 	responsivePriority : 7, 	},
+				{ targets: colMappings.cash, 			responsivePriority : 3, 	render: numberColor},
+				{ targets: colMappings.credit, 			responsivePriority : 4, 	render: numberColor},
+				{ targets: colMappings.totalCash, 		responsivePriority : 5, 	render: numberColor},
+				{ targets: colMappings.totalFrozen, 	responsivePriority : 6, 	render: numberColor},
+				{ targets: colMappings.totalAvail, 		responsivePriority : 7, 	render: numberColor},
 				{ targets: colMappings.posRb, 			responsivePriority : 8, 	},
 				{ targets: colMappings.negRb, 			responsivePriority : 9, 	},
-				{ targets: colMappings.status, 			responsivePriority : 10, 	
-				  render: function(data, type, full, meta) {
-						var map = {
-							'active' :   {'state': 'success', 'title' : '正常'},
-							'frozen':    {'state': 'danger',  'title' : '凍結'},
-							'undefined': {'state': 'metal',   'title' : '不明'},
-						};
-						if (typeof map[data] === 'undefined') {
-							return data;
-						}
-						return '<span class="m-badge m-badge--' + map[data].state + ' m-badge--dot"></span>&nbsp;' +
-							'<span class="m--font-bold m--font-' + map[data].state + '">' + map[data].title + '</span>';
-				  },
-				},
+				{ targets: colMappings.status, 			responsivePriority : 10, 	render: statusColor},
 				{ targets: colMappings.updatetime, 		responsivePriority : 11, 	},
 				{ targets: colMappings.bankSymbol, 		responsivePriority : 12, 	},
 				{ targets: colMappings.bankAccount, 	responsivePriority : 13, 	},
@@ -210,9 +197,7 @@ var HeadAgent = function() {
 				if (isChecked) {
 					empty = false;
                     var name =oTable.cell(rowIdx, colMappings.name).data();
-                    var cash =oTable.cell(rowIdx, colMappings.cash).data();
                     var credit =oTable.cell(rowIdx, colMappings.credit).data();
-                    var frozenBalance =oTable.cell(rowIdx, colMappings.frozenBalance).data();
                     var posRb =oTable.cell(rowIdx, colMappings.posRb).data();
                     var negRb =oTable.cell(rowIdx, colMappings.negRb).data();
 					var lineId = oTable.cell(rowIdx, colMappings.lineId).data();
@@ -226,9 +211,7 @@ var HeadAgent = function() {
 					
 					//console.log('index is cheched : ' + rowIdx);
                     oTable.cell(rowIdx,colMappings.name).node().innerHTML = `<input type="text" class="form-control input-small" value=${name}>`;
-                    oTable.cell(rowIdx,colMappings.cash).node().innerHTML = `<input type="text" class="form-control input-small" value=${cash}>`;
                     oTable.cell(rowIdx,colMappings.credit).node().innerHTML = `<input type="text" class="form-control input-small" value=${credit}>`;
-                    oTable.cell(rowIdx,colMappings.frozenBalance).node().innerHTML = `<input type="text" class="form-control input-small" value=${frozenBalance}>`;
                     oTable.cell(rowIdx,colMappings.posRb).node().innerHTML = `<input type="text" class="form-control input-small" value=${posRb}>`;
                     oTable.cell(rowIdx,colMappings.negRb).node().innerHTML = `<input type="text" class="form-control input-small" value=${negRb}>`;
 					oTable.cell(rowIdx,colMappings.lineId).node().innerHTML = `<input type="text" class="form-control input-small" value=${lineId}>`;
@@ -265,9 +248,7 @@ var HeadAgent = function() {
 				if (isChecked) {
 					
 					var name =oTable.cell(rowIdx, colMappings.name).data();
-                    var cash =oTable.cell(rowIdx, colMappings.cash).data();
                     var credit =oTable.cell(rowIdx, colMappings.credit).data();
-                    var frozenBalance =oTable.cell(rowIdx, colMappings.frozenBalance).data();
                     var posRb =oTable.cell(rowIdx, colMappings.posRb).data();
                     var negRb =oTable.cell(rowIdx, colMappings.negRb).data();
 					var lineId = oTable.cell(rowIdx, colMappings.lineId).data();
@@ -281,9 +262,7 @@ var HeadAgent = function() {
 					
 					//console.log('index is restored : ' + rowIdx);
 					oTable.cell(rowIdx,colMappings.name).node().innerHTML 			= name;
-                    oTable.cell(rowIdx,colMappings.cash).node().innerHTML 			= cash;
                     oTable.cell(rowIdx,colMappings.credit).node().innerHTML 		= credit;
-                    oTable.cell(rowIdx,colMappings.frozenBalance).node().innerHTML  = frozenBalance;
                     oTable.cell(rowIdx,colMappings.posRb).node().innerHTML 			= posRb;
                     oTable.cell(rowIdx,colMappings.negRb).node().innerHTML			= negRb;
 					oTable.cell(rowIdx,colMappings.lineId).node().innerHTML 		= lineId;
@@ -320,9 +299,7 @@ var HeadAgent = function() {
 					var obj = {};
 					obj["id"] = oTable.cell(rowIdx, colMappings.id).data();
                     obj["name"] = oTable.cell(rowIdx, colMappings.name).node().childNodes[0].value;
-                    obj["cash"] = oTable.cell(rowIdx, colMappings.cash).node().childNodes[0].value;
                     obj["credit"] = oTable.cell(rowIdx, colMappings.credit).node().childNodes[0].value;
-                    obj["frozenBalance"] = oTable.cell(rowIdx, colMappings.frozenBalance).node().childNodes[0].value;
                     obj["posRb"] = oTable.cell(rowIdx, colMappings.posRb).node().childNodes[0].value;
                     obj["negRb"] = oTable.cell(rowIdx, colMappings.negRb).node().childNodes[0].value;
 					obj["lineId"] = oTable.cell(rowIdx, colMappings.lineId).node().childNodes[0].value;
@@ -507,8 +484,10 @@ var HeadAgent = function() {
 
 		function editModeButton(){
 			oTable.column(colMappings.id).visible(false);
-			oTable.column(colMappings.availBalance).visible(false);
-			oTable.column(colMappings.totalBalance).visible(false);
+			oTable.column(colMappings.cash).visible(false);
+			oTable.column(colMappings.totalCash).visible(false);
+			oTable.column(colMappings.totalFrozen).visible(false);
+			oTable.column(colMappings.totalAvail).visible(false);
 			oTable.column(colMappings.status).visible(false);
 			oTable.column(colMappings.updatetime).visible(false);
 			oTable.column(colMappings.createtime).visible(false);
@@ -531,12 +510,39 @@ var HeadAgent = function() {
             $('#saveButton').css('display', 'none');
 			$('#cancelButton').css('display', 'none');
 			oTable.column(colMappings.id).visible(true);
-			oTable.column(colMappings.availBalance).visible(true);
-			oTable.column(colMappings.totalBalance).visible(true);
+			oTable.column(colMappings.cash).visible(true);
+			oTable.column(colMappings.totalCash).visible(true);
+			oTable.column(colMappings.totalFrozen).visible(true);
+			oTable.column(colMappings.totalAvail).visible(true);
 			oTable.column(colMappings.status).visible(true);
 			oTable.column(colMappings.updatetime).visible(true);
 			oTable.column(colMappings.createtime).visible(true);
 		}
+		// Function for rendering number colorful
+		function numberColor(data, type, full, meta) {
+			if (typeof data !== 'number') {
+				return data;
+			}
+			if(data <=  0){
+				return '<span class="m--font-bold m--font-danger">' + data + '</span>';
+			}
+			else{
+				return '<span class="m--font-bold m--font-info">' + data + '</span>';
+			}
+		}
+		// Function for rendering number colorful
+		function statusColor(data, type, full, meta) {
+			var map = {
+			  'active' :   {'state': 'success', 'title' : '正常'},
+			  'frozen':    {'state': 'danger',  'title' : '凍結'},
+			  'undefined': {'state': 'metal',   'title' : '不明'},
+			};
+			if (typeof map[data] === 'undefined') {
+				return data;
+			}
+			return '<span class="m-badge m-badge--' + map[data].state + ' m-badge--dot"></span>&nbsp;' +
+				'<span class="m--font-bold m--font-' + map[data].state + '">' + map[data].title + '</span>';
+	  	}
 	};
 
 	var initForm = function() {

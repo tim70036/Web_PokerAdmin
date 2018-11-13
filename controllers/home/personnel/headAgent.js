@@ -31,12 +31,14 @@ let readHandler = async function(req,res){
     // Prepare query
     let sqlStringRead = `SELECT 
                             H.id, H.userAccount, H.name,
-                            H.cash, H.credit, H.frozenBalance, H.availBalance, H.totalBalance, H.posRb, H.negRb, S.status,
+                            H.cash, H.credit, Hb.totalCash, Hb.totalFrozen, Hb.totalAvail, H.posRb, H.negRb, S.status,
                             H.lineId, H.wechatId, H.facebookId, H.phoneNumber, 
                             H.bankSymbol, H.bankName, H.bankAccount,  H.comment,
                             DATE_FORMAT(CONVERT_TZ(H.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                             DATE_FORMAT(CONVERT_TZ(H.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                         FROM HeadAgentInfo AS H
+                        INNER JOIN HeadAgentBalance AS Hb
+                            ON H.id = Hb.id
                         INNER JOIN UserAccount AS U
                             ON H.uid=U.id 
                         INNER JOIN Status AS S
@@ -102,11 +104,6 @@ let createHandler = async function(req,res){
         return res.json({err: true, msg: 'Server 錯誤'});
     }
 
-    // Check if admin has enough balance 
-    if(cash > admin.availBalance){
-        return res.json({err: true, msg: 'Admin 現金額度不足'});
-    }
-
     // Prepare query
     // Query for insert into UserAccount
     let sqlStringInsert1 = `INSERT INTO UserAccount (account, password, role, email) VALUES (?, ?, ?, ?);`;
@@ -116,23 +113,23 @@ let createHandler = async function(req,res){
     // Query for insert into HeadAgentInfo
     let sqlStringInsert2 = `INSERT INTO HeadAgentInfo (
                                 uid, adminId, userAccount, name, 
-                                cash, credit, frozenBalance, posRb, negRb, 
+                                cash, credit, posRb, negRb, 
                                 lineId, wechatId, facebookId, phoneNumber, 
                                 bankSymbol, bankName, bankAccount, comment) 
-                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
                             ;`;
     values = [  account, admin.id, account, name, 
-                cash, credit, 0, posRb, negRb,
+                cash, credit, posRb, negRb,
                 lineId, wechatId, facebookId, phoneNumber, 
                 bankSymbol, bankName, bankAccount, comment];
     sqlStringInsert2 = req.db.format(sqlStringInsert2, values);
 
-    // Query for update AdminInfo cash and frozenBalance
+    // Query for update AdminInfo cash
     let sqlStringUpdate = ` UPDATE AdminInfo
-                            SET cash=cash-?, frozenBalance=frozenBalance+?
+                            SET cash=cash-?
                             WHERE id=?
                             ;`;
-    values = [cash, cash, admin.id];
+    values = [cash, admin.id];
     sqlStringUpdate = req.db.format(sqlStringUpdate, values);
 
     // Insert new head agent
@@ -166,78 +163,28 @@ let updateHandler = async function(req,res){
     // Receive data array
     let updateData = req.body.data;
 
-    // Get the admin of this user
-    let admin;
-    try{
-        admin = await getAdmin(req);
-    }
-    catch(error) {
-        console.log(error);
-        return res.json({err: true, msg: 'Server 錯誤'});
-    }
-    
-    // Prepare query for validate availBalance
-    let sqlStringCash = `SELECT SUM(cash) AS totalCash
-                         FROM HeadAgentInfo
-                         WHERE id IN(?)
-                         `;
-    let values = [ updateData.map((headAgent) => headAgent.id) ]; // bind a list of head agent id to the sql string
-    sqlStringCash = req.db.format(sqlStringCash, values);
-
-    // Execute query to get orginal total cash and new total cash of all the head agent that required update
-    let newTotalCash = updateData.reduce( (sum, headAgent) => sum + Number(headAgent.cash) ,0);
-    let orgTotalCash;
-    try {
-        let results = await sqlAsync.query(req.db, sqlStringCash);
-
-        // Check result
-        if(results.length <= 0 ) throw Error(`Cannot calculate SUM of all head agents' cash`);
-        orgTotalCash = results[0].totalCash;
-    }
-    catch(error) {
-        console.log(error);
-        return res.json({err: true, msg: 'Server 錯誤'});
-    }
-
-    //console.log({newTotalCash, orgTotalCash});
-
-    // Calculate change and validate with admin's availBalance
-    if(newTotalCash - orgTotalCash > admin.availBalance){
-        return res.json({err: true, msg: 'Admin 現金額度不足'});
-    }
-
-
-    // Now, these updates are all valid, execute all 
     // Prepare query
     // Query for update all head agents
     let sqlStringTmp = `UPDATE HeadAgentInfo 
-                        SET  name=?, cash=?, credit=?, frozenBalance=?, posRb=?, negRb=?,
+                        SET  name=?, credit=?, posRb=?, negRb=?,
                             lineId=?, wechatId=?, facebookId=?, phoneNumber=?, 
                             bankSymbol=?, bankName=?, bankAccount=?, comment=?
                         WHERE id=?
                         ;`;
-    let sqlStringUpdate1 = '';
+    let sqlStringUpdate = '';
     for(let i=0 ; i<updateData.length ; i++) {
 
         let element = updateData[i];
-        let values = [  element.name, element.cash, element.credit, element.frozenBalance, element.posRb, element.negRb,
+        let values = [  element.name, element.credit, element.posRb, element.negRb,
                         element.lineId, element.wechatId, element.facebookId, element.phoneNumber,
                         element.bankSymbol, element.bankName, element.bankAccount, element.comment, element.id];
-        sqlStringUpdate1  += req.db.format(sqlStringTmp, values);
+        sqlStringUpdate  += req.db.format(sqlStringTmp, values);
     }
-
-    // Query for update admin
-    let sqlStringUpdate2 = `UPDATE AdminInfo
-                            SET cash=cash-?, frozenBalance=frozenBalance+?
-                            WHERE id=?
-                            ;`;
-    values = [newTotalCash - orgTotalCash, newTotalCash - orgTotalCash, admin.id];
-    sqlStringUpdate2 = req.db.format(sqlStringUpdate2, values);
 
     // Execute all queries
     try{
         await sqlAsync.query(req.db, 'START TRANSACTION');
-        let results = await sqlAsync.query(req.db, sqlStringUpdate1 +  sqlStringUpdate2);
+        let results = await sqlAsync.query(req.db, sqlStringUpdate);
     }
     catch(error) {
         await sqlAsync.query(req.db, 'ROLLBACK'); // rollback transaction if a statement produce error
@@ -297,7 +244,7 @@ let deleteHandler = async function(req,res){
         return res.json({err: true, msg: 'Server 錯誤'});
     }
 
-    console.log({totalCash});
+    //console.log({totalCash});
 
     // Now, delete all head agents
     // Prepare query, return cash to admin?
@@ -311,10 +258,10 @@ let deleteHandler = async function(req,res){
     sqlStringDel = req.db.format(sqlStringDel, values);
 
     let sqlStringUpdate = `UPDATE AdminInfo
-                            SET cash=cash+?, frozenBalance=frozenBalance-?
+                            SET cash=cash+?
                             WHERE id=?
                             ;`;
-    values = [totalCash, totalCash, admin.id];
+    values = [totalCash, admin.id];
     sqlStringUpdate = req.db.format(sqlStringUpdate, values);
 
     // Execute all queries
@@ -445,12 +392,9 @@ function updateValidator(){
             .isLength({ min:1 }).withMessage('名稱不可為空')
             .isLength({ max:20 }).withMessage('名稱長度不可超過 20'),  
 
-        body('data.*.cash')
-            .isInt({ min:-999999999 , max:999999999}).withMessage('現金額度必須是數字'),
+        
         body('data.*.credit')
             .isInt({ min:-999999999 , max:999999999}).withMessage('信用額度必須是數字'),
-        body('data.*.frozenBalance')
-            .isInt({ min:-999999999 , max:999999999}).withMessage('凍結資產必須是數字'),
         body('data.*.posRb')
             .isFloat({ min:-100 , max:100}).withMessage('正退水必須是小數'),
         body('data.*.negRb')
@@ -624,9 +568,8 @@ async function getAdmin(req){
 
     // Check result
     if(results.length <= 0 ) throw Error(`Cannot find the admin of this user`);
-    console.log(results);
-    return results[0];
 
+    return results[0];
 }
 
 module.exports = {

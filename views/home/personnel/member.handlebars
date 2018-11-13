@@ -126,11 +126,10 @@
 						<th class="dt-center">RecordId</th>		{{!-- 0 --}}
 						<th class="dt-center">帳號</th>			{{!-- 1 --}}
 						<th class="dt-center">名稱</th>			{{!-- 2 --}}
-						<th class="dt-center">現金額度</th>		{{!-- 3 --}}
+						<th class="dt-center">現金餘額</th>		{{!-- 3 --}}
 						<th class="dt-center">信用額度</th>		{{!-- 4 --}}
-						<th class="dt-center">凍結資產</th>		{{!-- 5 --}}
-						<th class="dt-center">可用資產</th>		{{!-- 6 --}}
-						<th class="dt-center">總資產</th>			{{!-- 7 --}}
+						<th class="dt-center">凍結金額</th>		{{!-- 5 --}}
+						<th class="dt-center">可上桌金額</th>		{{!-- 6 --}}
 						<th class="dt-center">退水</th>			{{!-- 8 --}}
 						<th class="dt-center">狀態</th>			{{!-- 9 --}}
 						<th class="dt-center">代理</th>			{{!-- 10 --}}
@@ -231,7 +230,7 @@
 							<div class="form-group m-form__group row">
 								<label class="col-lg-2 col-form-label">代理 *</label>
 								<div class="col-lg-10 m-form__group-sub">
-									<select class="form-control m-select2" id="agent" name="agentAccount">
+									<select class="form-control m-select2 m-input" id="agent" name="agentAccount">
 										<option></option> {{!--  placeholder --}}
 
 										{{#each agents}}

@@ -1,10 +1,13 @@
-npm
-
-restart
-
+wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+. ~/.nvm/nvm.sh
 nvm install node
 
 -------------------
 RDS parameter group
 timezone
 time language
+
+
+deploy
+credential.js : redis
+verify.js : socket url
