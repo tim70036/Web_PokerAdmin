@@ -12,20 +12,29 @@ let renderHandler = async function(req,res){
     // Prepare query
     let sqlString, values;
     if(req.user.role === 'agent'){
-        sqlString =`SELECT name, userAccount
-                    FROM AgentInfo
+        sqlString =`SELECT A.name, U.account
+                    FROM AgentInfo AS A
+                    INNER JOIN UserAccount AS U
+                        ON A.uid=U.id 
+
                     WHERE id=?
                     ;`;
     }
     else if(req.user.role === 'headAgent'){
-        sqlString =`SELECT name, userAccount
-                    FROM AgentInfo
+        sqlString =`SELECT A.name, U.account
+                    FROM AgentInfo AS A
+                    INNER JOIN UserAccount AS U
+                        ON A.uid=U.id 
+
                     WHERE headAgentId=?
                     ;`;
     }
     else if(req.user.role === 'serviceAgent'){
-        sqlString =`SELECT A.name, A.userAccount
+        sqlString =`SELECT A.name, U.account
                     FROM AgentInfo AS A
+                    INNER JOIN UserAccount AS U
+                        ON A.uid=U.id 
+
                     INNER JOIN ServiceAgentInfo AS Ser
                         ON Ser.id=?
                     INNER JOIN HeadAgentInfo AS H
@@ -33,8 +42,11 @@ let renderHandler = async function(req,res){
                     ;`;
     }
     else if(req.user.role === 'admin'){
-        sqlString =`SELECT A.name, A.userAccount
+        sqlString =`SELECT A.name, U.account
                     FROM AgentInfo AS A
+                    INNER JOIN UserAccount AS U
+                        ON A.uid=U.id 
+
                     INNER JOIN HeadAgentInfo AS H
                         ON A.headAgentId=H.id AND H.adminId=?
                     ;`;
@@ -72,54 +84,60 @@ let readHandler = async function(req,res){
     let sqlString, values;
     if(req.user.role === 'agent'){
         sqlString =`SELECT 
-                        M.id, M.userAccount, M.name,
+                        M.id, U1.account, M.name,
                         M.cash, M.credit, M.frozenBalance, M.availBalance, M.totalBalance, M.rb,
-                        S.status, A.name AS agentName, A.userAccount AS agentAccount,
+                        S.status, A.name AS agentName, U2.account AS agentAccount,
                         M.lineId, M.wechatId, M.facebookId, M.phoneNumber, 
                         M.bankSymbol, M.bankName, M.bankAccount,  M.comment,
                         DATE_FORMAT(CONVERT_TZ(M.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                         DATE_FORMAT(CONVERT_TZ(M.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM MemberInfo AS M
-                    INNER JOIN UserAccount AS U
-                        ON M.uid=U.id 
+                    INNER JOIN UserAccount AS U1
+                        ON M.uid=U1.id 
                     INNER JOIN Status AS S
-                        ON U.statusId=S.id
+                        ON U1.statusId=S.id
+
                     INNER JOIN AgentInfo AS A
                         ON M.agentId=A.id AND A.id=?
+                    INNER JOIN UserAccount AS U2
+                        ON A.uid=U2.id 
                     ;`;
     }
     else if(req.user.role === 'headAgent'){
         sqlString =`SELECT 
-                        M.id, M.userAccount, M.name,
+                        M.id, U1.account, M.name,
                         M.cash, M.credit, M.frozenBalance, M.availBalance, M.totalBalance, M.rb,
-                        S.status, A.name AS agentName, A.userAccount AS agentAccount,
+                        S.status, A.name AS agentName, U2.account AS agentAccount,
                         M.lineId, M.wechatId, M.facebookId, M.phoneNumber, 
                         M.bankSymbol, M.bankName, M.bankAccount,  M.comment,
                         DATE_FORMAT(CONVERT_TZ(M.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                         DATE_FORMAT(CONVERT_TZ(M.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM MemberInfo AS M
-                    INNER JOIN UserAccount AS U
-                        ON M.uid=U.id 
+                    INNER JOIN UserAccount AS U1
+                        ON M.uid=U1.id 
                     INNER JOIN Status AS S
-                        ON U.statusId=S.id
+                        ON U1.statusId=S.id
+
                     INNER JOIN AgentInfo AS A
                         ON M.agentId=A.id AND A.headAgentId=?
+                    INNER JOIN UserAccount AS U2
+                        ON A.uid=U2.id 
                     ;`;
     }
     else if(req.user.role === 'serviceAgent'){
         sqlString =`SELECT 
-                        M.id, M.userAccount, M.name,
+                        M.id, U1.account, M.name,
                         M.cash, M.credit, M.frozenBalance, M.availBalance, M.totalBalance, M.rb,
-                        S.status, A.name AS agentName, A.userAccount AS agentAccount,
+                        S.status, A.name AS agentName, U2.account AS agentAccount,
                         M.lineId, M.wechatId, M.facebookId, M.phoneNumber, 
                         M.bankSymbol, M.bankName, M.bankAccount,  M.comment,
                         DATE_FORMAT(CONVERT_TZ(M.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                         DATE_FORMAT(CONVERT_TZ(M.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM MemberInfo AS M
-                    INNER JOIN UserAccount AS U
-                        ON M.uid=U.id 
+                    INNER JOIN UserAccount AS U1
+                        ON M.uid=U1.id 
                     INNER JOIN Status AS S
-                        ON U.statusId=S.id
+                        ON U1.statusId=S.id
 
                     INNER JOIN ServiceAgentInfo AS Ser
                         ON Ser.id=?
@@ -127,27 +145,31 @@ let readHandler = async function(req,res){
                         ON M.agentId=A.id
                     INNER JOIN HeadAgentInfo AS H
                         ON A.headAgentId=H.id AND H.adminId=Ser.adminId
+                    INNER JOIN UserAccount AS U2
+                        ON A.uid=U2.id 
                     ;`;
     }
     else if(req.user.role === 'admin'){
         sqlString =`SELECT 
-                        M.id, M.userAccount, M.name,
+                        M.id, U1.account, M.name,
                         M.cash, M.credit, M.frozenBalance, M.availBalance, M.totalBalance, M.rb,
-                        S.status, A.name AS agentName, A.userAccount AS agentAccount,
+                        S.status, A.name AS agentName, U2.account AS agentAccount,
                         M.lineId, M.wechatId, M.facebookId, M.phoneNumber, 
                         M.bankSymbol, M.bankName, M.bankAccount,  M.comment,
                         DATE_FORMAT(CONVERT_TZ(M.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
                         DATE_FORMAT(CONVERT_TZ(M.updatetime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS updatetime
                     FROM MemberInfo AS M
-                    INNER JOIN UserAccount AS U
-                        ON M.uid=U.id 
+                    INNER JOIN UserAccount AS U1
+                        ON M.uid=U1.id 
                     INNER JOIN Status AS S
-                        ON U.statusId=S.id
+                        ON U1.statusId=S.id
 
                     INNER JOIN AgentInfo AS A
                         ON M.agentId=A.id
                     INNER JOIN HeadAgentInfo AS H
                         ON A.headAgentId=H.id AND H.adminId=?
+                    INNER JOIN UserAccount AS U2
+                        ON A.uid=U2.id 
                     ;`;
     }
     else{
@@ -206,7 +228,11 @@ let createHandler = async function(req,res){
             comment } = req.body;
     
     // Prepare query
-    let sqlString =`SELECT * FROM AgentInfo WHERE userAccount=?`; 
+    let sqlString =`SELECT A.* 
+                    FROM AgentInfo AS A
+                    INNER JOIN UserAccount AS U
+                        ON A.uid=U.id AND U.account=?
+                    ;`; 
     let values = [agentAccount];
     sqlString = req.db.format(sqlString, values);
 
@@ -233,13 +259,13 @@ let createHandler = async function(req,res){
 
     // Query for insert into MemberInfo
     let sqlStringInsert2 = `INSERT INTO MemberInfo (
-                                uid, agentId, userAccount, name, 
+                                uid, agentId, name, 
                                 cash, credit, frozenBalance, rb, 
                                 lineId, wechatId, facebookId, phoneNumber, 
                                 bankSymbol, bankName, bankAccount, comment) 
-                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
                             ;`;
-    values = [  account, agent.id, account, name, 
+    values = [  account, agent.id, name, 
                 cash, credit, 0, rb,
                 lineId, wechatId, facebookId, phoneNumber, 
                 bankSymbol, bankName, bankAccount, comment];
@@ -539,25 +565,33 @@ function createValidator(){
             if(req.user.role === 'headAgent') {
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
-                            WHERE A.headAgentId=? AND A.userAccount=? 
+                            INNER JOIN UserAccount AS U
+                                ON A.uid=U.id 
+                            WHERE A.headAgentId=? AND U.account=? 
                             ;`;
             }
             else if(req.user.role === 'serviceAgent') {
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
+                            INNER JOIN UserAccount AS U
+                                ON A.uid=U.id 
+
                             INNER JOIN ServiceAgentInfo AS Ser
                                 ON Ser.id=?
                             INNER JOIN HeadAgentInfo AS H
                                 ON A.headAgentId=H.id AND H.adminId=Ser.adminId
-                            WHERE A.userAccount=?
+                            WHERE U.account=?
                             ;`;
             }
             else if(req.user.role === 'admin') {
                 sqlString =`SELECT *
                             FROM AgentInfo AS A
+                            INNER JOIN UserAccount AS U
+                                ON A.uid=U.id 
+
                             INNER JOIN HeadAgentInfo AS H
                                 ON A.headAgentId=H.id AND H.adminId=?
-                            WHERE A.userAccount=?
+                            WHERE U.account=?
                             ;`;
             }
             else{

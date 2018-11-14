@@ -52,8 +52,10 @@ router.post('/personnel/agent/delete', agent.deleteValidate, agent.delete);
 router.post('/personnel/member/delete', member.deleteValidate, member.delete);
 
 // Credit management routes
-router.get('/credit/transfer', credit.transfer);
-router.get('/credit/history', credit.history);
+const {transfer, history} = credit;
+router.get('/credit/transfer', transfer.render);
+router.get('/credit/history', history);
+router.post('/credit/transfer',transfer.transferValidate, transfer.transfer);
 
 // Game management routes
 router.get('/game/verify', game.verify);

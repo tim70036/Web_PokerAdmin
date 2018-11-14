@@ -21,22 +21,15 @@ let clubHandler = async function(req,res){
 
 
     // Prepare query
-    let sqlString =`SELECT * FROM CmsPoker.ClubInfo AS a LEFT OUTER JOIN CmsPoker.CmsAccount AS b ON a.cmsAccountId = b.id WHERE adminId = ?;`;
+    let sqlString =`SELECT *
+                    FROM CmsPoker.ClubInfo AS a
+                      LEFT OUTER JOIN CmsPoker.CmsAccount AS b ON a.cmsAccountId = b.id
+                    WHERE adminId = ?;`;
     let values = [roleId];
     sqlString = req.db.format(sqlString, values);
+    let sqlresults = await sqlAsync.query(req.db, sqlString);
 
-    try{
-      await sqlAsync.query(req.db, 'START TRANSACTION');
-
-      var results = await sqlAsync.query(req.db, sqlString);
-    }
-    catch(error){
-      await sqlAsync.query(req.db, 'ROLLBACK');
-      console.log(error);
-      res.render('home/account/club', {layout : 'home'});
-    }
-    await sqlAsync.query(req.db, 'COMMIT');
-    if(results.length <= 0) {
+    if(sqlresults.length <= 0) {
       res.render('home/account/club', {layout : 'home'});
       return console.log("results is empty");
     }
@@ -117,22 +110,6 @@ let clubHandler = async function(req,res){
 //     // [TODO] Prepare queries
 // }
 
-function printObject(o) {
-  var out = '';
-  for (var p in o) {
-    out += p + ': ' + o[p] + '\n';
-  }
-  return out;
-}
-
-function getObjectValue(o){
-  var out = '';
-  for (var p in o){
-    out = o[p];
-  }
-  return out;
-}
-
 let createHandler = async function(req, res){
     let adminid = req.user.roleId;
     const result = validationResult(req);
@@ -151,10 +128,7 @@ let createHandler = async function(req, res){
     console.log("addaccount : " + addaccount);
     console.log("addpassword : " + addpassword);
 
-
-
-    // [TODO] check data with api server
-
+    // login cms with api, check whether the account is correct
     try{
       var token = await cmsApi.login(addaccount, addpassword);
     }
@@ -165,154 +139,78 @@ let createHandler = async function(req, res){
 
     // wrong account -> token is null
     if(token == null){
-      return res.json({err: true, msg: 'wrong account'});
+      return res.json({err: true, msg: 'CMS帳號密碼錯誤'});
     }
 
+    // get the clubs of the cms account
     let club = await cmsApi.getClubList(token);
     console.log("length of club list is : " + club.result.length);
 
-    let checkQuery = `SELECT IF ((SELECT COUNT(c.id) FROM CmsPoker.CmsAccount AS c
-                                    WHERE c.account = ? AND c.adminId = ?) > 0,'true', 'false');`;
+    // check whether the cms account is already exist (different admin could manage a same cms account)
+    var checkQuery = `SELECT *
+                      FROM CmsPoker.CmsAccount
+                      WHERE account = ? AND adminId = ?;`;
     values = [addaccount, adminid];
     checkQuery = req.db.format(checkQuery, values);
-
-    try{
-      await sqlAsync.query(req.db, 'START TRANSACTION');
-      var checkresults = await sqlAsync.query(req.db, checkQuery);
-    }
-    catch(error){
-      await sqlAsync.query(req.db, 'ROLLBACK');
-      console.log(error);
-      return res.json({err: true, msg: '執行錯誤'});
-    }
-    await sqlAsync.query(req.db, 'COMMIT');
-
-    // insert data into CmsAccount table and get cmsid for later insert clubInfo use
-    if(getObjectValue(checkresults[0]) === 'false'){
-      let insertCmsQuery = `INSERT INTO CmsPoker.CmsAccount (account, password, adminId)
-                            VALUES (?, ?, ?);`;
+    var cmsaccountid;
+    let checkresults = await sqlAsync.query(req.db, checkQuery);
+    if(checkresults.length <= 0){
+      // cms account not exist -> insert into CmsAccount table & record the id for later use
+      let insertQuery = `INSERT INTO CmsPoker.CmsAccount (account, password, adminId)
+                          VALUES (?, ?, ?);`;
       values = [addaccount, addpassword, adminid];
-      insertCmsQuery = req.db.format(insertCmsQuery, values);
-
-      let getCmsidQuery = `SELECT id FROM CmsPoker.CmsAccount WHERE account = ? AND adminId = ?`;
-      values = [addaccount, adminid];
-      getCmsidQuery = req.db.format(getCmsidQuery, values);
-
-      try{
-        await sqlAsync.query(req.db, 'START TRANSACTION');
-        var getresults = await sqlAsync.query(req.db, insertCmsQuery + getCmsidQuery);
-      }
-      catch(error){
-        await sqlAsync.query(req.db, 'ROLLBACK');
-        console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
-      }
-      await sqlAsync.query(req.db, 'COMMIT');
-
-      var getCmsId = getresults[1][0]['id'];
-
-      console.log("getresult with insert : " + getCmsId);
-      //return res.json({err: false, msg: '#check point1'});
-
-    }else if(getObjectValue(checkresults[0]) === 'true'){
-      console.log("In function !!!");
-      let getCmsidQuery = `SELECT id FROM CmsPoker.CmsAccount WHERE account = ? AND adminId = ?;`;
-      values = [addaccount, adminid];
-      getCmsidQuery = req.db.format(getCmsidQuery, values);
-      console.log("QQQQQ : " + getCmsidQuery);
-      try{
-        await sqlAsync.query(req.db, 'START TRANSACTION');
-        var getresults = await sqlAsync.query(req.db, getCmsidQuery);
-      }
-      catch(error){
-        await sqlAsync.query(req.db, 'ROLLBACK');
-        console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
-      }
-      await sqlAsync.query(req.db, 'COMMIT');
-
-      var getCmsId = getresults[0]['id'];
-
-      console.log("getresult without insert : " + getCmsId);
-      //return res.json({err: false, msg: '#check point2'});
-    }else{
-      console.log("Something went wrong !!!");
-      return res.json({err: true, msg: '執行錯誤'});
+      insertQuery = req.db.format(insertQuery, values);
+      let insertresults = await sqlAsync.query(req.db, insertQuery + checkQuery);
+      cmsaccountid = insertresults[1][0]['id'];
+      console.log("insert : cmsaccountid is : " + cmsaccountid);
+    }
+    else{
+      // cms account exist -> record the id for later use
+      cmsaccountid = checkresults[0]['id'];
+      console.log("cmsaccountid is : " + cmsaccountid);
     }
 
+
+    // insert or update the clubInfo
     for(let i=0 ; i < club.result.length ; i++){
-    // check query
-      let checkQuery = `SELECT IF((SELECT COUNT(club.id) FROM CmsPoker.ClubInfo AS club WHERE club.cmsId = ? AND
-                                    club.cmsAccountId = ?)>0,'true','false') AS result;`;
-      values = [club.result[i].lClubID, getCmsId];
+      // check whether the club exist, since different admin could manage a same cmsAccount
+      // we have to select the club by cmsid and cmsAccountid
+      let checkQuery = `SELECT *
+                        FROM CmsPoker.ClubInfo AS club
+                        WHERE club.cmsId = ? AND club.cmsAccountId = ?`;
+      values = [club.result[i].lClubID, cmsaccountid];
       checkQuery = req.db.format(checkQuery, values);
-      //console.log("the query is : " + checkQuery);
-
-      try{
-        await sqlAsync.query(req.db, 'START TRANSACTION');
-        var checkresults = await sqlAsync.query(req.db, checkQuery);
-      }
-      catch(error){
-        await sqlAsync.query(req.db, 'ROLLBACK');
-        console.log(error);
-        return res.json({err: true, msg: '執行錯誤'});
-      }
-      await sqlAsync.query(req.db, 'COMMIT');
-
-      console.log("The check result is fucking : " + getObjectValue(checkresults[0]));
-      if(getObjectValue(checkresults[0]) === 'true'){
-        console.log("Time to update club ~~~");
-        let updateQuery = `UPDATE CmsPoker.ClubInfo SET name = ?, curMember = ?, maxMember = ?, curManage = ?, maxManage = ?,
-level = ?, fund = ?, diamond = ?, smallIcon = ?, bigIcon = ?
-        WHERE id = (SELECT a.id FROM (SELECT * FROM CmsPoker.ClubInfo) AS a WHERE a.cmsId = ? AND a.cmsAccountId = ?);`;
-        values = [club.result[i].sClubName, club.result[i].iCurMembers, club.result[i].iMaxMembers,
-                  club.result[i].iCurManageMembers, club.result[i].iMaxManageMembers, club.result[i].iClubLevel, club.result[i].lFund,
-                  club.result[i].lDiamond, club.result[i].sSmallIcon, club.result[i].sBigIcon, club.result[i].lClubID, getCmsId];
-        updateQuery = req.db.format(updateQuery, values);
-
-        try{
-          await sqlAsync.query(req.db, 'START TRANSACTION');
-          let updateResult = await sqlAsync.query(req.db, updateQuery);
-        }
-        catch(error){
-          await sqlAsync.query(req.db, 'ROLLBACK');
-          console.log(error);
-          return res.json({err: true, msg: '執行錯誤'});
-        }
-        await sqlAsync.query(req.db, 'COMMIT');
-      }
-      else if(getObjectValue(checkresults[0]) === 'false'){
-        console.log("Time to insert club ~~");
-        let insertClubQuery = `INSERT INTO CmsPoker.ClubInfo (name, cmsId, cmsAccountId, curMember, maxMember, curManage, maxManage, level, fund, diamond, smallIcon, bigIcon)
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-        values = [club.result[i].sClubName, club.result[i].lClubID, getCmsId, club.result[i].iCurMembers, club.result[i].iMaxMembers,
+      console.log("@@@@@@@ : " + checkQuery);
+      let checkresults = await sqlAsync.query(req.db, checkQuery);
+      if(checkresults.length <= 0){
+        // club not exist -> insert
+        console.log(" Time to insert ");
+        let insertClubQuery = `INSERT INTO CmsPoker.ClubInfo
+                                    (name, cmsId, cmsAccountId, curMember, maxMember, curManage, maxManage,
+                                      level, fund, diamond, smallIcon, bigIcon)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`;
+        values = [club.result[i].sClubName, club.result[i].lClubID, cmsaccountid, club.result[i].iCurMembers, club.result[i].iMaxMembers,
                   club.result[i].iCurManageMembers, club.result[i].iMaxManageMembers, club.result[i].iClubLevel, club.result[i].lFund,
                   club.result[i].lDiamond, club.result[i].sSmallIcon, club.result[i].sBigIcon];
-        insertClubQuery = req.db.format(insertClubQuery, values);
-
-        try{
-          await sqlAsync.query(req.db, 'START TRANSACTION');
-          let insertclubResult = await sqlAsync.query(req.db, insertClubQuery);
-        }
-        catch(error){
-          await sqlAsync.query(req.db, 'ROLLBACK');
-          console.log(error);
-          return res.json({err: true, msg: '執行錯誤'});
-        }
-        await sqlAsync.query(req.db, 'COMMIT');
+        var sqlString = req.db.format(insertClubQuery, values);
       }
       else{
-        console.log("Something went wrong !!!");
-        return res.json({err: true, msg: '執行錯誤'});
+        // club exist -> update
+        console.log(" Time to update ");
+        targetid = checkresults[0]['id'];
+        let updateQuery = `UPDATE CmsPoker.ClubInfo
+                           SET
+                              name = ?, curMember = ?, maxMember = ?, curManage = ?, maxManage = ?,
+                              level = ?, fund = ?, diamond = ?, smallIcon = ?, bigIcon = ?
+                           WHERE id = ?;`;
+        values = [club.result[i].sClubName, club.result[i].iCurMembers, club.result[i].iMaxMembers,
+                  club.result[i].iCurManageMembers, club.result[i].iMaxManageMembers, club.result[i].iClubLevel, club.result[i].lFund,
+                  club.result[i].lDiamond, club.result[i].sSmallIcon, club.result[i].sBigIcon, targetid];
+        var sqlString = req.db.format(updateQuery, values);
       }
+      let sqlresults = await sqlAsync.query(req.db, sqlString);
 
-
-
-      // [TODO] exist_notequal return false
-      //        exist_equal update
-      //        not_exist insert
-
-  }
+    }
 
 
     // store to redis
@@ -341,45 +239,12 @@ level = ?, fund = ?, diamond = ?, smallIcon = ?, bigIcon = ?
 
     });
 
-
-    // [TODO] Prepare queries
-    // let queryStrings = [];
-
-    // let sqlString = ;
-
-    // for(let i=0 ; i<updateData.length ; i++){
-    //     let element = updataData[i];
-    //     let values = [];
-
-    //     // Append a statement to query string array
-    //     queryStrings.push(req.db.format(sqlString, values));
-    // }
-
-    // sqlTransaction(req.db, queryStrings, function(error, msg){
-    //     // Return the result of transaction to client
-    //     if(error) {
-    //         return res.json({err: true, msg: msg});
-    //     }
-    //     else {
-    //         return res.json({err: false, msg: 'success'});
-    //     }
-    // });
-
 }
 
 
 
 let deleteHandler = async function(req, res) {
     let adminid = req.user.roleId;
-    //const result = validationResult(req);
-
-
-    // If the form data is invalid
-    // if (!result.isEmpty()) {
-    //     // Return the first error to client
-    //     let firstError = result.array()[0].msg;
-    //     return res.json({err: true, msg: firstError});
-    // }
 
     // Gather all required data
     const
@@ -387,21 +252,16 @@ let deleteHandler = async function(req, res) {
     console.log("target id : " + clubid);
     console.log("target account : " + cmsaccount);
 
-    let deleteQuery = `DELETE FROM CmsPoker.ClubInfo WHERE id = (SELECT c.id FROM (SELECT * FROM ClubInfo) AS c WHERE
-                        c.cmsId = ? AND c.cmsAccountId = (SELECT ca.id FROM CmsPoker.CmsAccount AS ca WHERE account = ? AND adminId = ?));`;
+    let deleteQuery = `DELETE FROM CmsPoker.ClubInfo
+                       WHERE
+                          id = (SELECT c.id
+                                FROM (SELECT * FROM ClubInfo) AS c
+                                WHERE c.cmsId = ? AND c.cmsAccountId = (SELECT ca.id
+                                                                        FROM CmsPoker.CmsAccount AS ca
+                                                                        WHERE account = ? AND adminId = ?));`;
     values = [clubid, cmsaccount, adminid];
     deleteQuery = req.db.format(deleteQuery, values);
-
-    try{
-      await sqlAsync.query(req.db, 'START TRANSACTION');
-      let deleteResult = await sqlAsync.query(req.db, deleteQuery);
-    }
-    catch(error){
-      await sqlAsync.query(req.db, 'ROLLBACK');
-      console.log(error);
-      return res.json({err: true, msg: '執行錯誤'});
-    }
-    await sqlAsync.query(req.db, 'COMMIT');
+    let deleteresult = await sqlAsync.query(req.db, deleteQuery);
 
       // delete data in redis
       let key = '/clubsInfo:' + req.user.roleId;
@@ -411,33 +271,6 @@ let deleteHandler = async function(req, res) {
         req.redis.set(key, JSON.stringify(myobj));
         return res.json({err: false, msg: 'success'});
       });
-
-
-
-    // [TODO] check data with api server
-
-    // [TODO] Prepare queries
-    // let queryStrings = [];
-
-    // let sqlString = ;
-
-    // for(let i=0 ; i<updateData.length ; i++){
-    //     let element = updataData[i];
-    //     let values = [];
-
-    //     // Append a statement to query string array
-    //     queryStrings.push(req.db.format(sqlString, values));
-    // }
-
-    // sqlTransaction(req.db, queryStrings, function(error, msg){
-    //     // Return the result of transaction to client
-    //     if(error) {
-    //         return res.json({err: true, msg: msg});
-    //     }
-    //     else {
-    //         return res.json({err: false, msg: 'success'});
-    //     }
-    // });
 }
 
 // function updateValidator(){

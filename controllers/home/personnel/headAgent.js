@@ -30,7 +30,7 @@ let readHandler = async function(req,res){
     
     // Prepare query
     let sqlStringRead = `SELECT 
-                            H.id, H.userAccount, H.name,
+                            H.id, U.account, H.name,
                             H.cash, H.credit, Hb.totalCash, Hb.totalFrozen, Hb.totalAvail, H.posRb, H.negRb, S.status,
                             H.lineId, H.wechatId, H.facebookId, H.phoneNumber, 
                             H.bankSymbol, H.bankName, H.bankAccount,  H.comment,
@@ -112,13 +112,13 @@ let createHandler = async function(req,res){
 
     // Query for insert into HeadAgentInfo
     let sqlStringInsert2 = `INSERT INTO HeadAgentInfo (
-                                uid, adminId, userAccount, name, 
+                                uid, adminId, name, 
                                 cash, credit, posRb, negRb, 
                                 lineId, wechatId, facebookId, phoneNumber, 
                                 bankSymbol, bankName, bankAccount, comment) 
-                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
                             ;`;
-    values = [  account, admin.id, account, name, 
+    values = [  account, admin.id, name, 
                 cash, credit, posRb, negRb,
                 lineId, wechatId, facebookId, phoneNumber, 
                 bankSymbol, bankName, bankAccount, comment];

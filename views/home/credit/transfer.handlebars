@@ -5,6 +5,19 @@
 {{!-- Import custom script to layout --}}
 {{#section 'js'}}
 	<script src="/home/credit/js/transfer.js" type="text/javascript"></script>
+	<script>
+		var accountOptions = [
+			{{#each managedAccounts}}
+				{ 
+					id : '{{account}}',
+					text : '{{account}}',
+					html : '<div class="m-stack m-stack--ver m-stack--general"> <div class="m-stack__item m-stack__item--left">{{account}}  </div>         <div class="m-stack__item m-stack__item--center"><span class="m--font-bold m--font-primary">{{name}}</span></div>      <div class="m-stack__item m-stack__item--right"><span class="m-badge m-badge--{{stateColor}} m-badge--rounded">現金餘額 : {{cash}}</span></div>    </div>',
+					title : '{{account}}',
+				}, 
+			{{/each}}
+		];
+	</script>
+	
 {{/section}}
 
 {{!-- Header goes here --}}
@@ -112,12 +125,8 @@
 						<label class="col-form-label col-lg-3 col-sm-12">轉出帳號 *</label>
 						<div class="col-lg-4 col-md-9 col-sm-12">
 							<select class="form-control m-select2 m-input" id="accountFrom" name="accountFrom">
-								<option></option> {{!--  placeholder --}}
-
-								{{#each agents}}
-									<option value="{{userAccount}}">{{name}}({{userAccount}})</option>
-								{{/each}}
-
+								<option>
+								</option> {{!--  placeholder --}}
 							</select>
 							<span class="m-form__help"> </span>
 						</div>
@@ -127,11 +136,6 @@
 						<div class="col-lg-4 col-md-9 col-sm-12">
 							<select class="form-control m-select2 m-input" id="accountTo" name="accountTo">
 								<option></option> {{!--  placeholder --}}
-
-								{{#each agents}}
-									<option value="{{userAccount}}">{{name}}({{userAccount}})</option>
-								{{/each}}
-
 							</select>
 							<span class="m-form__help"> </span>
 						</div>

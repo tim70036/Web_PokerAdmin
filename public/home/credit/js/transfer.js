@@ -2,20 +2,32 @@ var Transfer = function() {
 
 	var initForm = function() {
 
-		// Select 2
+		
         $('#accountFrom').select2({
-            placeholder: "請選擇歸屬的代理",
+			data: accountOptions,
+			placeholder: "請選擇轉出帳號",
+			templateResult: function(data) {return data.html},
+			templateSelection: function(data) {return data.text},
+			escapeMarkup: function(markup) {return markup;},
 		});
 		$('#accountTo').select2({
-            placeholder: "請選擇歸屬的代理",
+			data: accountOptions,
+			placeholder: "請選擇轉入帳號",
+			templateResult: function(data) {return data.html},
+			templateSelection: function(data) {return data.text},
+			escapeMarkup: function(markup) {return markup;},
 		});
-		
+
+
 		// Form Validate
 		// http://jqueryvalidation.org/validate/
 		// Custom alphaNumeric validator
 		$.validator.methods.alphaNumeric = function( value, element ) {
-			console.log(value);
 			return this.optional( element ) ||  /^[a-z0-9]+$/i.test( value ) ;
+		}
+		// Custom notEqual validator
+		$.validator.methods.notEqual = function( value, element, param ) {
+			return this.optional( element ) ||  value !=  $(param).val() ;
 		}
 		
 		// Set up validator for form
@@ -27,6 +39,7 @@ var Transfer = function() {
                 },
                 accountTo: {
 					required: true,
+					notEqual: '#accountFrom',
 				},
 				amount: {
 					required: true,
@@ -49,6 +62,7 @@ var Transfer = function() {
                 },
                 accountTo: {
 					required: '轉入帳號為必填欄位',
+					notEqual: '轉入帳號不能跟轉出帳號相同',
 				},
 				amount: {
 					required: '轉帳金額為必填欄位',
@@ -97,10 +111,6 @@ var Transfer = function() {
 						
 						// Sweet alert
 						if(!result.err){
-
-							$('#create-modal').modal('hide');  // close form modal
-							oTable.ajax.reload(); // reload table data
-
 							swal({
 								title: "執行成功",
 								text: "轉帳已完成!",

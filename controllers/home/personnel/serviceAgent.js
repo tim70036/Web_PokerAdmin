@@ -19,7 +19,7 @@ let readHandler = async function(req,res){
 
     // Prepare query
     let sqlString = `SELECT 
-                        Ser.id, Ser.userAccount, Ser.name, S.status,
+                        Ser.id, U.account, Ser.name, S.status,
                         Ser.lineId, Ser.wechatId, Ser.facebookId, Ser.phoneNumber, 
                         Ser.bankSymbol, Ser.bankName, Ser.bankAccount,  Ser.comment, 
                         DATE_FORMAT(CONVERT_TZ(Ser.createtime, 'UTC', 'Asia/Shanghai'),'%Y-%m-%d %H:%i:%s ') AS createtime,
@@ -87,10 +87,10 @@ let createHandler = async function(req,res){
     sqlStringInsert1 = req.db.format(sqlStringInsert1, values);
     
     // Query for insert into ServiceAgentInfo
-    let sqlStringInsert2 = `INSERT INTO ServiceAgentInfo (uid, adminId, userAccount, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment) 
-                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
+    let sqlStringInsert2 = `INSERT INTO ServiceAgentInfo (uid, adminId, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment) 
+                            VALUES ((SELECT id FROM UserAccount WHERE account=?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) 
                             ;`;
-    values = [account, adminId, account, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment];
+    values = [account, adminId, name, lineId, wechatId, facebookId, phoneNumber, bankSymbol, bankName, bankAccount, comment];
     sqlStringInsert2 = req.db.format(sqlStringInsert2, values);
 
     // Insert new service agent
